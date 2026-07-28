@@ -309,10 +309,24 @@ $('#pvDownload').onclick=()=>{
 };
 $('#pvDelete').onclick=async ()=>{
   if(!previewItem)return;
-  if(!confirm('确定删除「'+previewItem.name+'」吗？'))return;
+  const tip = previewItem.kind==='cloud'
+    ? '确定删除「'+previewItem.name+'」吗？\n（将同时删除云端文件，其他设备拉取后也会消失）'
+    : '确定删除「'+previewItem.name+'」吗？';
+  if(!confirm(tip))return;
+  let msg='已删除';
+  if(previewItem.kind==='cloud'){
+    try{
+      await deleteFromCloud(previewItem);
+      msg='已删除（云端+本机同步）';
+    }catch(e){
+      toast('云端删除失败：'+e.message+'（本机未删除）');
+      console.error('[deleteFromCloud]',e);
+      return;
+    }
+  }
   await dbDel('assets',previewItem.id);
   objURLs.delete(previewItem.id); objURLs.delete('t_'+previewItem.id);
-  closePreview(); await load(); render(); toast('已删除');
+  closePreview(); await load(); render(); toast(msg);
 };
 
 /* ================= 文案库 ================= */
@@ -911,11 +925,11 @@ function render(){
 
 /* ================= 云存储 UI 绑定（提前执行，不依赖数据库加载） ================= */
 // v19: 从云端仓库拉取所有图片到本机，实现「图片云端共享、清单各自同步」
-async function syncFromCloud(){
+async function syncFromCloud(silent){
   const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
-  if(!token) return toast('先填 GitHub Token 才能拉取');
+  if(!token){ if(!silent) toast('先填 GitHub Token 才能拉取'); return; }
   const btn=$('#ghSync');
-  if(btn){ btn.disabled=true; btn.textContent='拉取中…'; }
+  if(!silent && btn){ btn.disabled=true; btn.textContent='拉取中…'; }
   $('#ghStatus').textContent='从云端拉取中…';
   try{
     const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.dir}`;
@@ -924,8 +938,9 @@ async function syncFromCloud(){
     const list=await res.json();
     if(!Array.isArray(list)) throw new Error('云端目录为空或尚不存在');
     const extOk=n=>/\.(jpg|jpeg|png|gif|webp|avif|bmp|heic)$/i.test(n);
+    const cloudUrls=new Set(list.filter(f=>extOk(f.name)).map(f=>f.download_url));
     const exist=new Set(assets.filter(a=>a.kind==='cloud').map(a=>a.url));
-    let added=0, skipped=0;
+    let added=0, skipped=0, removed=0;
     for(const f of list){
       if(!extOk(f.name)) continue;            // 只拉图片
       const u=f.download_url;
@@ -933,17 +948,45 @@ async function syncFromCloud(){
       await dbPut('assets',{id:uid(),name:f.name,type:'image',mime:'image/'+((f.name.split('.').pop()||'jpeg').toLowerCase()),size:f.size||0,cat:'',tags:[],kind:'cloud',url:u,thumb:u,created:Date.now(),remote:true});
       added++;
     }
+    // 双向同步：清理本机已不在云端的 cloud 记录（别人从云端删了，本机也清）
+    for(const a of assets.filter(a=>a.kind==='cloud')){
+      if(!cloudUrls.has(a.url)){ await dbDel('assets',a.id); removed++; }
+    }
     await load(); render();
-    $('#ghStatus').textContent=`✅ 已拉取 ${added} 张新图（云端共 ${list.length} 个文件，已存在 ${skipped} 张）`;
-    toast(added?`已拉取 ${added} 张云端素材`:'云端素材已全部在本机');
+    $('#ghStatus').textContent=`✅ 拉取 ${added} 张新图、清理 ${removed} 张已删图（云端共 ${list.length} 个文件，已存在 ${skipped} 张）`;
+    if(!silent) toast(added||removed?`已拉取 ${added} 张、清理 ${removed} 张`:'云端素材已全部在本机');
   }catch(e){
     $('#ghStatus').textContent='❌ 拉取失败：'+e.message;
-    toast('拉取失败：'+e.message);
+    if(!silent) toast('拉取失败：'+e.message);
     console.error('[syncFromCloud failed]',e);
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent='从云端拉取素材'; }
+    if(!silent && btn){ btn.disabled=false; btn.textContent='从云端拉取素材'; }
   }
 }
+
+// 删除 GitHub 仓库里的云端源文件（先 GET 拿 sha，再 DELETE）
+async function deleteFromCloud(item){
+  const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
+  if(!token) throw new Error('未配置 Token，无法删除云端文件');
+  const path=`${GH.dir}/${item.name}`;   // 与上传路径保持一致（不编码）
+  const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  const r1=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+  if(r1.status===404) return;            // 云端已无此文件，视为已删
+  if(!r1.ok){ const e=await r1.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r1.status)); }
+  const meta=await r1.json();
+  const r2=await fetch(api,{method:'DELETE',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:'delete asset '+item.name,sha:meta.sha,branch:GH.branch})});
+  if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r2.status)); }
+}
+
+// 启动后静默自动同步云端素材（仅当已配置 token，不弹 toast、不碰按钮）
+async function autoSync(){
+  try{
+    const t=await kvGet('gh_token');
+    if(!t) return;                  // 没配云存储就不自动拉
+    await syncFromCloud(true);      // silent 模式
+  }catch(e){ console.warn('[autoSync]',e); }
+}
+
 function bindCloudUI(){
   const saveBtn=$('#ghSave'), testBtn=$('#ghTest'), syncBtn=$('#ghSync');
   if(!saveBtn||!testBtn) return;
@@ -977,4 +1020,5 @@ function bindCloudUI(){
   // 请求持久化存储，降低系统自动清理数据的概率
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+  autoSync();   // 后台静默同步云端素材：任一端删/增，其他设备打开即自动对齐
 })();
