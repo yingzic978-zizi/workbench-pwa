@@ -408,18 +408,16 @@ async function batchDelete(){
     +(localCount?`· ${localCount} 张仅本机删除\n`:'');
   if(!confirm(tip.trim())) return;
 
-  // 先删云端（批量并行）
+  // 先并行删云端（所有图同时发请求，速度 N 倍）
   if(cloudCount){
     const cloudItems=items.filter(a=>a.kind==='cloud');
-    toast(`正在删除云端文件 0/${cloudItems.length}…`);
-    let ok=0, fail=0;
-    let i=0;
-    for(const a of cloudItems){
-      i++;
-      try{ await deleteFromCloud(a); ok++; }catch(e){ fail++; console.error('[batchDelete cloud]',a.name,e); }
-      toast(`正在删除云端文件 ${i}/${cloudItems.length}…`);
-    }
-    if(fail) toast(`云端删除：${ok} 成功 ${fail} 失败（仅成功的已同步）`);
+    toast(`正在删除云端 ${cloudItems.length} 张…`);
+    const results=await Promise.all(cloudItems.map(async a=>{
+      try{ await deleteFromCloud(a); return {a,ok:true}; }
+      catch(e){ console.error('[batchDelete cloud]',a.name,e); return {a,ok:false,err:e}; }
+    }));
+    const failed=results.filter(r=>!r.ok);
+    if(failed.length) toast(`云端删除：${cloudItems.length-failed.length} 成功 ${failed.length} 失败（仅成功的已同步）`);
   }
 
   // 再删本机
