@@ -338,6 +338,19 @@ progress{width:100%;height:6px}
         <div>🔔 开启计划提醒通知<div class="desc" id="notifyState">点击授权，到时间弹出提醒</div></div><span class="arrow">›</span>
       </div>
     </div>
+    <div class="card" id="cloudCard">
+      <div class="mine-item" style="display:block">
+        <div>☁️ 云存储（跨设备同步图片）<div class="desc">填 GitHub Token 后，上传素材会自动存到仓库图床，手机电脑自动互通、永不丢失</div></div>
+        <div style="margin-top:10px">
+          <input class="f-input" id="ghToken" type="password" placeholder="粘贴 GitHub Personal Access Token" style="margin-bottom:8px">
+          <div style="display:flex;gap:8px">
+            <button class="btn" id="ghTest" style="flex:1">测试连接</button>
+            <button class="btn" id="ghSave" style="flex:1">保存</button>
+          </div>
+          <div class="desc" id="ghStatus" style="margin-top:8px">未配置</div>
+        </div>
+      </div>
+    </div>
     <div class="card">
       <div class="mine-item">
         <div>📲 安装到手机桌面<div class="desc">iPhone：Safari 打开 → 分享 → 添加到主屏幕<br>安卓：浏览器菜单 → 安装应用 / 添加到桌面</div></div>
@@ -395,6 +408,9 @@ progress{width:100%;height:6px}
   <input class="f-input" id="aCat" placeholder="选填，方便按产品/系列筛选" list="catList"><datalist id="catList"></datalist>
   <div class="f-label">标签（空格分隔，如：红色 连衣裙 爆款）</div>
   <input class="f-input" id="aTags" placeholder="选填，搜索时能快速命中">
+  <div id="assetCloudRow" style="display:flex;align-items:center;gap:6px;margin:6px 0 2px;font-size:14px;color:var(--accent)">
+    <input type="checkbox" id="aCloud"> <label for="aCloud">☁ 上传到云端（跨设备同步，仅图片）</label>
+  </div>
   <button class="btn" id="aSave">保存到素材库</button>
 </div>
 

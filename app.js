@@ -8,7 +8,7 @@ const $$ = s => [...document.querySelectorAll(s)];
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
-    const r = indexedDB.open('workbench', 2);
+    const r = indexedDB.open('workbench', 3);
     r.onupgradeneeded = e=>{
       const d = e.target.result;
       if(!d.objectStoreNames.contains('assets')) d.createObjectStore('assets',{keyPath:'id'});
@@ -18,6 +18,7 @@ function openDB(){
       if(!d.objectStoreNames.contains('hots'))   d.createObjectStore('hots',{keyPath:'id'});
       if(!d.objectStoreNames.contains('attend')) d.createObjectStore('attend',{keyPath:'id'});
       if(!d.objectStoreNames.contains('hosts'))  d.createObjectStore('hosts',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('kv')) d.createObjectStore('kv',{keyPath:'k'});
     };
     r.onsuccess = ()=>{db=r.result;res()};
     r.onerror = ()=>rej(r.error);
@@ -28,6 +29,35 @@ const dbAll = store => new Promise((res,rej)=>{const q=tx(store).getAll();q.onsu
 const dbPut = (store,val)=>new Promise((res,rej)=>{const q=tx(store,'readwrite').put(val);q.onsuccess=res;q.onerror=()=>rej(q.error)});
 const dbDel = (store,key)=>new Promise((res,rej)=>{const q=tx(store,'readwrite').delete(key);q.onsuccess=res;q.onerror=()=>rej(q.error)});
 const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- kv 键值存储（存 token 等） ---------- */
+const kvGet = k=>new Promise((res,rej)=>{const q=tx('kv','readonly').get(k);q.onsuccess=()=>res(q.result?q.result.v:undefined);q.onerror=()=>rej(q.error)});
+const kvPut = (k,v)=>new Promise((res,rej)=>{const q=tx('kv','readwrite').put({k,v});q.onsuccess=res;q.onerror=()=>rej(q.error)});
+
+/* ---------- GitHub 图床 ---------- */
+const GH={owner:'yingzic978-zizi',repo:'workbench-pwa',branch:'main',dir:'assets-img'};
+function fileToB64(file){ return new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.readAsDataURL(file); }); }
+function compressImage(file,maxDim=1280,q=0.82){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const r=Math.min(1,maxDim/Math.max(img.width,img.height));
+      const c=document.createElement('canvas'); c.width=img.width*r; c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>res(b),'image/jpeg',q); URL.revokeObjectURL(img.src);
+    };
+    img.onerror=()=>res(null);
+    img.src=URL.createObjectURL(file);
+  });
+}
+async function uploadToGitHub(filename,base64,token){
+  const path=`${GH.dir}/${filename}`;
+  const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  const res=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:`upload ${filename}`,content:base64,branch:GH.branch})});
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||('HTTP '+res.status)); }
+  const d=await res.json();
+  return d.content.download_url;
+}
 
 /* ---------- 全局状态 ---------- */
 let assets=[], copies=[], tasks=[], ideas=[], hots=[], attend=[], hosts=[];
@@ -47,12 +77,12 @@ let attSort={key:'name',dir:1};
 const objURLs = new Map(); // id -> objectURL 缓存
 
 function url(item){
-  if(item.kind==='link') return item.url;
+  if(item.kind==='link'||item.kind==='cloud') return item.url;
   if(!objURLs.has(item.id) && item.blob) objURLs.set(item.id, URL.createObjectURL(item.blob));
   return objURLs.get(item.id);
 }
 function thumbUrl(item){
-  if(item.kind==='link') return item.thumb||(item.type==='image'?item.url:null);
+  if(item.kind==='link'||item.kind==='cloud') return item.thumb||(item.type==='image'?item.url:null);
   if(item.thumb){
     const k='t_'+item.id;
     if(!objURLs.has(k)) objURLs.set(k, URL.createObjectURL(item.thumb));
@@ -62,9 +92,9 @@ function thumbUrl(item){
 }
 
 /* ---------- 工具 ---------- */
-function toast(msg){
+function toast(msg,ms=2200){
   const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200);
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),ms);
 }
 const fmtSize = n=>{ if(!n)return'0B'; const u=['B','KB','MB','GB']; let i=0; while(n>=1024&&i<3){n/=1024;i++} return n.toFixed(i?1:0)+u[i]; };
 const todayStr = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
@@ -88,7 +118,7 @@ function openSheet(id){ $('#mask').classList.add('show'); $(id).classList.add('s
 function closeSheets(){ $('#mask').classList.remove('show'); $$('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#mask').onclick=closeSheets;
 $('#fab').onclick=()=>{
-  if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; $('#aTags').value=''; assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
+  if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; $('#aTags').value=''; assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#assetCloudRow').style.display='flex'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
   else if(curView==='copy'){ editCopyId=null; $('#copySheetTitle').textContent='新建文案'; $('#cTitle').value=''; $('#cBody').value=''; $('#cTags').value=''; refreshFabricHint(); openSheet('#sheetCopy'); }
   else if(curView==='plan'){ $('#tTitle').value=''; $('#tDate').value=todayStr(); $('#tTime').value=''; $('#tRepeat').value='none'; openSheet('#sheetTask'); }
   else if(curView==='ideas'){ editIdeaId=null; $('#ideaSheetTitle').textContent='添加选题'; $('#iBody').value=''; $('#iTags').value=''; openSheet('#sheetIdea'); }
@@ -103,6 +133,7 @@ document.querySelectorAll('#sheetAsset .seg button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x===b));
   $('#assetFilePanel').style.display = assetMode==='file'?'block':'none';
   $('#assetLinkPanel').style.display = assetMode==='link'?'block':'none';
+  const cr=$('#assetCloudRow'); if(cr) cr.style.display = assetMode==='file'?'flex':'none';
 });
 $('#filePick').onchange = e=>{
   pickedFiles=[...e.target.files];
@@ -169,16 +200,34 @@ $('#aSave').onclick = async ()=>{
   if(!pickedFiles.length) return toast('请先选择文件');
   const cat=$('#aCat').value.trim();
   const tags=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+  const token = $('#ghToken').value.trim() || await kvGet('gh_token');
+  const useCloud = $('#aCloud').checked && !!token;
+  if($('#aCloud').checked && !token) toast('未配置 GitHub Token，已转存本地');
   $('#aSave').disabled=true; $('#aSave').textContent='保存中…';
+  let cloudOk=0, localOk=0, cloudErr=null;
   for(const f of pickedFiles){
     const type = f.type.startsWith('image/')?'image':f.type.startsWith('video/')?'video':'file';
+    if(useCloud && type==='image'){
+      try{
+        let blob=f;
+        const cp=await compressImage(f); if(cp) blob=cp;
+        const b64=await fileToB64(blob);
+        const ext='.'+(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9.]/g,'');
+        const u=await uploadToGitHub(uid()+ext, b64, token);
+        await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:blob.size,cat,tags,kind:'cloud',url:u,thumb:u,created:Date.now()});
+        cloudOk++; continue;
+      }catch(e){ cloudErr=e.message; console.error('[GitHub cloud upload failed]', e); }
+    }
     let thumb=null;
     if(type==='image') thumb=await makeImageThumb(f);
     if(type==='video') thumb=await makeVideoThumb(f);
     await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:f.size,cat,tags,blob:f,thumb,created:Date.now()});
+    localOk++;
   }
   $('#aSave').disabled=false; $('#aSave').textContent='保存到素材库';
-  closeSheets(); await load(); render(); toast('已保存 '+pickedFiles.length+' 个素材');
+  closeSheets(); await load(); render();
+  const sum=`已保存 ${cloudOk?cloudOk+' 张云端 ':''}${localOk?localOk+' 张本地':''}素材`;
+  toast(cloudErr?`❌ 云端失败：${cloudErr}（已转本地）— ${sum}`:sum, cloudErr?5500:2200);
 };
 
 function renderCatList(){
@@ -224,6 +273,7 @@ function renderAssets(){
       else if(a.type==='video') d.innerHTML=`<div class="g-file">🎬<span>${esc(a.name)}</span></div>`;
       else d.innerHTML=`<div class="g-file">📄<span>${esc(a.name)}</span></div>`;
       if(a.type==='video') d.innerHTML+=`<div class="g-badge">▶ 视频</div>`;
+      if(a.kind==='cloud') d.innerHTML+=`<div class="g-badge">☁ 云端</div>`;
     }
     d.innerHTML+=`<div class="g-name">${esc(a.name)}</div>`;
     d.onclick=()=>openPreview(a);
@@ -772,14 +822,18 @@ async function exportBackup(full){
         txt.textContent=`正在打包素材 ${++i}/${assets.length}（${esc(a.name)}）`;
         bar.value=i/assets.length*90;
         await new Promise(r=>setTimeout(r,0));
-        const blob = a.kind==='link' ? a.blob : await blobToB64(a.blob);
-        const thumb = a.kind==='link' ? a.thumb : (a.thumb?await blobToB64(a.thumb):null);
+        let blob, thumb;
+        if(a.kind==='cloud'){ blob=null; thumb=a.thumb; }
+        else if(a.kind==='link'){ blob=a.blob; thumb=a.thumb; }
+        else { blob=await blobToB64(a.blob); thumb=a.thumb?await blobToB64(a.thumb):null; }
         data.assets.push({...a,blob,thumb});
       }
     }else{
-      data.assets=assets.map(a=> a.kind==='link'
-        ? {id:a.id,name:a.name,type:a.type,kind:'link',url:a.url,thumb:a.thumb||null,cat:a.cat,tags:a.tags,created:a.created,size:0,metaOnly:true}
-        : {id:a.id,name:a.name,type:a.type,mime:a.mime,size:a.size,cat:a.cat,tags:a.tags,created:a.created,blob:null,thumb:null,metaOnly:true});
+      data.assets=assets.map(a=>{
+        if(a.kind==='link') return {id:a.id,name:a.name,type:a.type,kind:'link',url:a.url,thumb:a.thumb||null,cat:a.cat,tags:a.tags,created:a.created,size:0,metaOnly:true};
+        if(a.kind==='cloud') return {id:a.id,name:a.name,type:a.type,kind:'cloud',url:a.url,thumb:a.thumb||null,cat:a.cat,tags:a.tags,created:a.created,size:a.size,metaOnly:true};
+        return {id:a.id,name:a.name,type:a.type,mime:a.mime,size:a.size,cat:a.cat,tags:a.tags,created:a.created,blob:null,thumb:null,metaOnly:true};
+      });
     }
     txt.textContent='正在生成备份文件…'; bar.value=95;
     const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
@@ -813,7 +867,7 @@ $('#importFile').onchange=async e=>{
       txt.textContent=`正在恢复素材 ${++i}/${as.length}`;
       bar.value=10+i/Math.max(as.length,1)*85;
       await new Promise(r=>setTimeout(r,0));
-      if(a.kind==='link'){ await dbPut('assets',a); continue; }
+      if(a.kind==='link'||a.kind==='cloud'){ await dbPut('assets',a); continue; }
       if(a.metaOnly||!a.blob) continue; // 轻量备份不含文件本体
       a.blob=await b64ToBlob(a.blob);
       a.thumb=a.thumb?await b64ToBlob(a.thumb):null;
@@ -860,6 +914,12 @@ function render(){
   const d=new Date();
   $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
   await openDB(); await load(); render(); scheduleCheck();
+  // 云存储：加载已存 token + 绑定按钮
+  try{
+    const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
+  }catch(e){}
+  if($('#ghSave')) $('#ghSave').onclick=async()=>{ const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token'); await kvPut('gh_token',t); toast('Token 已保存 ✓'); };
+  if($('#ghTest')) $('#ghTest').onclick=async()=>{ const t=$('#ghToken').value.trim()||(await kvGet('gh_token')); if(!t)return toast('先填 Token'); $('#ghStatus').textContent='测试中…'; try{ const r=await fetch('https://api.github.com/user',{headers:{'Authorization':`Bearer ${t}`}}); const d=await r.json(); if(r.ok){ $('#ghStatus').textContent='✅ 已连接：'+d.login; } else $('#ghStatus').textContent='❌ '+d.message; }catch(e){ $('#ghStatus').textContent='❌ '+e.message; } };
   // 请求持久化存储，降低系统自动清理数据的概率
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
