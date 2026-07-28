@@ -886,6 +886,7 @@ let attMonth=todayStr().slice(0,7); // YYYY-MM
 - 看板只看「主播×维度」汇总，不显示明细。
 */
 const ATT_TYPE_PATTERNS = [
+  [/场次|出勤/, '出勤'],  // v33: 1 条记录 = 1 场，无数字默认 1
   [/加班/, '加班'],
   [/请假|休假|歇/, '请假'],
   [/绩效/, '绩效'],
@@ -926,6 +927,7 @@ function parseOneAtt(seg){
   if(type==='请假') unit = seg.match(ATT_UNIT_RE) ? 'h' : '天';
   else if(type==='加班') unit='h';
   if(!hasNum && type==='请假') hours=1;
+  if(!hasNum && type==='出勤') hours=1;  // v33: "张三" 自动 1 场
   return {hostName:name, type, hours, hasNum, unit};
 }
 function refreshAttPreview(){
@@ -935,14 +937,14 @@ function refreshAttPreview(){
     box.innerHTML='<span style="color:#999">输入备注后实时识别主播·类型·数量…</span>';
     return;
   }
-  const valid=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假');
+  const valid=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假'||s.type==='出勤');  // v33: 出勤无数字也保留
   if(!valid.length){
-    box.innerHTML='<span style="color:var(--danger)">⚠ 没识别到内容（每段要含主播+类型，如 婷婷加班5h / 梦淇休假 / 梦淇请假5小时）</span>';
+    box.innerHTML='<span style="color:var(--danger)">⚠ 没识别到内容（每段要含主播+类型，如 婷婷加班5h / 梦淇5场 / 梦淇绩效7 / 梦淇）</span>';
     return;
   }
   const unit=s=>s.type==='加班'?'h':(s.type==='请假'?(s.unit==='h'?'h':'天'):'');
   box.innerHTML='<b>将保存 '+valid.length+' 条：</b><br>'+valid.map(s=>{
-    const q=s.hasNum?s.hours:(s.type==='请假'?1:'');
+    const q=s.hasNum?s.hours:((s.type==='请假'||s.type==='出勤')?1:'');  // v33: 出勤无数字也按 1
     return `· <b>${esc(s.hostName)}</b> ${s.type} ${q}${unit(s)}`;
   }).join('<br>');
 }
@@ -951,7 +953,7 @@ $('#attSave').onclick=async ()=>{
   const date=$('#attDate').value||todayStr();
   const text=$('#attNote').value.trim();
   if(!text) return toast('写点备注');
-  const segs=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假');
+  const segs=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假'||s.type==='出勤');  // v33
   if(!segs.length) return toast('没识别到有效内容');
   let saved=0;
   for(const s of segs){
@@ -983,22 +985,74 @@ function renderAttend(){
   renderBoard();
   renderAttendLog();
 }
+/* ================= v33 主播个人统计 sheet（点名字弹出） ================= */
+function openHostSheet(name){
+  $('#hostSheetTitle').textContent=name+' · 个人统计';
+  // 收集该主播的所有记录（跨月）
+  const recs=attend.filter(a=>cleanHostName(a.hostName)===name);
+  const byMonth={};
+  recs.forEach(a=>{
+    const m=(a.date||'').slice(0,7);
+    if(!m) return;
+    byMonth[m]=byMonth[m]||{work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
+    const r=byMonth[m];
+    if(a.type==='出勤') r.work+=(a.hours||1);  // 场次 = 出场次数
+    else if(a.type==='加班') r.ot+=(a.hours||0);
+    else if(a.type==='请假'){ if((a.unit||'天')==='h') r.leaveH+=(a.hours||0); else r.leaveDays+=(a.hours||0); }
+    else if(a.type==='绩效') r.perf+=(a.hours||0);
+  });
+  // 累计
+  const tot={work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
+  Object.values(byMonth).forEach(m=>{
+    tot.work+=m.work; tot.ot+=m.ot; tot.leaveDays+=m.leaveDays; tot.leaveH+=m.leaveH; tot.perf+=m.perf;
+  });
+  const fmt=n=>Number(n).toFixed(n%1?1:0).replace(/\.0$/,'');
+  const months=Object.keys(byMonth).sort().reverse();
+  const monthHtml=months.length? months.map(m=>{
+    const d=byMonth[m];
+    return `<div class="card" style="margin-bottom:10px;padding:10px 12px">
+      <div style="font-weight:500;font-size:14px;margin-bottom:8px">${m.replace('-','年')}月</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:12px;text-align:center">
+        <div><div style="color:var(--sub);font-size:11px">场次</div><b style="font-size:15px">${fmt(d.work)}</b></div>
+        <div><div style="color:var(--sub);font-size:11px">加班</div><b style="font-size:15px">${fmt(d.ot)}h</b></div>
+        <div><div style="color:var(--sub);font-size:11px">休假</div><b style="font-size:15px">${fmt(d.leaveDays)}天</b></div>
+        <div><div style="color:var(--sub);font-size:11px">请假</div><b style="font-size:15px">${fmt(d.leaveH)}h</b></div>
+        <div><div style="color:var(--sub);font-size:11px">绩效</div><b style="font-size:15px">${fmt(d.perf)}</b></div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="text-align:center;color:var(--sub);padding:30px 0">还没有任何记录</div>';
+
+  $('#hostSheetBody').innerHTML=`
+    <div class="card" style="background:var(--brand);color:#fff;padding:14px 16px;margin-bottom:12px;border:none">
+      <div style="font-size:13px;opacity:.88;margin-bottom:10px">📊 累计（${months.length} 个月）</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
+        <div><div style="opacity:.78;font-size:11px">场次</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.work)}</div></div>
+        <div><div style="opacity:.78;font-size:11px">加班</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.ot)}h</div></div>
+        <div><div style="opacity:.78;font-size:11px">休假</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.leaveDays)}天</div></div>
+        <div><div style="opacity:.78;font-size:11px">请假</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.leaveH)}h</div></div>
+        <div><div style="opacity:.78;font-size:11px">绩效</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.perf)}</div></div>
+      </div>
+    </div>
+    ${monthHtml}
+  `;
+  openSheet('#hostSheet');
+}
 function renderBoard(){
   $('#monLabel').textContent=attMonth.replace('-','年')+'月';
   const list=attend.filter(a=>a.date&&a.date.startsWith(attMonth));
-  const total=daysInMonth(attMonth);
   const map={};
   list.forEach(a=>{
     const name=(a.hostName&&a.hostName!=='未分配')?cleanHostName(a.hostName):'未分配';
-    if(!map[name]) map[name]={name,ot:0,leaveDays:0,leaveH:0,perf:0};
+    if(!map[name]) map[name]={name,work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
     const r=map[name];
-    if(a.type==='加班') r.ot+=(a.hours||0);
+    if(a.type==='出勤') r.work+=(a.hours||1);  // v33: 场次 = 出场次数（hours 累加，无数字默认 1 场）
+    else if(a.type==='加班') r.ot+=(a.hours||0);
     else if(a.type==='请假'){ if((a.unit||'天')==='h') r.leaveH+=(a.hours||0); else r.leaveDays+=(a.hours||0); }
     else if(a.type==='绩效') r.perf+=(a.hours||0);
   });
   let rows=Object.values(map).map(r=>({
     name:r.name,
-    work:Math.max(0, total-Math.round(r.leaveDays*10)/10),
+    work:r.work,
     ot:Math.round(r.ot*10)/10,
     leave:Math.round(r.leaveDays*10)/10,
     leaveH:Math.round(r.leaveH*10)/10,
@@ -1014,8 +1068,12 @@ function renderBoard(){
   });
   rows.forEach(r=>{
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="name">${esc(r.name)}</td><td>${r.work}</td><td>${r.ot}</td><td>${r.leave}</td><td>${r.leaveH}</td><td>${r.perf}</td>`;
+    tr.innerHTML=`<td class="name clickable" data-host="${esc(r.name)}">${esc(r.name)}</td><td>${r.work}</td><td>${r.ot}</td><td>${r.leave}</td><td>${r.leaveH}</td><td>${r.perf}</td>`;
     body.appendChild(tr);
+  });
+  // v33: 点主播名 → 个人统计 sheet
+  body.querySelectorAll('td.name.clickable').forEach(td=>{
+    td.onclick=e=>{ e.stopPropagation(); openHostSheet(td.dataset.host); };
   });
 }
 function renderAttendLog(){
