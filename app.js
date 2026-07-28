@@ -489,6 +489,8 @@ $('#cSave').onclick=async ()=>{
   toast('文案已保存'+(autoFab.length?'（面料：'+autoFab.join('、')+'）':''));
 };
 function renderCopies(){
+  ensureFabricTags();
+  initFabricChips();   // chips 跟着当前文案动态生成（新面料自动出现）
   const list=copies.filter(c=>{
     const okKw=!keyword||(c.title+' '+c.body+' '+(c.tags||[]).join(' ')).toLowerCase().includes(keyword);
     const okFab=!copyFabric||(c.tags||[]).includes(copyFabric);
@@ -502,8 +504,13 @@ function renderCopies(){
     d.innerHTML=`<div class="copy-title"><span>${esc(c.title||'未命名')}</span></div>
       <div class="copy-body">${esc(c.body)}</div>
       ${c.tags.length?`<div class="tags">${c.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
-      <div class="row-actions"><span data-act="edit">✏️ 编辑</span><span class="del" data-act="del">🗑 删除</span></div>`;
+      <div class="row-actions"><span data-act="copy">📋 复制</span><span data-act="edit">✏️ 编辑</span><span class="del" data-act="del">🗑 删除</span></div>`;
     if(copyMultiMode) d.innerHTML += `<div class="copy-check ${copySelectedIds.has(c.id)?'on':''}">${copySelectedIds.has(c.id)?'✓':''}</div>`;
+    d.querySelector('[data-act=copy]').onclick=async e=>{
+      e.stopPropagation();
+      try{ await navigator.clipboard.writeText(c.body); toast('已复制到剪贴板'); }
+      catch(err){ toast('复制失败，请长按文本手动复制'); }
+    };
     d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); refreshFabricHint(); openSheet('#sheetCopy'); };
     d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await delCopy(c.id); await load(); render(); };
     attachCopyEvents(d,c);
@@ -566,16 +573,50 @@ $('#copyMultiBtn').onclick=()=>toggleCopyMulti(!copyMultiMode);
 $('#copyBCancel').onclick=()=>toggleCopyMulti(false);
 $('#copyBDel').onclick=batchDeleteCopies;
 
-/* ================= v15 文案面料：筛选条 / 批量复制 / 旧文案补全 ================= */
+/* ================= 文案面料：动态 chips（从 copies.tags 实时收集，新面料自动出现） ================= */
+// 从所有文案的 tags 中去重收集；FABRICS 词库里的面料排前面，其他按使用频次倒序
+function collectCopyFabrics(){
+  const set=new Set();
+  copies.forEach(c=>(c.tags||[]).forEach(t=>{ if(t) set.add(t); }));
+  // 频次统计
+  const cnt={};
+  copies.forEach(c=>(c.tags||[]).forEach(t=>{ cnt[t]=(cnt[t]||0)+1; }));
+  const arr=[...set];
+  arr.sort((a,b)=>{
+    const ai=FABRICS.indexOf(a), bi=FABRICS.indexOf(b);
+    if(ai!==-1||bi!==-1) return (ai===-1?99:ai)-(bi===-1?99:bi);
+    if((cnt[b]||0)!==(cnt[a]||0)) return (cnt[b]||0)-(cnt[a]||0);
+    return a.localeCompare(b,'zh-Hans-CN');
+  });
+  return arr;
+}
 function initFabricChips(){
   const box=$('#fabricChips'); if(!box) return;
-  box.innerHTML='<div class="chip on" data-f="">全部</div>';
-  FABRICS.forEach(f=>{ const d=document.createElement('div'); d.className='chip'; d.dataset.f=f; d.textContent=f; box.appendChild(d); });
+  box.innerHTML='';
+  const list=collectCopyFabrics();
+  if(!list.length){
+    const empty=document.createElement('div');
+    empty.className='chips-empty';
+    empty.textContent='暂无标签 · 新建/导入文案时按面料词自动打标签';
+    box.appendChild(empty);
+    return;
+  }
+  list.forEach(f=>{
+    const d=document.createElement('div');
+    d.className='chip';
+    d.dataset.f=f;
+    d.textContent=f;
+    box.appendChild(d);
+  });
   box.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+    // 再点同一个 chip → 取消过滤（回到全部）
+    if(copyFabric===ch.dataset.f){ copyFabric=''; ch.classList.remove('on'); renderCopies(); return; }
     copyFabric=ch.dataset.f;
     box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===ch));
     renderCopies();
   });
+  // 初始：刷新"on"高亮状态
+  box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on', x.dataset.f===copyFabric));
 }
 function initAssetFabricChips(){
   const box=$('#assetFabricChips'); if(!box) return;
@@ -606,6 +647,21 @@ function refreshFabricHint(){
   const hit=detectFabrics($('#cTitle').value+' '+$('#cBody').value);
   if(hit.length){ el.textContent='已识别面料：'+hit.map(f=>'#'+f).join('  '); el.classList.add('has'); }
   else { el.textContent='未识别到面料词（录入内容含面料会自动加标签）'; el.classList.remove('has'); }
+}
+// 给没有面料标签的文案自动补（幂等），写到 IndexedDB 后重渲染
+async function ensureFabricTags(){
+  let changed=0;
+  for(const c of copies){
+    if(!(c.tags||[]).some(t=>FABRICS.includes(t))){
+      const hit=detectFabrics((c.title||'')+' '+(c.body||''));
+      if(hit.length){
+        c.tags=[...new Set([...(c.tags||[]), ...hit])];
+        await dbPut('copies',c);
+        changed++;
+      }
+    }
+  }
+  return changed;
 }
 $('#cTitle').oninput=refreshFabricHint;
 $('#cBody').oninput=refreshFabricHint;
