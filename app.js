@@ -1227,6 +1227,9 @@ async function syncCopies(silent){
   }catch(e){
     if(!silent) toast('文案同步失败：'+e.message);
     console.error('[syncCopies failed]',e);
+  }finally{
+    const b=$('#ghSyncCopy');
+    if(b){ b.disabled=false; b.textContent='☁ 文案云同步'; }
   }
 }
 
