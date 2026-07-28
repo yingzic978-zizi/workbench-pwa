@@ -130,9 +130,31 @@ nav::-webkit-scrollbar{display:none}
 .board th.c-name{width:23%}
 .board td.name{text-align:left;font-weight:600}
 /* v33: 主播名可点开个人看板 */
-.board td.name.clickable{cursor:pointer;-webkit-tap-highlight-color:transparent}
-.board td.name.clickable:hover{color:var(--brand)}
-.board td.name.clickable:active{background:rgba(99,153,34,.12)}
+.board td.name.clickable{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s,background .15s}
+.board td.name.clickable:hover{color:#1d4ed8}
+.board td.name.clickable.host-active{color:#fff;background:linear-gradient(135deg,#3b82f6,#60a5fa);font-weight:600}
+.board td.name.clickable:active{background:rgba(59,130,246,.15)}
+
+/* v35: 主播个人统计折叠卡片（主表正上方，亮色配色） */
+.host-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(59,130,246,.15);overflow:hidden;border:1px solid #e0e7ff}
+.host-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);border-bottom:1px solid #c7d2fe}
+.host-head b{font-size:15px;color:#1e3a8a;margin:0 2px}
+.host-emoji{margin-right:4px}
+.host-close{font-size:22px;color:#64748b;cursor:pointer;padding:0 6px;line-height:1;-webkit-tap-highlight-color:transparent}
+.host-close:hover{color:#1e3a8a}
+.host-total{background:linear-gradient(135deg,#60a5fa 0%,#3b82f6 60%,#818cf8 100%);color:#fff;padding:14px 16px}
+.ht-lab{font-size:12px;opacity:.95;margin-bottom:10px;letter-spacing:.5px}
+.ht-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center}
+.ht-lab2{font-size:11px;opacity:.85;margin-bottom:2px}
+.ht-val{font-size:20px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.12)}
+.host-months{max-height:none;overflow:visible;padding:10px 12px;background:#f8fafc}
+.host-month{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.host-month:last-child{margin-bottom:0}
+.host-month-title{font-size:13px;font-weight:600;color:#1e3a8a;margin-bottom:8px;padding-left:4px;border-left:3px solid #60a5fa}
+.host-month-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;text-align:center;font-size:12px;color:#334155}
+.host-month-grid b{font-size:15px;color:#0f172a;display:block;margin-top:2px}
+.hm-lab{color:#64748b;font-size:11px}
+.host-empty{text-align:center;color:#94a3b8;padding:24px 0;font-size:13px}
 .board tbody tr:nth-child(even){background:rgba(0,0,0,.02)}
 .board tbody tr:active{background:rgba(0,0,0,.05)}
 .chip-x{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:18px;height:18px;line-height:16px;text-align:center;border-radius:50%;background:rgba(0,0,0,.06);font-size:13px;color:var(--sub);cursor:pointer;font-weight:400;user-select:none}
@@ -332,6 +354,8 @@ progress{width:100%;height:6px}
     <div class="stat-row">
       <div class="stat"><b id="attPerf">¥0</b><div>绩效</div></div>
     </div>
+    <!-- v35: 点主播名字 → 主表正上方插入个人统计卡片（折叠/展开），不用底部 sheet -->
+    <div id="hostCardWrap" class="hidden" style="margin:8px 0 12px"></div>
     <div id="attBoard">
       <div class="board-scroll">
         <table class="board">
@@ -354,15 +378,6 @@ progress{width:100%;height:6px}
     <div class="plan-group" style="margin-top:18px">📝 录入记录 <span style="font-weight:400;color:var(--sub);font-size:12px">（按日期倒序，点删除可去掉错的那条）</span></div>
     <div id="attendLog"></div>
   </section>
-
-  <!-- v33: 主播个人统计 sheet（点名字弹出） -->
-  <div class="sheet" id="hostSheet">
-    <div class="sheet-mask"></div>
-    <div class="sheet-card" style="max-width:520px">
-      <div class="sheet-head"><span id="hostSheetTitle">主播统计</span><span class="sheet-x">×</span></div>
-      <div class="sheet-body" id="hostSheetBody" style="max-height:75vh;overflow-y:auto"></div>
-    </div>
-  </div>
 
   <!-- 我的 / 备份 -->
   <section class="view" id="view-mine">
@@ -560,6 +575,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=34"></script>
+<script src="app.js?v=35"></script>
 </body>
 </html>

@@ -985,10 +985,20 @@ function renderAttend(){
   renderBoard();
   renderAttendLog();
 }
-/* ================= v33 主播个人统计 sheet（点名字弹出） ================= */
-function openHostSheet(name){
-  $('#hostSheetTitle').textContent=name+' · 个人统计';
-  // 收集该主播的所有记录（跨月）
+/* ================= v35 主播个人统计：主表正上方折叠卡片（亮色） ================= */
+let currentHostCard=null;  // 当前展开的主播名（null=收起）
+function toggleHostCard(name){
+  const wrap=$('#hostCardWrap');
+  // 同一个名字再点 → 收起
+  if(currentHostCard===name){
+    wrap.classList.add('hidden');
+    wrap.innerHTML='';
+    currentHostCard=null;
+    // 取消高亮
+    document.querySelectorAll('#boardBody td.name').forEach(td=>td.classList.remove('host-active'));
+    return;
+  }
+  // 收集该主播所有记录（跨月）
   const recs=attend.filter(a=>cleanHostName(a.hostName)===name);
   const byMonth={};
   recs.forEach(a=>{
@@ -996,12 +1006,11 @@ function openHostSheet(name){
     if(!m) return;
     byMonth[m]=byMonth[m]||{work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
     const r=byMonth[m];
-    if(a.type==='出勤') r.work+=(a.hours||1);  // 场次 = 出场次数
+    if(a.type==='出勤') r.work+=(a.hours||1);
     else if(a.type==='加班') r.ot+=(a.hours||0);
     else if(a.type==='请假'){ if((a.unit||'天')==='h') r.leaveH+=(a.hours||0); else r.leaveDays+=(a.hours||0); }
     else if(a.type==='绩效') r.perf+=(a.hours||0);
   });
-  // 累计
   const tot={work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
   Object.values(byMonth).forEach(m=>{
     tot.work+=m.work; tot.ot+=m.ot; tot.leaveDays+=m.leaveDays; tot.leaveH+=m.leaveH; tot.perf+=m.perf;
@@ -1010,32 +1019,46 @@ function openHostSheet(name){
   const months=Object.keys(byMonth).sort().reverse();
   const monthHtml=months.length? months.map(m=>{
     const d=byMonth[m];
-    return `<div class="card" style="margin-bottom:10px;padding:10px 12px">
-      <div style="font-weight:500;font-size:14px;margin-bottom:8px">${m.replace('-','年')}月</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:12px;text-align:center">
-        <div><div style="color:var(--sub);font-size:11px">场次</div><b style="font-size:15px">${fmt(d.work)}</b></div>
-        <div><div style="color:var(--sub);font-size:11px">加班</div><b style="font-size:15px">${fmt(d.ot)}h</b></div>
-        <div><div style="color:var(--sub);font-size:11px">休假</div><b style="font-size:15px">${fmt(d.leaveDays)}天</b></div>
-        <div><div style="color:var(--sub);font-size:11px">请假</div><b style="font-size:15px">${fmt(d.leaveH)}h</b></div>
-        <div><div style="color:var(--sub);font-size:11px">绩效</div><b style="font-size:15px">${fmt(d.perf)}</b></div>
+    return `<div class="host-month">
+      <div class="host-month-title">${m.replace('-','年')}月</div>
+      <div class="host-month-grid">
+        <div><div class="hm-lab">场次</div><b>${fmt(d.work)}</b></div>
+        <div><div class="hm-lab">加班</div><b>${fmt(d.ot)}h</b></div>
+        <div><div class="hm-lab">休假</div><b>${fmt(d.leaveDays)}天</b></div>
+        <div><div class="hm-lab">请假</div><b>${fmt(d.leaveH)}h</b></div>
+        <div><div class="hm-lab">绩效</div><b>${fmt(d.perf)}</b></div>
       </div>
     </div>`;
-  }).join('') : '<div style="text-align:center;color:var(--sub);padding:30px 0">还没有任何记录</div>';
+  }).join('') : '<div class="host-empty">还没有任何记录</div>';
 
-  $('#hostSheetBody').innerHTML=`
-    <div class="card" style="background:var(--brand);color:#fff;padding:14px 16px;margin-bottom:12px;border:none">
-      <div style="font-size:13px;opacity:.88;margin-bottom:10px">📊 累计（${months.length} 个月）</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
-        <div><div style="opacity:.78;font-size:11px">场次</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.work)}</div></div>
-        <div><div style="opacity:.78;font-size:11px">加班</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.ot)}h</div></div>
-        <div><div style="opacity:.78;font-size:11px">休假</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.leaveDays)}天</div></div>
-        <div><div style="opacity:.78;font-size:11px">请假</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.leaveH)}h</div></div>
-        <div><div style="opacity:.78;font-size:11px">绩效</div><div style="font-size:20px;font-weight:500;margin-top:2px">${fmt(tot.perf)}</div></div>
+  wrap.innerHTML=`
+    <div class="host-card">
+      <div class="host-head">
+        <span><span class="host-emoji">📊</span><b>${esc(name)}</b> · 个人统计</span>
+        <span class="host-close">×</span>
       </div>
+      <div class="host-total">
+        <div class="ht-lab">📈 累计（${months.length} 个月）</div>
+        <div class="ht-grid">
+          <div><div class="ht-lab2">场次</div><div class="ht-val">${fmt(tot.work)}</div></div>
+          <div><div class="ht-lab2">加班</div><div class="ht-val">${fmt(tot.ot)}h</div></div>
+          <div><div class="ht-lab2">休假</div><div class="ht-val">${fmt(tot.leaveDays)}天</div></div>
+          <div><div class="ht-lab2">请假</div><div class="ht-val">${fmt(tot.leaveH)}h</div></div>
+          <div><div class="ht-lab2">绩效</div><div class="ht-val">${fmt(tot.perf)}</div></div>
+        </div>
+      </div>
+      <div class="host-months">${monthHtml}</div>
     </div>
-    ${monthHtml}
   `;
-  openSheet('#hostSheet');
+  wrap.classList.remove('hidden');
+  currentHostCard=name;
+  // 高亮当前选中的名字 + 滚到顶部
+  document.querySelectorAll('#boardBody td.name').forEach(td=>{
+    td.classList.toggle('host-active', td.dataset.host===name);
+  });
+  wrap.querySelector('.host-close').onclick=()=>toggleHostCard(name);
+  // 滚到卡片（手机端体验）
+  wrap.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function renderBoard(){
   $('#monLabel').textContent=attMonth.replace('-','年')+'月';
@@ -1073,7 +1096,7 @@ function renderBoard(){
   });
   // v33: 点主播名 → 个人统计 sheet
   body.querySelectorAll('td.name.clickable').forEach(td=>{
-    td.onclick=e=>{ e.stopPropagation(); openHostSheet(td.dataset.host); };
+    td.onclick=e=>{ e.stopPropagation(); toggleHostCard(td.dataset.host); };
   });
 }
 function renderAttendLog(){
