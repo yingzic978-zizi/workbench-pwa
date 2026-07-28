@@ -367,7 +367,7 @@ progress{width:100%;height:6px}
     </div>
     <div class="card" id="cloudCard">
       <div class="mine-item" style="display:block">
-        <div>☁️ 云存储（跨设备同步图片）<div class="desc">填 GitHub Token 后，上传素材会自动存到仓库图床，手机电脑自动互通、永不丢失</div></div>
+        <div>☁️ 云存储（跨设备同步图片与文案）<div class="desc">填 GitHub Token 后，上传素材会自动存到仓库图床，文案点「☁ 文案云同步」即可手机电脑自动互通、永不丢失</div></div>
         <div style="margin-top:10px">
           <input class="f-input" id="ghToken" type="password" placeholder="粘贴 GitHub Personal Access Token" style="margin-bottom:8px">
           <div style="display:flex;gap:8px">
@@ -376,6 +376,7 @@ progress{width:100%;height:6px}
           </div>
           <div class="desc" id="ghStatus" style="margin-top:8px">未配置</div>
           <button class="btn" id="ghSync" style="margin-top:10px;background:linear-gradient(135deg,#f5804e,#f0a24f)">从云端拉取素材</button>
+          <button class="btn" id="ghSyncCopy" style="margin-top:10px;background:linear-gradient(135deg,#4f6ef7,#6a8bff)">☁ 文案云同步</button>
         </div>
       </div>
     </div>
@@ -538,6 +539,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=28"></script>
+<script src="app.js?v=29"></script>
 </body>
 </html>

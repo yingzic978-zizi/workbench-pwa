@@ -59,6 +59,9 @@ async function uploadToGitHub(filename,base64,token){
   return d.content.download_url;
 }
 
+// 文案云端同步：UTF-8 安全的 base64 编解码（GitHub Contents API 要求 content 为 base64）
+function utf8ToB64(str){ const b=new TextEncoder().encode(str); let s=''; for(const x of b) s+=String.fromCharCode(x); return btoa(s); }
+function b64ToUtf8(b64){ const bin=atob(b64); const arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return new TextDecoder().decode(arr); }
 /* ---------- 全局状态 ---------- */
 let assets=[], copies=[], tasks=[], ideas=[], hots=[], attend=[], hosts=[];
 let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='all', assetMode='file', copyFabric='';
@@ -68,6 +71,7 @@ const selectedIds=new Set();       // 多选模式下被勾选的素材 id
 let copyMultiMode=false;           // 文案库多选模式
 const copySelectedIds=new Set();   // 多选模式下被勾选的文案 id
 let selFabrics=new Set();          // 上传弹层已选中的面料（保存时拼「账号-面料」）
+let pendingDel=new Set();         // 本机删过的文案 id，待云同步时写入云端 deleted 列表（跨设备传播删除意图）
 // v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
 // ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
 const FABRICS=['纯棉','莱赛尔','莫代尔棉','云朵棉','雪花绒','半边绒','羊毛绒','夹棉'];
@@ -501,7 +505,7 @@ function renderCopies(){
       <div class="row-actions"><span data-act="edit">✏️ 编辑</span><span class="del" data-act="del">🗑 删除</span></div>`;
     if(copyMultiMode) d.innerHTML += `<div class="copy-check ${copySelectedIds.has(c.id)?'on':''}">${copySelectedIds.has(c.id)?'✓':''}</div>`;
     d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); refreshFabricHint(); openSheet('#sheetCopy'); };
-    d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await dbDel('copies',c.id); await load(); render(); };
+    d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await delCopy(c.id); await load(); render(); };
     attachCopyEvents(d,c);
     box.appendChild(d);
   });
@@ -553,7 +557,7 @@ async function batchDeleteCopies(){
   if(!copySelectedIds.size) return;
   const items=copies.filter(c=>copySelectedIds.has(c.id));
   if(!confirm(`确定删除选中的 ${items.length} 条文案？`)) return;
-  await Promise.all(items.map(c=>dbDel('copies',c.id)));
+  await Promise.all(items.map(c=>delCopy(c.id)));
   toast(`已删除 ${items.length} 条文案`);
   copySelectedIds.clear();
   await load(); render();
@@ -1174,12 +1178,65 @@ async function deleteFromCloud(item){
   if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r2.status)); }
 }
 
+// 删除文案：本机删除 + 记录到 pendingDel（下次云同步时传播删除意图）
+async function delCopy(id){
+  await dbDel('copies',id);
+  pendingDel.add(id);
+  try{ await kvPut('copy_del',[...pendingDel]); }catch(e){}
+}
+
+// 文案云端同步：云端存 cloud-data/copies.json = {copies:[...], deleted:[id...]}
+// 双向合并：本机新增/编辑上传、云端新增拉回本机、删除意图跨设备传播
+async function syncCopies(silent){
+  const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
+  if(!token){ if(!silent) toast('先填 GitHub Token 才能同步文案'); return; }
+  const path='cloud-data/copies.json';
+  const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  if(!silent) $('#ghStatus').textContent='文案云同步中…';
+  try{
+    let cloudCopies=[], cloudDel=[], sha=null;
+    const r1=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+    if(r1.ok){ const j=await r1.json(); sha=j.sha; const obj=JSON.parse(b64ToUtf8(j.content)); cloudCopies=Array.isArray(obj.copies)?obj.copies:[]; cloudDel=Array.isArray(obj.deleted)?obj.deleted:[]; }
+    else if(r1.status!==404){ const e=await r1.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r1.status)); }
+    // 合并 copies：本机优先（同 id 取本机）
+    const map=new Map();
+    for(const c of cloudCopies) map.set(c.id,c);
+    for(const c of copies) map.set(c.id,c);
+    // 合并 deleted 列表（云端已有的 + 本机待删的）
+    const delSet=new Set([...cloudDel, ...pendingDel]);
+    for(const id of delSet) map.delete(id);
+    const merged=[...map.values()];
+    const mergedDel=[...delSet];
+    // 写回本机：upsert 云端新增、清理本机被删的
+    const localIds=new Set(copies.map(c=>c.id));
+    let added=0, removed=0;
+    for(const c of merged){ if(!localIds.has(c.id)){ await dbPut('copies',c); added++; } }
+    for(const c of copies){ if(!map.has(c.id)){ await dbDel('copies',c.id); removed++; } }
+    // PUT 云端（带 sha 乐观锁；冲突时简单重试一次）
+    const body={message:'sync copies '+new Date().toISOString().slice(0,19),content:utf8ToB64(JSON.stringify({copies:merged,deleted:mergedDel},null,1)),branch:GH.branch};
+    if(sha) body.sha=sha;
+    let r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r2.status===409 && sha){
+      const r3=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}}); const j3=await r3.json();
+      body.sha=j3.sha; r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    }
+    if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r2.status)); }
+    pendingDel.clear(); try{ await kvPut('copy_del',[]); }catch(e){}
+    await load(); render();
+    if(!silent) toast(`文案同步完成：新增 ${added} 条、清理 ${removed} 条`);
+  }catch(e){
+    if(!silent) toast('文案同步失败：'+e.message);
+    console.error('[syncCopies failed]',e);
+  }
+}
+
 // 启动后静默自动同步云端素材（仅当已配置 token，不弹 toast、不碰按钮）
 async function autoSync(){
   try{
     const t=await kvGet('gh_token');
     if(!t) return;                  // 没配云存储就不自动拉
-    await syncFromCloud(true);      // silent 模式
+    await syncFromCloud(true);      // silent 模式（图片）
+    await syncCopies(true);         // silent 模式（文案）
   }catch(e){ console.warn('[autoSync]',e); }
 }
 
@@ -1187,6 +1244,7 @@ function bindCloudUI(){
   const saveBtn=$('#ghSave'), testBtn=$('#ghTest'), syncBtn=$('#ghSync');
   if(!saveBtn||!testBtn) return;
   if(syncBtn) syncBtn.addEventListener('click', syncFromCloud);
+  const copySyncBtn=$('#ghSyncCopy'); if(copySyncBtn) copySyncBtn.addEventListener('click', ()=>syncCopies(false));
   saveBtn.addEventListener('click', async ()=>{
     const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token');
     await kvPut('gh_token',t); toast('Token 已保存 ✓');
@@ -1212,6 +1270,7 @@ function bindCloudUI(){
   // 云存储：加载已存 token（按钮已在 bindCloudUI 提前绑定）
   try{
     const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
+    const pd=await kvGet('copy_del'); if(Array.isArray(pd)) pendingDel=new Set(pd);
   }catch(e){}
   // 请求持久化存储，降低系统自动清理数据的概率
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
