@@ -65,6 +65,7 @@ let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='al
 let tagFilters=new Set();          // 多选标签筛选（AND 关系：图必须含全部选中标签）
 let multiMode=false;               // 素材库多选模式
 const selectedIds=new Set();       // 多选模式下被勾选的素材 id
+let selFabrics=new Set();          // 上传弹层已选中的面料（保存时拼「账号-面料」）
 // v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
 // ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
 const FABRICS=['纯棉','莱赛尔','莫代尔棉','云朵棉','雪花绒','半边绒','羊毛绒','夹棉'];
@@ -122,7 +123,7 @@ function openSheet(id){ $('#mask').classList.add('show'); $(id).classList.add('s
 function closeSheets(){ $('#mask').classList.remove('show'); $$('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#mask').onclick=closeSheets;
 $('#fab').onclick=()=>{
-  if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; $('#aTags').value=''; assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#assetCloudRow').style.display='flex'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
+  if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; resetAssetTagInputs(); assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#assetCloudRow').style.display='flex'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
   else if(curView==='copy'){ editCopyId=null; $('#copySheetTitle').textContent='新建文案'; $('#cTitle').value=''; $('#cBody').value=''; $('#cTags').value=''; refreshFabricHint(); openSheet('#sheetCopy'); }
   else if(curView==='plan'){ $('#tTitle').value=''; $('#tDate').value=todayStr(); $('#tTime').value=''; $('#tRepeat').value='none'; openSheet('#sheetTask'); }
   else if(curView==='ideas'){ editIdeaId=null; $('#ideaSheetTitle').textContent='添加选题'; $('#iBody').value=''; $('#iTags').value=''; openSheet('#sheetIdea'); }
@@ -189,21 +190,21 @@ function makeVideoThumb(file){
 }
 
 $('#aSave').onclick = async ()=>{
+  const tagArr=buildAssetTags();
   if(assetMode==='link'){
     const u=$('#aUrl').value.trim();
     if(!u) return toast('先粘贴素材链接');
     const type=$('#aLinkType').value;
     const name=$('#aName').value.trim() || u.split('/').pop().split('?')[0] || '未命名链接';
     const cat=$('#aCat').value.trim();
-    const tags=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+    const tags=tagArr;
     const thumb=$('#aThumb').value.trim()||null;
     await dbPut('assets',{id:uid(),name,type,kind:'link',url:u,thumb,cat,tags,size:0,created:Date.now()});
-    closeSheets(); await load(); render(); toast('链接素材已保存');
+    closeSheets(); await load(); render(); resetAssetTagInputs(); toast('链接素材已保存');
     return;
   }
   if(!pickedFiles.length) return toast('请先选择文件');
   const cat=$('#aCat').value.trim();
-  const tags=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
   const token = $('#ghToken').value.trim() || await kvGet('gh_token');
   const useCloud = $('#aCloud').checked && !!token;
   if($('#aCloud').checked && !token) toast('未配置 GitHub Token，已转存本地');
@@ -220,18 +221,18 @@ $('#aSave').onclick = async ()=>{
         const b64=await fileToB64(blob);
         const ext='.'+(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9.]/g,'');
         const u=await uploadToGitHub(uid()+ext, b64, token);
-        await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:blob.size,cat,tags,kind:'cloud',url:u,thumb:u,created:Date.now()});
+        await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:blob.size,cat,tags:tagArr,kind:'cloud',url:u,thumb:u,created:Date.now()});
         cloudOk++; continue;
       }catch(e){ cloudErr=e.message; console.error('[GitHub cloud upload failed]', e); }
     }
     let thumb=null;
     if(type==='image') thumb=await makeImageThumb(f);
     if(type==='video') thumb=await makeVideoThumb(f);
-    await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:f.size,cat,tags,blob:f,thumb,created:Date.now()});
+    await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:f.size,cat,tags:tagArr,blob:f,thumb,created:Date.now()});
     localOk++;
   }
   $('#aSave').disabled=false; $('#aSave').textContent='保存到素材库';
-  $('#aTags').value=''; initAssetFabricChips();
+  resetAssetTagInputs();
   closeSheets(); await load(); render();
   const sum=`已保存 ${cloudOk?cloudOk+' 张云端 ':''}${localOk?localOk+' 张本地':''}素材`;
   toast(cloudErr?`❌ 云端失败：${cloudErr}（已转本地）— ${sum}`:sum, cloudErr?5500:2200);
@@ -243,7 +244,6 @@ function renderCatList(){
 }
 
 function matchAsset(a){
-  if(assetFilter==='cloud') return a.kind==='cloud';
   if(assetFilter!=='all' && a.type!==assetFilter) return false;
   if(catFilter && a.cat!==catFilter) return false;
   if(tagFilters.size){
@@ -260,8 +260,7 @@ function matchAsset(a){
 function renderTagBar(){
   const counts=new Map();
   for(const a of assets){
-    if(assetFilter==='cloud' && a.kind!=='cloud') continue;
-    if(assetFilter!=='all' && assetFilter!=='cloud' && a.type!==assetFilter) continue;
+    if(assetFilter!=='all' && a.type!==assetFilter) continue;
     for(const t of a.tags){ counts.set(t,(counts.get(t)||0)+1); }
   }
   // 出现次数倒序，最多 18 个
@@ -372,8 +371,9 @@ function attachItemEvents(d,a){
 $('#assetChips').querySelectorAll('.chip').forEach(c=>{
   if(c.id==='multiBtn') return;   // 多选按钮单独绑定
   c.onclick=()=>{
-    assetFilter=c.dataset.f;
-    $('#assetChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+    const f=c.dataset.f;
+    assetFilter = (assetFilter===f) ? 'all' : f;   // 再点一次取消筛选，回到全部
+    $('#assetChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on', x===c && assetFilter===f));
     render();
   };
 });
@@ -519,17 +519,26 @@ function initFabricChips(){
 function initAssetFabricChips(){
   const box=$('#assetFabricChips'); if(!box) return;
   box.innerHTML='';
+  selFabrics.clear();
   FABRICS.forEach(f=>{
     const d=document.createElement('div'); d.className='chip'; d.dataset.f=f; d.textContent=f;
     d.onclick=()=>{
-      const cur=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
-      const i=cur.indexOf(f);
-      if(i>=0){ cur.splice(i,1); d.classList.remove('on'); }
-      else { cur.push(f); d.classList.add('on'); }
-      $('#aTags').value=cur.join(' ');
+      if(selFabrics.has(f)){ selFabrics.delete(f); d.classList.remove('on'); }
+      else { selFabrics.add(f); d.classList.add('on'); }
     };
     box.appendChild(d);
   });
+}
+// 上传弹层标签：账号 + 选中面料 → 「账号-面料」，并与手动标签合并去重
+function buildAssetTags(){
+  const extra=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+  const account=$('#aAccount').value.trim();
+  const set=new Set(extra);
+  selFabrics.forEach(f=> set.add(account? `${account}-${f}` : f));
+  return [...set];
+}
+function resetAssetTagInputs(){
+  $('#aTags').value=''; $('#aAccount').value=''; selFabrics.clear(); initAssetFabricChips();
 }
 function refreshFabricHint(){
   const el=$('#fabricHint'); if(!el) return;
