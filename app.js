@@ -910,9 +910,44 @@ function render(){
 }
 
 /* ================= 云存储 UI 绑定（提前执行，不依赖数据库加载） ================= */
+// v19: 从云端仓库拉取所有图片到本机，实现「图片云端共享、清单各自同步」
+async function syncFromCloud(){
+  const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
+  if(!token) return toast('先填 GitHub Token 才能拉取');
+  const btn=$('#ghSync');
+  if(btn){ btn.disabled=true; btn.textContent='拉取中…'; }
+  $('#ghStatus').textContent='从云端拉取中…';
+  try{
+    const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.dir}`;
+    const res=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||('HTTP '+res.status)); }
+    const list=await res.json();
+    if(!Array.isArray(list)) throw new Error('云端目录为空或尚不存在');
+    const extOk=n=>/\.(jpg|jpeg|png|gif|webp|avif|bmp|heic)$/i.test(n);
+    const exist=new Set(assets.filter(a=>a.kind==='cloud').map(a=>a.url));
+    let added=0, skipped=0;
+    for(const f of list){
+      if(!extOk(f.name)) continue;            // 只拉图片
+      const u=f.download_url;
+      if(exist.has(u)){ skipped++; continue; } // 跳过本机已有的
+      await dbPut('assets',{id:uid(),name:f.name,type:'image',mime:'image/'+((f.name.split('.').pop()||'jpeg').toLowerCase()),size:f.size||0,cat:'',tags:[],kind:'cloud',url:u,thumb:u,created:Date.now(),remote:true});
+      added++;
+    }
+    await load(); render();
+    $('#ghStatus').textContent=`✅ 已拉取 ${added} 张新图（云端共 ${list.length} 个文件，已存在 ${skipped} 张）`;
+    toast(added?`已拉取 ${added} 张云端素材`:'云端素材已全部在本机');
+  }catch(e){
+    $('#ghStatus').textContent='❌ 拉取失败：'+e.message;
+    toast('拉取失败：'+e.message);
+    console.error('[syncFromCloud failed]',e);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='从云端拉取素材'; }
+  }
+}
 function bindCloudUI(){
-  const saveBtn=$('#ghSave'), testBtn=$('#ghTest');
+  const saveBtn=$('#ghSave'), testBtn=$('#ghTest'), syncBtn=$('#ghSync');
   if(!saveBtn||!testBtn) return;
+  if(syncBtn) syncBtn.addEventListener('click', syncFromCloud);
   saveBtn.addEventListener('click', async ()=>{
     const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token');
     await kvPut('gh_token',t); toast('Token 已保存 ✓');
