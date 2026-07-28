@@ -1,0 +1,866 @@
+/* ================= 喵霸天 · 工作台 - 核心逻辑 ================= */
+/* 数据全部保存在本机 IndexedDB：assets(素材) / copies(文案) / tasks(计划) */
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- IndexedDB ---------- */
+let db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r = indexedDB.open('workbench', 2);
+    r.onupgradeneeded = e=>{
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains('assets')) d.createObjectStore('assets',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('copies')) d.createObjectStore('copies',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('tasks'))  d.createObjectStore('tasks',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('ideas'))  d.createObjectStore('ideas',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('hots'))   d.createObjectStore('hots',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('attend')) d.createObjectStore('attend',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('hosts'))  d.createObjectStore('hosts',{keyPath:'id'});
+    };
+    r.onsuccess = ()=>{db=r.result;res()};
+    r.onerror = ()=>rej(r.error);
+  });
+}
+const tx = (store,mode='readonly')=>db.transaction(store,mode).objectStore(store);
+const dbAll = store => new Promise((res,rej)=>{const q=tx(store).getAll();q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+const dbPut = (store,val)=>new Promise((res,rej)=>{const q=tx(store,'readwrite').put(val);q.onsuccess=res;q.onerror=()=>rej(q.error)});
+const dbDel = (store,key)=>new Promise((res,rej)=>{const q=tx(store,'readwrite').delete(key);q.onsuccess=res;q.onerror=()=>rej(q.error)});
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- 全局状态 ---------- */
+let assets=[], copies=[], tasks=[], ideas=[], hots=[], attend=[], hosts=[];
+let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='all', assetMode='file', copyFabric='';
+// v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
+// ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
+const FABRICS=['纯棉','莱赛尔','莫代尔棉','云朵棉','雪花绒','半边绒','羊毛绒','夹棉'];
+// 长词优先 + 命中后从文本移除，避免“莫代尔棉”被“棉”二次误抓
+function detectFabrics(text){
+  let t=text||''; const hit=[];
+  FABRICS.slice().sort((a,b)=>b.length-a.length).forEach(f=>{
+    if(t.includes(f)){ hit.push(f); t=t.split(f).join(''); }
+  });
+  return hit;
+}
+let attSort={key:'name',dir:1};
+const objURLs = new Map(); // id -> objectURL 缓存
+
+function url(item){
+  if(item.kind==='link') return item.url;
+  if(!objURLs.has(item.id) && item.blob) objURLs.set(item.id, URL.createObjectURL(item.blob));
+  return objURLs.get(item.id);
+}
+function thumbUrl(item){
+  if(item.kind==='link') return item.thumb||(item.type==='image'?item.url:null);
+  if(item.thumb){
+    const k='t_'+item.id;
+    if(!objURLs.has(k)) objURLs.set(k, URL.createObjectURL(item.thumb));
+    return objURLs.get(k);
+  }
+  return item.type==='image' ? url(item) : null;
+}
+
+/* ---------- 工具 ---------- */
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200);
+}
+const fmtSize = n=>{ if(!n)return'0B'; const u=['B','KB','MB','GB']; let i=0; while(n>=1024&&i<3){n/=1024;i++} return n.toFixed(i?1:0)+u[i]; };
+const todayStr = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const esc = s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- 视图切换 ---------- */
+const titles={assets:'素材库',copy:'文案库',plan:'今日计划',ideas:'选题灵感',hot:'热点视频',attend:'考勤统计',mine:'我的 · 备份'};
+$$('nav .n-item').forEach(b=>b.onclick=()=>{
+  curView=b.dataset.view;
+  $$('nav .n-item').forEach(x=>x.classList.toggle('on',x===b));
+  $$('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+curView));
+  $('#pageTitle').textContent=titles[curView];
+  $('#searchWrap').style.display = (curView==='mine'||curView==='attend')?'none':'flex';
+  $('#fab').style.display = (curView==='mine')?'none':'flex';
+  render();
+});
+$('#searchInput').oninput = e=>{ keyword=e.target.value.trim().toLowerCase(); render(); };
+
+/* ---------- 弹层控制 ---------- */
+function openSheet(id){ $('#mask').classList.add('show'); $(id).classList.add('show'); }
+function closeSheets(){ $('#mask').classList.remove('show'); $$('.sheet').forEach(s=>s.classList.remove('show')); }
+$('#mask').onclick=closeSheets;
+$('#fab').onclick=()=>{
+  if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; $('#aTags').value=''; assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
+  else if(curView==='copy'){ editCopyId=null; $('#copySheetTitle').textContent='新建文案'; $('#cTitle').value=''; $('#cBody').value=''; $('#cTags').value=''; refreshFabricHint(); openSheet('#sheetCopy'); }
+  else if(curView==='plan'){ $('#tTitle').value=''; $('#tDate').value=todayStr(); $('#tTime').value=''; $('#tRepeat').value='none'; openSheet('#sheetTask'); }
+  else if(curView==='ideas'){ editIdeaId=null; $('#ideaSheetTitle').textContent='添加选题'; $('#iBody').value=''; $('#iTags').value=''; openSheet('#sheetIdea'); }
+  else if(curView==='hot'){ editHotId=null; $('#hotSheetTitle').textContent='收藏热点视频'; $('#hTitle').value=''; $('#hUrl').value=''; $('#hPlat').value='抖音'; $('#hStatus').value='ref'; $('#hNote').value=''; openSheet('#sheetHot'); }
+  else if(curView==='attend'){ $('#attSheetTitle').textContent='添加考勤'; $('#attDate').value=todayStr(); $('#attNote').value=''; refreshAttPreview(); openSheet('#sheetAtt'); }
+};
+
+/* ================= 素材库 ================= */
+let pickedFiles=[];
+document.querySelectorAll('#sheetAsset .seg button').forEach(b=>b.onclick=()=>{
+  assetMode=b.dataset.m;
+  document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#assetFilePanel').style.display = assetMode==='file'?'block':'none';
+  $('#assetLinkPanel').style.display = assetMode==='link'?'block':'none';
+});
+$('#filePick').onchange = e=>{
+  pickedFiles=[...e.target.files];
+  const pv=$('#pickPreview'); pv.innerHTML='';
+  pickedFiles.forEach(f=>{
+    if(f.type.startsWith('image/')){
+      const img=document.createElement('img'); img.className='pv'; img.src=URL.createObjectURL(f); pv.appendChild(img);
+    }else{
+      const d=document.createElement('div'); d.className='pv'; d.textContent=f.type.startsWith('video/')?'🎬':'📄'; pv.appendChild(d);
+    }
+  });
+};
+
+function makeImageThumb(file){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas'); const m=360;
+      const r=Math.min(m/img.width,m/img.height,1);
+      c.width=img.width*r; c.height=img.height*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>res(b),'image/jpeg',.75);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror=()=>res(null);
+    img.src=URL.createObjectURL(file);
+  });
+}
+function makeVideoThumb(file){
+  return new Promise(res=>{
+    const v=document.createElement('video');
+    v.muted=true; v.playsInline=true; v.preload='metadata';
+    v.src=URL.createObjectURL(file);
+    let done=false;
+    const finish=b=>{ if(done)return; done=true; URL.revokeObjectURL(v.src); res(b); };
+    v.onloadeddata=()=>{ v.currentTime=Math.min(0.5, (v.duration||1)/2); };
+    v.onseeked=()=>{
+      try{
+        const c=document.createElement('canvas'); const m=360;
+        const r=Math.min(m/v.videoWidth,m/v.videoHeight,1);
+        c.width=v.videoWidth*r; c.height=v.videoHeight*r;
+        c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+        c.toBlob(b=>finish(b),'image/jpeg',.7);
+      }catch(e){ finish(null); }
+    };
+    v.onerror=()=>finish(null);
+    setTimeout(()=>finish(null),4000);
+  });
+}
+
+$('#aSave').onclick = async ()=>{
+  if(assetMode==='link'){
+    const u=$('#aUrl').value.trim();
+    if(!u) return toast('先粘贴素材链接');
+    const type=$('#aLinkType').value;
+    const name=$('#aName').value.trim() || u.split('/').pop().split('?')[0] || '未命名链接';
+    const cat=$('#aCat').value.trim();
+    const tags=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+    const thumb=$('#aThumb').value.trim()||null;
+    await dbPut('assets',{id:uid(),name,type,kind:'link',url:u,thumb,cat,tags,size:0,created:Date.now()});
+    closeSheets(); await load(); render(); toast('链接素材已保存');
+    return;
+  }
+  if(!pickedFiles.length) return toast('请先选择文件');
+  const cat=$('#aCat').value.trim();
+  const tags=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+  $('#aSave').disabled=true; $('#aSave').textContent='保存中…';
+  for(const f of pickedFiles){
+    const type = f.type.startsWith('image/')?'image':f.type.startsWith('video/')?'video':'file';
+    let thumb=null;
+    if(type==='image') thumb=await makeImageThumb(f);
+    if(type==='video') thumb=await makeVideoThumb(f);
+    await dbPut('assets',{id:uid(),name:f.name,type,mime:f.type,size:f.size,cat,tags,blob:f,thumb,created:Date.now()});
+  }
+  $('#aSave').disabled=false; $('#aSave').textContent='保存到素材库';
+  closeSheets(); await load(); render(); toast('已保存 '+pickedFiles.length+' 个素材');
+};
+
+function renderCatList(){
+  const cats=[...new Set(assets.map(a=>a.cat).filter(Boolean))];
+  $('#catList').innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
+}
+
+function matchAsset(a){
+  if(assetFilter!=='all' && a.type!==assetFilter) return false;
+  if(catFilter && a.cat!==catFilter) return false;
+  if(keyword){
+    const hay=(a.name+' '+(a.cat||'')+' '+a.tags.join(' ')).toLowerCase();
+    if(!hay.includes(keyword)) return false;
+  }
+  return true;
+}
+
+function renderAssets(){
+  // 分类 chips
+  const cats=[...new Set(assets.map(a=>a.cat).filter(Boolean))];
+  const cc=$('#catChips');
+  if(cats.length){
+    cc.classList.remove('hidden');
+    cc.innerHTML=`<div class="chip ${!catFilter?'on':''}" data-c="">全部分类</div>`+cats.map(c=>`<div class="chip ${catFilter===c?'on':''}" data-c="${esc(c)}">${esc(c)}</div>`).join('');
+    cc.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{catFilter=ch.dataset.c;render();});
+  }else{ cc.classList.add('hidden'); catFilter=''; }
+
+  const list=assets.filter(matchAsset).sort((a,b)=>b.created-a.created);
+  const g=$('#assetGrid'); g.innerHTML='';
+  $('#assetEmpty').classList.toggle('hidden', assets.length>0);
+  list.forEach(a=>{
+    const d=document.createElement('div'); d.className='g-item';
+    if(a.kind==='link'){
+      const tu=thumbUrl(a);
+      if(tu) d.innerHTML=`<img src="${tu}" loading="lazy">`;
+      else if(a.type==='video') d.innerHTML=`<div class="g-file">🔗<span>${esc(a.name)}</span></div>`;
+      else if(a.type==='image') d.innerHTML=`<div class="g-file">🌐<span>${esc(a.name)}</span></div>`;
+      else d.innerHTML=`<div class="g-file">🔗<span>${esc(a.name)}</span></div>`;
+      d.innerHTML+=`<div class="g-badge">🔗 链接</div>`;
+    }else{
+      const tu=thumbUrl(a);
+      if(tu) d.innerHTML=`<img src="${tu}" loading="lazy">`;
+      else if(a.type==='video') d.innerHTML=`<div class="g-file">🎬<span>${esc(a.name)}</span></div>`;
+      else d.innerHTML=`<div class="g-file">📄<span>${esc(a.name)}</span></div>`;
+      if(a.type==='video') d.innerHTML+=`<div class="g-badge">▶ 视频</div>`;
+    }
+    d.innerHTML+=`<div class="g-name">${esc(a.name)}</div>`;
+    d.onclick=()=>openPreview(a);
+    g.appendChild(d);
+  });
+  if(assets.length && !list.length){
+    g.innerHTML='<div class="empty" style="grid-column:1/-1">没有匹配的素材</div>';
+  }
+}
+$('#assetChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  assetFilter=c.dataset.f;
+  $('#assetChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+  render();
+});
+
+/* ---- 预览 ---- */
+let previewItem=null;
+function openPreview(a){
+  previewItem=a;
+  const b=$('#pvBody'); b.innerHTML='';
+  $('#pvInfo').innerHTML=`<div class="t">${esc(a.name)}</div><div class="s">${a.cat?esc(a.cat)+' · ':''}${fmtSize(a.size)}${a.tags.length?' · '+esc(a.tags.join(' ')):''}</div>`;
+  if(a.type==='image') b.innerHTML=`<img src="${url(a)}">`;
+  else if(a.type==='video') b.innerHTML=`<video src="${url(a)}" controls playsinline autoplay></video>`;
+  else if(a.kind==='link') b.innerHTML=`<div class="pv-doc">🔗 外部链接<br>${esc(a.name)}<br><br><a class="btn" href="${esc(a.url)}" target="_blank" rel="noopener">打开链接</a></div>`;
+  else b.innerHTML=`<div class="pv-doc">📄<br>${esc(a.name)}<br>${fmtSize(a.size)}<br><br>点击下方「保存到手机」下载查看</div>`;
+  $('#previewer').classList.add('show');
+}
+function closePreview(){ $('#previewer').classList.remove('show'); $('#pvBody').innerHTML=''; }
+$('#pvDownload').onclick=()=>{
+  if(!previewItem)return;
+  if(previewItem.kind==='link'){ window.open(previewItem.url,'_blank'); return; }
+  const a=document.createElement('a'); a.href=url(previewItem); a.download=previewItem.name; a.click();
+};
+$('#pvDelete').onclick=async ()=>{
+  if(!previewItem)return;
+  if(!confirm('确定删除「'+previewItem.name+'」吗？'))return;
+  await dbDel('assets',previewItem.id);
+  objURLs.delete(previewItem.id); objURLs.delete('t_'+previewItem.id);
+  closePreview(); await load(); render(); toast('已删除');
+};
+
+/* ================= 文案库 ================= */
+let editCopyId=null;
+$('#cSave').onclick=async ()=>{
+  const title=$('#cTitle').value.trim(), body=$('#cBody').value;
+  if(!title && !body.trim()) return toast('写点内容再保存吧');
+  const manualTags=$('#cTags').value.trim().split(/\s+/).filter(Boolean);
+  const autoFab=detectFabrics(title+' '+body);            // 自动识别面料
+  const tags=[...new Set([...manualTags, ...autoFab])];  // 合并去重
+  const old=editCopyId?copies.find(c=>c.id===editCopyId):null;
+  await dbPut('copies',{id:editCopyId||uid(),title:title||'未命名文案',body,tags,created:old?old.created:Date.now(),updated:Date.now()});
+  closeSheets(); await load(); render();
+  toast('文案已保存'+(autoFab.length?'（面料：'+autoFab.join('、')+'）':''));
+};
+function renderCopies(){
+  const list=copies.filter(c=>{
+    const okKw=!keyword||(c.title+' '+c.body+' '+(c.tags||[]).join(' ')).toLowerCase().includes(keyword);
+    const okFab=!copyFabric||(c.tags||[]).includes(copyFabric);
+    return okKw&&okFab;
+  }).sort((a,b)=>b.updated-a.updated);
+  const box=$('#copyList'); box.innerHTML='';
+  $('#copyEmpty').classList.toggle('hidden',copies.length>0);
+  const cnt=$('#copyCnt'); if(cnt) cnt.textContent=list.length;
+  list.forEach(c=>{
+    const d=document.createElement('div'); d.className='card';
+    d.innerHTML=`<div class="copy-title"><span>${esc(c.title)}</span></div>
+      <div class="copy-body">${esc(c.body)}</div>
+      ${c.tags.length?`<div class="tags">${c.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
+      <div class="row-actions"><span data-act="copy">📋 复制内容</span><span data-act="edit">✏️ 编辑</span><span data-act="expand">展开</span><span class="del" data-act="del">删除</span></div>`;
+    d.querySelector('[data-act=copy]').onclick=async ()=>{ try{ await navigator.clipboard.writeText(c.body); toast('已复制，去粘贴吧'); }catch(e){ toast('复制失败，请长按文本手动复制'); } };
+    d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); refreshFabricHint(); openSheet('#sheetCopy'); };
+    d.querySelector('[data-act=expand]').onclick=e=>{ const bd=d.querySelector('.copy-body'); bd.classList.toggle('open'); e.target.textContent=bd.classList.contains('open')?'收起':'展开'; };
+    d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await dbDel('copies',c.id); await load(); render(); };
+    box.appendChild(d);
+  });
+  if(copies.length&&!list.length) box.innerHTML='<div class="empty">没有匹配的文案</div>';
+}
+
+/* ================= v15 文案面料：筛选条 / 批量复制 / 旧文案补全 ================= */
+function initFabricChips(){
+  const box=$('#fabricChips'); if(!box) return;
+  box.innerHTML='<div class="chip on" data-f="">全部</div>';
+  FABRICS.forEach(f=>{ const d=document.createElement('div'); d.className='chip'; d.dataset.f=f; d.textContent=f; box.appendChild(d); });
+  box.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+    copyFabric=ch.dataset.f;
+    box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===ch));
+    renderCopies();
+  });
+}
+function refreshFabricHint(){
+  const el=$('#fabricHint'); if(!el) return;
+  const hit=detectFabrics($('#cTitle').value+' '+$('#cBody').value);
+  if(hit.length){ el.textContent='已识别面料：'+hit.map(f=>'#'+f).join('  '); el.classList.add('has'); }
+  else { el.textContent='未识别到面料词（录入内容含面料会自动加标签）'; el.classList.remove('has'); }
+}
+$('#cTitle').oninput=refreshFabricHint;
+$('#cBody').oninput=refreshFabricHint;
+// 复制当前筛选（关键词 + 面料）下的全部文案正文，拼好一次性复制
+$('#copyAllBtn').onclick=async ()=>{
+  const list=copies.filter(c=>{
+    const okKw=!keyword||(c.title+' '+c.body+' '+(c.tags||[]).join(' ')).toLowerCase().includes(keyword);
+    const okFab=!copyFabric||(c.tags||[]).includes(copyFabric);
+    return okKw&&okFab;
+  }).sort((a,b)=>b.updated-a.updated);
+  if(!list.length) return toast('当前筛选没有可复制的文案');
+  const text=list.map(c=>'【'+(c.title||'未命名文案')+'】\n'+c.body).join('\n\n————————\n\n');
+  try{ await navigator.clipboard.writeText(text); toast('已复制 '+list.length+' 条文案到剪贴板'); }
+  catch(e){ toast('复制失败，请手动复制'); }
+};
+// 给历史旧文案补跑面料识别（只在确实新增了标签时才写库）
+$('#copyBackfill').onclick=async ()=>{
+  let n=0;
+  for(const c of copies){
+    const hit=detectFabrics((c.title||'')+' '+(c.body||''));
+    if(hit.length){
+      const tags=[...new Set([...(c.tags||[]), ...hit])];
+      if(tags.length!==(c.tags||[]).length){ c.tags=tags; await dbPut('copies',c); n++; }
+    }
+  }
+  if(n){ await load(); render(); toast('已为 '+n+' 条旧文案补上面料标签'); }
+  else toast('没有需要补全的旧文案');
+};
+initFabricChips();
+refreshFabricHint();
+
+/* ================= 计划 / 提醒 ================= */
+$('#tSave').onclick=async ()=>{
+  const title=$('#tTitle').value.trim();
+  if(!title) return toast('先写下要做什么');
+  const t={id:uid(),title,date:$('#tDate').value||todayStr(),time:$('#tTime').value||'',repeat:$('#tRepeat').value,done:false,doneDates:[],created:Date.now()};
+  await dbPut('tasks',t);
+  closeSheets(); await load(); render(); scheduleCheck(); toast('计划已添加'+(t.time?'，到点提醒你':''));
+};
+const isDoneToday = t => t.repeat==='daily' ? (t.doneDates||[]).includes(todayStr()) : t.done;
+async function toggleTask(t){
+  if(t.repeat==='daily'){
+    t.doneDates=t.doneDates||[];
+    const i=t.doneDates.indexOf(todayStr());
+    i>=0?t.doneDates.splice(i,1):t.doneDates.push(todayStr());
+  }else t.done=!t.done;
+  await dbPut('tasks',t); await load(); render();
+}
+function renderPlans(){
+  const today=todayStr();
+  const list=tasks.filter(t=>!keyword||t.title.toLowerCase().includes(keyword));
+  const groups={overdue:[],today:[],future:[],doneOld:[]};
+  list.forEach(t=>{
+    if(t.repeat==='daily'){ groups.today.push(t); return; }
+    if(t.date<today && !t.done) groups.overdue.push(t);
+    else if(t.date===today) groups.today.push(t);
+    else if(t.date>today) groups.future.push(t);
+    else groups.doneOld.push(t);
+  });
+  const box=$('#planList'); box.innerHTML='';
+  $('#planEmpty').classList.toggle('hidden',tasks.length>0);
+  const sec=(name,arr,cls)=>{
+    if(!arr.length)return;
+    box.insertAdjacentHTML('beforeend',`<div class="plan-group">${name}</div>`);
+    arr.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).forEach(t=>{
+      const d=document.createElement('div'); d.className='task'+(isDoneToday(t)?' done':'');
+      d.innerHTML=`<div class="t-check"></div><div class="t-main"><div class="t-title">${esc(t.title)}</div>
+        <div class="t-meta">${t.repeat==='daily'?'<span class="rep">🔁 每天</span>':`<span class="${cls==='overdue'?'late':''}">${t.date}</span>`}${t.time?`<span>⏰ ${t.time}</span>`:''}</div></div>
+        <div class="t-del">✕</div>`;
+      d.querySelector('.t-check').parentElement.onclick=e=>{ if(e.target.classList.contains('t-del'))return; toggleTask(t); };
+      d.querySelector('.t-del').onclick=async e=>{ e.stopPropagation(); if(!confirm('删除这条计划？'))return; await dbDel('tasks',t.id); await load(); render(); };
+      box.appendChild(d);
+    });
+  };
+  sec('⚠️ 已逾期',groups.overdue,'overdue');
+  sec('📌 今天',groups.today);
+  sec('🗓️ 以后',groups.future);
+  sec('✅ 已完成（历史）',groups.doneOld.slice(0,20));
+}
+
+/* ---- 提醒通知 ---- */
+function askNotify(){
+  if(!('Notification' in window)) return toast('当前浏览器不支持通知。iPhone 需先「添加到主屏幕」后从桌面打开');
+  Notification.requestPermission().then(p=>{
+    $('#notifyState').textContent = p==='granted'?'已开启 ✓ 应用打开时到点会提醒':'未授权，无法弹出提醒';
+    toast(p==='granted'?'提醒已开启':'你拒绝了通知权限');
+  });
+}
+const notified=new Set(JSON.parse(localStorage.getItem('notified')||'[]'));
+function scheduleCheck(){
+  const now=new Date();
+  const hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const today=todayStr();
+  tasks.forEach(t=>{
+    if(!t.time||isDoneToday(t))return;
+    const due=(t.repeat==='daily'||t.date===today)&&t.time<=hm;
+    const key=t.id+'_'+today;
+    if(due&&!notified.has(key)){
+      notified.add(key);
+      localStorage.setItem('notified',JSON.stringify([...notified].slice(-200)));
+      if('Notification' in window&&Notification.permission==='granted'){
+        try{ navigator.serviceWorker?.ready.then(r=>r.showNotification('⏰ 工作提醒',{body:t.title,tag:key})); }catch(e){ new Notification('⏰ 工作提醒',{body:t.title}); }
+      }
+      toast('⏰ 该做了：'+t.title);
+    }
+  });
+}
+setInterval(()=>{ scheduleCheck(); },30000);
+
+/* ================= 选题灵感 ================= */
+const SPARKS=[
+ '新品开箱：第一视角拆包装，突出质感细节','工厂/仓库实拍：让客户看到实力','产品前后对比：使用前 vs 使用后',
+ '客户好评截图合集 + 真实反馈讲述','一分钟教程：产品的正确使用方法','避坑指南：买这类产品最容易踩的3个坑',
+ '价格拆解：为什么我们敢卖这个价','同行对比测评（不点名），突出差异点','幕后花絮：打包发货的一天',
+ '答疑合集：评论区问得最多的5个问题','场景种草：产品在真实生活场景里的样子','限时活动预告：3秒钩子+倒计时',
+ '老板/主理人出镜：创业故事讲一段','产品极限测试：暴力测试抓眼球','买家秀翻车 vs 正确打开方式',
+ '一件代发/批发流程全公开','今日发货实况：堆成山的快递','新款剧透：只露一角吊胃口',
+ '行业冷知识：99%的人不知道的小知识','用数据说话：卖爆的一款，回购率多少','搭配推荐：这样组合买最划算',
+ '仓库寻宝：随机抽一件半价','客户案例故事：他是怎么用我们产品赚钱的','节日热点借势：结合最近的节日拍一条',
+ '拟人化产品自述：我是一件被买走的…','挑战类：连续7天每天上新一款','高频对比：9.9的和99的差在哪',
+ '过程满足向：打包/贴标/封箱解压视频','店铺日常vlog：早上开门到晚上打烊','蹭热点BGM：用当下最火的音乐拍产品'
+];
+let editIdeaId=null, sparkSeed=0;
+let sparkPlatform='all';
+const PF_COLORS={'抖音':'#fe2c55','小红书':'#ff2442','淘宝':'#ff5000','微博':'#e6162d','快手':'#ff4906','综合':'#6c5ce7'};
+async function renderSparks(){
+  const box=$('#sparkList'); box.innerHTML='<div class="spark-loading">正在拉取今日灵感…</div>';
+  let items=null;
+  try{
+    const res=await fetch('inspirations.json?t='+Date.now());
+    if(res.ok){ const data=await res.json(); items=data.items||[]; }
+  }catch(e){ items=null; }
+  box.innerHTML='';
+  if(!items||!items.length){
+    // 离线降级：用本地题库顶上，保证有内容
+    const day=Math.floor(Date.now()/86400000);
+    for(let i=0;i<3;i++){
+      const idx=(day*3+i+sparkSeed*7)%SPARKS.length;
+      addSparkItem(box, SPARKS[idx], null);
+    }
+    const tip=document.createElement('div'); tip.className='spark-err';
+    tip.textContent='（联网灵感暂时拉取不到，已显示离线灵感，点刷新重试）';
+    box.appendChild(tip);
+    return;
+  }
+  if(sparkPlatform!=='all') items=items.filter(x=>x.platform===sparkPlatform);
+  if(!items.length){
+    box.innerHTML='<div class="spark-err">该平台暂时没有灵感，点其他平台看看</div>';
+    return;
+  }
+  items.forEach(it=> addSparkItem(box, it.body||it.title, it));
+}
+function addSparkItem(box, text, it){
+  const d=document.createElement('div'); d.className='spark-item';
+  const pf = it&&it.platform ? `<span class="pf-badge" style="background:${PF_COLORS[it.platform]||'#999'}">${esc(it.platform)}</span>` : '';
+  const src = it&&it.source ? `<span class="spark-src">${esc(it.source)}</span>` : '';
+  const date = it&&it.date ? `<span class="spark-date">${esc(it.date)}</span>` : '';
+  const link = it&&it.url ? ` <a class="spark-src" href="${esc(it.url)}" target="_blank" rel="noopener">查看来源</a>` : '';
+  d.innerHTML=`<div class="spark-main"><span class="spark-text">${esc(text)}</span><div class="spark-meta">${pf}${src}${date}${link}</div></div><span class="add">＋ 存为选题</span>`;
+  d.querySelector('.add').onclick=async ()=>{
+    const tags=['灵感'];
+    if(it&&Array.isArray(it.tags)) it.tags.forEach(t=>{ if(!tags.includes(t)) tags.push(t); });
+    await dbPut('ideas',{id:uid(),body:text,tags,used:false,created:Date.now()});
+    await load(); render(); toast('已加入选题库');
+  };
+  box.appendChild(d);
+}
+$('#sparkRefresh').onclick=()=>{ renderSparks(); };
+$('#pfChips').querySelectorAll('.pf-chip').forEach(c=>c.onclick=()=>{
+  sparkPlatform=c.dataset.pf;
+  $('#pfChips').querySelectorAll('.pf-chip').forEach(x=>x.classList.toggle('on',x===c));
+  renderSparks();
+});
+$('#iSave').onclick=async ()=>{
+  const body=$('#iBody').value.trim();
+  if(!body) return toast('先写下选题内容');
+  const tags=$('#iTags').value.trim().split(/\s+/).filter(Boolean);
+  const old=editIdeaId?ideas.find(x=>x.id===editIdeaId):null;
+  await dbPut('ideas',{id:editIdeaId||uid(),body,tags,used:old?old.used:false,created:old?old.created:Date.now()});
+  closeSheets(); await load(); render(); toast('选题已保存');
+};
+function renderIdeas(){
+  renderSparks();
+  const list=ideas.filter(i=>!keyword||(i.body+' '+i.tags.join(' ')).toLowerCase().includes(keyword)).sort((a,b)=>(a.used-b.used)||(b.created-a.created));
+  const box=$('#ideaList'); box.innerHTML='';
+  $('#ideaEmpty').classList.toggle('hidden',ideas.length>0);
+  list.forEach(i=>{
+    const d=document.createElement('div'); d.className='card';
+    d.innerHTML=`<div class="copy-title"><span style="font-weight:500;font-size:14px;line-height:1.5">${esc(i.body)}</span><span class="idea-status ${i.used?'used':''}">${i.used?'已用':'待用'}</span></div>
+      ${i.tags.length?`<div class="tags">${i.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
+      <div class="row-actions"><span data-a="use">${i.used?'↩️ 标为待用':'✅ 标为已用'}</span><span data-a="edit">✏️ 编辑</span><span data-a="copy">📋 复制</span><span class="del" data-a="del">删除</span></div>`;
+    d.querySelector('[data-a=use]').onclick=async ()=>{ i.used=!i.used; await dbPut('ideas',i); await load(); render(); };
+    d.querySelector('[data-a=edit]').onclick=()=>{ editIdeaId=i.id; $('#ideaSheetTitle').textContent='编辑选题'; $('#iBody').value=i.body; $('#iTags').value=i.tags.join(' '); openSheet('#sheetIdea'); };
+    d.querySelector('[data-a=copy]').onclick=async ()=>{ try{ await navigator.clipboard.writeText(i.body); toast('已复制'); }catch(e){ toast('复制失败'); } };
+    d.querySelector('[data-a=del]').onclick=async ()=>{ if(!confirm('删除这条选题？'))return; await dbDel('ideas',i.id); await load(); render(); };
+    box.appendChild(d);
+  });
+}
+
+/* ================= 热点视频 ================= */
+let editHotId=null;
+const PLAT_COLOR={'抖音':'#161823','快手':'#ff5000','视频号':'#07c160','小红书':'#ff2442','B站':'#fb7299','其他':'#8a90a0'};
+const HOT_ST={ref:'📌 参考',todo:'🎬 想拍同款',done:'✅ 已拍'};
+$('#hSave').onclick=async ()=>{
+  const title=$('#hTitle').value.trim();
+  if(!title) return toast('写个标题好找回来');
+  const old=editHotId?hots.find(x=>x.id===editHotId):null;
+  await dbPut('hots',{id:editHotId||uid(),title,url:$('#hUrl').value.trim(),plat:$('#hPlat').value,status:$('#hStatus').value,note:$('#hNote').value.trim(),created:old?old.created:Date.now()});
+  closeSheets(); await load(); render(); toast('已收藏');
+};
+$('#hotChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  hotFilter=c.dataset.p;
+  $('#hotChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+  render();
+});
+function renderHot(){
+  const list=hots.filter(h=>{
+    if(hotFilter!=='all'&&h.plat!==hotFilter)return false;
+    if(keyword&&!((h.title+' '+h.note+' '+h.plat).toLowerCase().includes(keyword)))return false;
+    return true;
+  }).sort((a,b)=>b.created-a.created);
+  const box=$('#hotList'); box.innerHTML='';
+  $('#hotEmpty').classList.toggle('hidden',hots.length>0);
+  list.forEach(h=>{
+    const d=document.createElement('div'); d.className='card';
+    d.innerHTML=`<div class="copy-title"><span>${esc(h.title)}</span><span class="hot-plat" style="background:${PLAT_COLOR[h.plat]||'#999'}">${esc(h.plat)}</span></div>
+      <div style="font-size:12px;color:var(--brand2)">${HOT_ST[h.status]||''}</div>
+      ${h.note?`<div class="copy-body" style="margin-top:4px">${esc(h.note)}</div>`:''}
+      ${h.url?`<div class="hot-link">🔗 ${esc(h.url)}</div>`:''}
+      <div class="row-actions">${h.url?'<span data-a="open">▶️ 打开</span><span data-a="copy">📋 复制链接</span>':''}<span data-a="edit">✏️ 编辑</span><span class="del" data-a="del">删除</span></div>`;
+    const open=d.querySelector('[data-a=open]'); if(open) open.onclick=()=>window.open(h.url,'_blank');
+    const cp=d.querySelector('[data-a=copy]'); if(cp) cp.onclick=async ()=>{ try{ await navigator.clipboard.writeText(h.url); toast('链接已复制'); }catch(e){ toast('复制失败'); } };
+    d.querySelector('[data-a=edit]').onclick=()=>{ editHotId=h.id; $('#hotSheetTitle').textContent='编辑收藏'; $('#hTitle').value=h.title; $('#hUrl').value=h.url; $('#hPlat').value=h.plat; $('#hStatus').value=h.status; $('#hNote').value=h.note; openSheet('#sheetHot'); };
+    d.querySelector('[data-a=del]').onclick=async ()=>{ if(!confirm('删除这条收藏？'))return; await dbDel('hots',h.id); await load(); render(); };
+    box.appendChild(d);
+  });
+  if(hots.length&&!list.length) box.innerHTML='<div class="empty">没有匹配的收藏</div>';
+}
+
+/* ================= 考勤统计（多主播工时表） ================= */
+let attMonth=todayStr().slice(0,7); // YYYY-MM
+
+/* ================= 考勤模块 v6（极简录入 + 智能解析 + 看板汇总） =================
+- 录入只剩「日期 + 备注」两字段；备注里手写「主播 类型 数字」，自动识别成多条结构化记录。
+- 出勤 = 当月总天数 - 休假日数（按主播聚合），无需手录。
+- 看板只看「主播×维度」汇总，不显示明细。
+*/
+const ATT_TYPE_PATTERNS = [
+  [/加班/, '加班'],
+  [/请假|休假|歇/, '请假'],
+  [/绩效/, '绩效'],
+];
+const ATT_NUM_RE = /(\d+(?:\.\d+)?)/;
+const ATT_DATE_PRE = /^(\d{1,2})\s*[号日]\s*/;
+const ATT_UNIT_RE = /个小时|小时|个钟头|h|H/gi;
+function cleanHostName(name){
+  if(!name) return '未分配';
+  name = name.replace(ATT_UNIT_RE,'').replace(/^[\s,，\。\.、]+|[\s,，\。\.、]+$/g,'').trim();
+  return name || '未分配';
+}
+function daysInMonth(ym){
+  const [y,m]=ym.split('-').map(Number);
+  return new Date(y, m, 0).getDate();
+}
+function parseAttNote(text){
+  if(!text) return [];
+  return text.split(/[,，;；\n]+/).map(s=>s.trim()).filter(Boolean).map(parseOneAtt).filter(Boolean);
+}
+function parseOneAtt(seg){
+  if(!seg) return null;
+  seg = seg.replace(ATT_DATE_PRE,'').trim();
+  if(!seg) return null;
+  let type=null, typeKW='';
+  for(const [re, t] of ATT_TYPE_PATTERNS){
+    const m=seg.match(re);
+    if(m){ type=t; typeKW=m[0]; break; }
+  }
+  if(!type) return null;
+  let hours=0, hasNum=false;
+  const num=seg.match(ATT_NUM_RE);
+  if(num){ hours=parseFloat(num[1]); hasNum=true; }
+  let name=cleanHostName(seg.replace(typeKW,'').replace(ATT_NUM_RE,''));
+  name=name.replace(/^[\s,，\。\.]+|[\s,，\。\.]+$/g,'');
+  if(!name) return null;
+  let unit='';
+  if(type==='请假') unit = seg.match(ATT_UNIT_RE) ? 'h' : '天';
+  else if(type==='加班') unit='h';
+  if(!hasNum && type==='请假') hours=1;
+  return {hostName:name, type, hours, hasNum, unit};
+}
+function refreshAttPreview(){
+  const text=$('#attNote').value.trim();
+  const box=$('#attParsePreview');
+  if(!text){
+    box.innerHTML='<span style="color:#999">输入备注后实时识别主播·类型·数量…</span>';
+    return;
+  }
+  const valid=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假');
+  if(!valid.length){
+    box.innerHTML='<span style="color:var(--danger)">⚠ 没识别到内容（每段要含主播+类型，如 婷婷加班5h / 梦淇休假 / 梦淇请假5小时）</span>';
+    return;
+  }
+  const unit=s=>s.type==='加班'?'h':(s.type==='请假'?(s.unit==='h'?'h':'天'):'');
+  box.innerHTML='<b>将保存 '+valid.length+' 条：</b><br>'+valid.map(s=>{
+    const q=s.hasNum?s.hours:(s.type==='请假'?1:'');
+    return `· <b>${esc(s.hostName)}</b> ${s.type} ${q}${unit(s)}`;
+  }).join('<br>');
+}
+$('#attNote').oninput=refreshAttPreview;
+$('#attSave').onclick=async ()=>{
+  const date=$('#attDate').value||todayStr();
+  const text=$('#attNote').value.trim();
+  if(!text) return toast('写点备注');
+  const segs=parseAttNote(text).filter(s=>s.hasNum||s.type==='请假');
+  if(!segs.length) return toast('没识别到有效内容');
+  let saved=0;
+  for(const s of segs){
+    let h=hosts.find(x=>x.name===s.hostName);
+    if(!h){
+      h={id:uid(),name:s.hostName,created:Date.now()};
+      await dbPut('hosts',h);
+      hosts.push(h);
+    }
+    await dbPut('attend',{id:uid(),date,hostId:h.id,hostName:s.hostName,type:s.type,hours:s.hours,unit:s.unit,note:text.slice(0,80),created:Date.now()});
+    saved++;
+  }
+  closeSheets(); await load(); render();
+  toast('已保存 '+saved+' 条');
+};
+$('#monPrev').onclick=()=>{ const [y,m]=attMonth.split('-').map(Number); attMonth=m===1?(y-1)+'-12':y+'-'+String(m-1).padStart(2,'0'); render(); };
+$('#monNext').onclick=()=>{ const [y,m]=attMonth.split('-').map(Number); attMonth=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0'); render(); };
+$('#attBoard').querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{
+  const k=th.dataset.k;
+  if(attSort.key===k) attSort.dir*=-1; else attSort={key:k,dir:1};
+  renderBoard();
+});
+
+function renderAttend(){
+  // v7: 看板 + 录入明细 两段都在
+  $('#hostChips').style.display='none';
+  document.querySelectorAll('#view-attend .stat-row').forEach(e=>e.style.display='none');
+  $('#attBoard').classList.remove('hidden');
+  renderBoard();
+  renderAttendLog();
+}
+function renderBoard(){
+  $('#monLabel').textContent=attMonth.replace('-','年')+'月';
+  const list=attend.filter(a=>a.date&&a.date.startsWith(attMonth));
+  const total=daysInMonth(attMonth);
+  const map={};
+  list.forEach(a=>{
+    const name=(a.hostName&&a.hostName!=='未分配')?cleanHostName(a.hostName):'未分配';
+    if(!map[name]) map[name]={name,ot:0,leaveDays:0,leaveH:0,perf:0};
+    const r=map[name];
+    if(a.type==='加班') r.ot+=(a.hours||0);
+    else if(a.type==='请假'){ if((a.unit||'天')==='h') r.leaveH+=(a.hours||0); else r.leaveDays+=(a.hours||0); }
+    else if(a.type==='绩效') r.perf+=(a.hours||0);
+  });
+  let rows=Object.values(map).map(r=>({
+    name:r.name,
+    work:Math.max(0, total-Math.round(r.leaveDays*10)/10),
+    ot:Math.round(r.ot*10)/10,
+    leave:Math.round(r.leaveDays*10)/10,
+    leaveH:Math.round(r.leaveH*10)/10,
+    perf:Math.round(r.perf*10)/10
+  }));
+  const {key,dir}=attSort;
+  rows.sort((a,b)=> key==='name'? dir*a.name.localeCompare(b.name,'zh') : dir*((a[key]||0)-(b[key]||0)));
+  const body=$('#boardBody'); body.innerHTML='';
+  $('#boardEmpty').classList.toggle('hidden',rows.length>0);
+  document.querySelectorAll('#attBoard th[data-k]').forEach(th=>{
+    const sp=th.querySelector('.ar');
+    sp.textContent= th.dataset.k===key ? (dir>0?'▲':'▼') : '';
+  });
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="name">${esc(r.name)}</td><td>${r.work}</td><td>${r.ot}</td><td>${r.leave}</td><td>${r.leaveH}</td><td>${r.perf}</td>`;
+    body.appendChild(tr);
+  });
+}
+function renderAttendLog(){
+  const box=$('#attendLog');
+  if(!box) return;
+  const list=attend.filter(a=>a.date&&a.date.startsWith(attMonth));
+  if(!list.length){
+    box.innerHTML='<div style="text-align:center;color:var(--sub);padding:18px 0;font-size:13px">这个月还没录过任何记录</div>';
+    return;
+  }
+  const groups={};
+  list.forEach(a=>{(groups[a.date]=groups[a.date]||[]).push(a);});
+  const today=todayStr();
+  const w=['日','一','二','三','四','五','六'];
+  const typeKey={'出勤':'work','加班':'ot','请假':'leave','绩效':'perf'};
+  const typeColor={'work':'var(--ok)','ot':'#f5804e','leave':'var(--danger)','perf':'var(--brand2)'};
+  const dates=Object.keys(groups).sort().reverse();
+  box.innerHTML=dates.map(date=>{
+    const recs=groups[date].sort((a,b)=>(a.created||0)-(b.created||0));
+    const dd=new Date(date+'T00:00:00');
+    const isToday=date===today;
+    const items=recs.map(r=>{
+      const tk=typeKey[r.type];
+      const u= r.type==='加班'?'h' : (r.type==='请假'?((r.unit||'天')==='h'?'h':'天') : (r.type==='绩效'?'':''));
+      return `<div class="item">
+        <span class="tag ${tk}" style="background:${typeColor[tk]||'#999'}">${r.type}</span>
+        <span class="who">${esc(cleanHostName(r.hostName))}</span>
+        <span class="val">${r.hours}${u}</span>
+        <span class="del" data-del="${r.id}">删</span>
+      </div>`;
+    }).join('');
+    return `<div class="day-card">
+      <div class="day-head">
+        <span class="day-date ${isToday?'today':''}">${date.slice(5).replace('-','/')} 周${w[dd.getDay()]}${isToday?' · 今天':''}</span>
+        <span class="day-summary">${recs.length} 条</span>
+        <span class="del-day" data-del-day="${date}">清空当天</span>
+      </div>
+      <div class="day-body">${items}</div>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('[data-del]').forEach(el=>el.onclick=async e=>{
+    e.stopPropagation();
+    const id=el.dataset.del;
+    const r=attend.find(x=>x.id===id);
+    if(!r) return;
+    const u= r.type==='加班'?'h' : (r.type==='请假'?((r.unit||'天')==='h'?'h':'天') : '');
+    if(!confirm('删除「'+cleanHostName(r.hostName)+' '+r.type+' '+r.hours+u+'」这条记录？'))return;
+    await dbDel('attend',id); await load(); render(); toast('已删除');
+  });
+  box.querySelectorAll('[data-del-day]').forEach(el=>el.onclick=async e=>{
+    e.stopPropagation();
+    const d=el.dataset.delDay;
+    const n=(groups[d]||[]).length;
+    if(!n) return;
+    if(!confirm('删除「'+d+'」这一天的全部 '+n+' 条记录？\\n（删除后看板统计会同步刷新）'))return;
+    for(const r of groups[d]) await dbDel('attend',r.id);
+    await load(); render(); toast('已清空 '+d+' 的记录');
+  });
+}
+
+
+/* ================= 备份 / 恢复 ================= */
+const blobToB64 = blob=>new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(blob); });
+const b64ToBlob = async b64=>{ const r=await fetch(b64); return r.blob(); };
+
+async function exportBackup(full){
+  const bp=$('#backupProgress'); bp.classList.remove('hidden');
+  const bar=$('#bpBar'), txt=$('#bpText');
+  try{
+    const data={ver:2,exportedAt:new Date().toISOString(),full,copies,tasks,ideas,hots,attend,assets:[]};
+    if(full){
+      let i=0;
+      for(const a of assets){
+        txt.textContent=`正在打包素材 ${++i}/${assets.length}（${esc(a.name)}）`;
+        bar.value=i/assets.length*90;
+        await new Promise(r=>setTimeout(r,0));
+        const blob = a.kind==='link' ? a.blob : await blobToB64(a.blob);
+        const thumb = a.kind==='link' ? a.thumb : (a.thumb?await blobToB64(a.thumb):null);
+        data.assets.push({...a,blob,thumb});
+      }
+    }else{
+      data.assets=assets.map(a=> a.kind==='link'
+        ? {id:a.id,name:a.name,type:a.type,kind:'link',url:a.url,thumb:a.thumb||null,cat:a.cat,tags:a.tags,created:a.created,size:0,metaOnly:true}
+        : {id:a.id,name:a.name,type:a.type,mime:a.mime,size:a.size,cat:a.cat,tags:a.tags,created:a.created,blob:null,thumb:null,metaOnly:true});
+    }
+    txt.textContent='正在生成备份文件…'; bar.value=95;
+    const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+    const aEl=document.createElement('a');
+    aEl.href=URL.createObjectURL(blob);
+    aEl.download='喵霸天备份_'+(full?'完整':'轻量')+'_'+todayStr()+'.json';
+    aEl.click();
+    setTimeout(()=>URL.revokeObjectURL(aEl.href),10000);
+    toast('备份文件已生成（'+fmtSize(blob.size)+'），请妥善保存');
+  }catch(e){ toast('备份失败：'+e.message); }
+  bp.classList.add('hidden');
+}
+window.exportBackup=exportBackup; window.askNotify=askNotify; window.closePreview=closePreview;
+
+$('#importFile').onchange=async e=>{
+  const f=e.target.files[0]; if(!f)return;
+  if(!confirm('恢复备份会与现有数据合并（相同条目以备份为准），继续吗？'))return;
+  const bp=$('#backupProgress'); bp.classList.remove('hidden');
+  const bar=$('#bpBar'), txt=$('#bpText');
+  try{
+    txt.textContent='正在读取备份文件…'; bar.value=10;
+    const data=JSON.parse(await f.text());
+    for(const c of data.copies||[]) await dbPut('copies',c);
+    for(const t of data.tasks||[]) await dbPut('tasks',t);
+    for(const i of data.ideas||[]) await dbPut('ideas',i);
+    for(const h of data.hots||[]) await dbPut('hots',h);
+    for(const a of data.attend||[]) await dbPut('attend',a);
+    const as=data.assets||[];
+    let i=0;
+    for(const a of as){
+      txt.textContent=`正在恢复素材 ${++i}/${as.length}`;
+      bar.value=10+i/Math.max(as.length,1)*85;
+      await new Promise(r=>setTimeout(r,0));
+      if(a.kind==='link'){ await dbPut('assets',a); continue; }
+      if(a.metaOnly||!a.blob) continue; // 轻量备份不含文件本体
+      a.blob=await b64ToBlob(a.blob);
+      a.thumb=a.thumb?await b64ToBlob(a.thumb):null;
+      delete a.metaOnly;
+      await dbPut('assets',a);
+    }
+    await load(); render(); toast('恢复完成 ✓');
+  }catch(err){ toast('恢复失败：文件格式不对'); }
+  bp.classList.add('hidden'); e.target.value='';
+};
+
+/* ================= 统计 & 渲染入口 ================= */
+async function load(){
+  [assets,copies,tasks,ideas,hots,attend,hosts]=await Promise.all([dbAll('assets'),dbAll('copies'),dbAll('tasks'),dbAll('ideas'),dbAll('hots'),dbAll('attend'),dbAll('hosts')]);
+  // 旧版"打卡"数据迁移为工时表记录（无主播字段的归到"未分配"）
+  for(const a of attend){
+    if(a.in!==undefined||a.out!==undefined){
+      const h=hoursBetween(a.in,a.out);
+      await dbPut('attend',{id:uid(),date:a.date||a.id,hostId:'',hostName:'未分配',type:'出勤',hours:h!=null?h:0,note:a.note||'',created:a.created||Date.now()});
+      await dbDel('attend',a.id);
+    }
+  }
+  if(attend.some(a=>a.in!==undefined||a.out!==undefined)) attend=await dbAll('attend');
+}
+async function renderStats(){
+  $('#stAsset').textContent=assets.length;
+  $('#stCopy').textContent=copies.length;
+  $('#stTask').textContent=tasks.filter(t=>!isDoneToday(t)).length;
+  try{ const est=await navigator.storage.estimate(); $('#stSize').textContent=fmtSize(est.usage); }catch(e){ $('#stSize').textContent='-'; }
+  if('Notification' in window&&Notification.permission==='granted') $('#notifyState').textContent='已开启 ✓ 应用打开时到点会提醒';
+}
+function render(){
+  if(curView==='assets') renderAssets();
+  else if(curView==='copy') renderCopies();
+  else if(curView==='plan') renderPlans();
+  else if(curView==='ideas') renderIdeas();
+  else if(curView==='hot') renderHot();
+  else if(curView==='attend') renderAttend();
+  else renderStats();
+}
+
+/* ================= 启动 ================= */
+(async function init(){
+  const d=new Date();
+  $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
+  await openDB(); await load(); render(); scheduleCheck();
+  // 请求持久化存储，降低系统自动清理数据的概率
+  try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
+  if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+})();
