@@ -135,28 +135,27 @@ nav::-webkit-scrollbar{display:none}
 .board td.name.clickable.host-active{color:#fff;background:linear-gradient(135deg,#3b82f6,#60a5fa);font-weight:600}
 .board td.name.clickable:active{background:rgba(59,130,246,.15)}
 
-/* v37: 主播个人统计看板 = 全屏大图（fixed 撑满，确保 × 按钮可见） */
-#hostCardWrap{position:fixed;inset:0;z-index:90}
-#hostCardWrap.hidden{display:none}
-.host-mask{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(2px);-webkit-tap-highlight-color:transparent}
-.host-full{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;display:flex;flex-direction:column;overflow:hidden;animation:hostIn .2s ease-out;max-width:560px;margin:0 auto}
-@keyframes hostIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.host-head{background:linear-gradient(135deg,#dbeafe,#e0e7ff);padding:24px 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #c7d2fe;flex-shrink:0}
-.host-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#3b82f6);color:#fff;font-size:24px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,.3)}
-.host-head-text{flex:1;min-width:0}
-.host-head-name{font-size:20px;font-weight:600;color:#1e3a8a;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.host-head-sub{font-size:13px;color:#475569;margin-top:4px}
-.host-close{font-size:28px;color:#64748b;cursor:pointer;padding:0 8px;line-height:1;-webkit-tap-highlight-color:transparent;flex-shrink:0;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
-.host-close:hover,.host-close:active{color:#1e3a8a}
-.host-months{flex:1;overflow-y:auto;padding:14px;background:linear-gradient(180deg,#f8fafc 0%,#eff6ff 100%);-webkit-overflow-scrolling:touch;min-height:0}
-.host-month{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(59,130,246,.08);border:1px solid #e0e7ff}
-.host-month:last-child{margin-bottom:0}
-.host-month-title{font-size:15px;font-weight:600;color:#1e3a8a;margin-bottom:12px;padding-left:8px;border-left:4px solid #60a5fa;line-height:1}
-.host-month-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;text-align:center;font-size:11px;color:#334155}
-.host-month-grid b{font-size:18px;color:#0f172a;display:block;margin-top:3px;font-weight:600;white-space:nowrap}
-.hm-lab{color:#64748b;font-size:10px;white-space:nowrap}
-.host-empty{text-align:center;color:#94a3b8;padding:48px 0;font-size:14px}
-.host-tip{background:#eff6ff;color:#475569;font-size:12px;text-align:center;padding:10px;border-top:1px solid #dbeafe;flex-shrink:0}
+/* v38: 主播个人统计看板 = 独立 overlay（append 到 body，100% 全屏保证） */
+.host-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999}
+.host-overlay .host-mask{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,23,42,.55);-webkit-tap-highlight-color:transparent}
+.host-overlay .host-full{position:fixed;top:0;left:50%;width:100vw;height:100vh;max-width:560px;transform:translateX(-50%);background:#fff;display:flex;flex-direction:column;overflow:hidden;animation:hostIn .2s ease-out;box-shadow:0 0 40px rgba(0,0,0,.25)}
+@keyframes hostIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+.host-overlay .host-head{background:linear-gradient(135deg,#dbeafe,#e0e7ff);padding:18px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #c7d2fe;flex-shrink:0;min-height:88px}
+.host-overlay .host-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#3b82f6);color:#fff;font-size:24px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.host-overlay .host-head-text{flex:1;min-width:0;overflow:hidden}
+.host-overlay .host-head-name{font-size:20px;font-weight:600;color:#1e3a8a;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.host-overlay .host-head-sub{font-size:13px;color:#475569;margin-top:4px;white-space:nowrap}
+.host-overlay .host-close{width:48px;height:48px;font-size:30px;color:#64748b;cursor:pointer;line-height:1;-webkit-tap-highlight-color:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .15s}
+.host-overlay .host-close:hover,.host-overlay .host-close:active{color:#1e3a8a;background:rgba(99,102,241,.12)}
+.host-overlay .host-months{flex:1;overflow-y:auto;padding:14px;background:linear-gradient(180deg,#f8fafc 0%,#eff6ff 100%);-webkit-overflow-scrolling:touch;min-height:0}
+.host-overlay .host-month{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(59,130,246,.08);border:1px solid #e0e7ff}
+.host-overlay .host-month:last-child{margin-bottom:0}
+.host-overlay .host-month-title{font-size:15px;font-weight:600;color:#1e3a8a;margin-bottom:12px;padding-left:8px;border-left:4px solid #60a5fa;line-height:1}
+.host-overlay .host-month-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;text-align:center;font-size:12px;color:#334155}
+.host-overlay .host-month-grid b{font-size:18px;color:#0f172a;display:block;margin-top:3px;font-weight:600;white-space:nowrap}
+.host-overlay .hm-lab{color:#64748b;font-size:11px;white-space:nowrap}
+.host-overlay .host-empty{text-align:center;color:#94a3b8;padding:48px 0;font-size:14px}
+.host-overlay .host-tip{background:#eff6ff;color:#475569;font-size:12px;text-align:center;padding:10px;border-top:1px solid #dbeafe;flex-shrink:0}
 .board tbody tr:nth-child(even){background:rgba(0,0,0,.02)}
 .board tbody tr:active{background:rgba(0,0,0,.05)}
 .chip-x{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:18px;height:18px;line-height:16px;text-align:center;border-radius:50%;background:rgba(0,0,0,.06);font-size:13px;color:var(--sub);cursor:pointer;font-weight:400;user-select:none}
@@ -356,8 +355,7 @@ progress{width:100%;height:6px}
     <div class="stat-row">
       <div class="stat"><b id="attPerf">¥0</b><div>绩效</div></div>
     </div>
-    <!-- v37: 点主播名字 → 全屏大图（fixed 撑满），不再有 inline margin -->
-    <div id="hostCardWrap" class="hidden"></div>
+    <!-- v38: 个人统计看板改为动态 createElement 追加到 body，不再需要静态容器 -->
     <div id="attBoard">
       <div class="board-scroll">
         <table class="board">
@@ -577,6 +575,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=37"></script>
+<script src="app.js?v=38"></script>
 </body>
 </html>

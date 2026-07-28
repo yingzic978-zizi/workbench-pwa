@@ -985,15 +985,13 @@ function renderAttend(){
   renderBoard();
   renderAttendLog();
 }
-/* ================= v36 主播个人看板：全屏大图（适合截图分享）+ 去累计冗余 ================= */
+/* ================= v38 主播个人看板：独立 fixed 容器（append 到 body，100% 全屏保证） ================= */
 let currentHostCard=null;  // 当前展开的主播名（null=收起）
 function toggleHostCard(name){
-  const wrap=$('#hostCardWrap');
   // 同一个名字再点 → 收起
-  if(currentHostCard===name){
-    closeHostCard();
-    return;
-  }
+  if(currentHostCard===name){ closeHostCard(); return; }
+  // 不同名字 → 先收起旧的再开新的
+  closeHostCard();
   // 收集该主播所有记录（跨月）
   const recs=attend.filter(a=>cleanHostName(a.hostName)===name);
   const byMonth={};
@@ -1008,7 +1006,7 @@ function toggleHostCard(name){
     else if(a.type==='绩效') r.perf+=(a.hours||0);
   });
   const fmt=n=>Number(n).toFixed(n%1?1:0).replace(/\.0$/,'');
-  const months=Object.keys(byMonth).sort().reverse();  // 新→旧
+  const months=Object.keys(byMonth).sort().reverse();
   const monthHtml=months.length? months.map(m=>{
     const d=byMonth[m];
     return `<div class="host-month">
@@ -1023,38 +1021,43 @@ function toggleHostCard(name){
     </div>`;
   }).join('') : '<div class="host-empty">还没有任何记录</div>';
 
+  // v38: 直接 appendChild 一个独立 fixed 容器到 body，不嵌在 view-attend 里
+  // （避免父级 overflow/transform 干扰 fixed 定位）
+  const wrap=document.createElement('div');
+  wrap.id='hostCardOverlay';
+  wrap.className='host-overlay';
   wrap.innerHTML=`
     <div class="host-mask"></div>
     <div class="host-full">
       <div class="host-head">
-        <span class="host-avatar">${esc(name).slice(0,1)}</span>
+        <div class="host-avatar">${esc(name).slice(0,1)}</div>
         <div class="host-head-text">
           <div class="host-head-name">${esc(name)}</div>
           <div class="host-head-sub">📊 个人统计看板</div>
         </div>
-        <span class="host-close">×</span>
+        <div class="host-close" role="button" aria-label="关闭">×</div>
       </div>
       <div class="host-months">${monthHtml}</div>
       <div class="host-tip">↑ 截图发给主播核对 · 点空白处或 × 关闭</div>
     </div>
   `;
-  wrap.classList.remove('hidden');
+  document.body.appendChild(wrap);
   currentHostCard=name;
+  // 关闭交互
+  wrap.querySelector('.host-close').onclick=e=>{ e.stopPropagation(); closeHostCard(); };
+  wrap.querySelector('.host-mask').onclick=closeHostCard;
   // 高亮当前选中的名字
   document.querySelectorAll('#boardBody td.name').forEach(td=>{
     td.classList.toggle('host-active', td.dataset.host===name);
   });
-  // 关闭交互
-  wrap.querySelector('.host-close').onclick=closeHostCard;
-  wrap.querySelector('.host-mask').onclick=closeHostCard;
-  // 自动滚到顶部（让看板成为视觉中心）
-  window.scrollTo({top:0, behavior:'smooth'});
+  // 锁住背景滚动
+  document.body.style.overflow='hidden';
 }
 function closeHostCard(){
-  const wrap=$('#hostCardWrap');
-  wrap.classList.add('hidden');
-  wrap.innerHTML='';
+  const old=document.getElementById('hostCardOverlay');
+  if(old) old.remove();
   currentHostCard=null;
+  document.body.style.overflow='';
   document.querySelectorAll('#boardBody td.name').forEach(td=>td.classList.remove('host-active'));
 }
 function renderBoard(){
