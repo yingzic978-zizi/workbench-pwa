@@ -985,17 +985,13 @@ function renderAttend(){
   renderBoard();
   renderAttendLog();
 }
-/* ================= v35 主播个人统计：主表正上方折叠卡片（亮色） ================= */
+/* ================= v36 主播个人看板：全屏大图（适合截图分享）+ 去累计冗余 ================= */
 let currentHostCard=null;  // 当前展开的主播名（null=收起）
 function toggleHostCard(name){
   const wrap=$('#hostCardWrap');
   // 同一个名字再点 → 收起
   if(currentHostCard===name){
-    wrap.classList.add('hidden');
-    wrap.innerHTML='';
-    currentHostCard=null;
-    // 取消高亮
-    document.querySelectorAll('#boardBody td.name').forEach(td=>td.classList.remove('host-active'));
+    closeHostCard();
     return;
   }
   // 收集该主播所有记录（跨月）
@@ -1011,12 +1007,8 @@ function toggleHostCard(name){
     else if(a.type==='请假'){ if((a.unit||'天')==='h') r.leaveH+=(a.hours||0); else r.leaveDays+=(a.hours||0); }
     else if(a.type==='绩效') r.perf+=(a.hours||0);
   });
-  const tot={work:0,ot:0,leaveDays:0,leaveH:0,perf:0};
-  Object.values(byMonth).forEach(m=>{
-    tot.work+=m.work; tot.ot+=m.ot; tot.leaveDays+=m.leaveDays; tot.leaveH+=m.leaveH; tot.perf+=m.perf;
-  });
   const fmt=n=>Number(n).toFixed(n%1?1:0).replace(/\.0$/,'');
-  const months=Object.keys(byMonth).sort().reverse();
+  const months=Object.keys(byMonth).sort().reverse();  // 新→旧
   const monthHtml=months.length? months.map(m=>{
     const d=byMonth[m];
     return `<div class="host-month">
@@ -1032,33 +1024,38 @@ function toggleHostCard(name){
   }).join('') : '<div class="host-empty">还没有任何记录</div>';
 
   wrap.innerHTML=`
-    <div class="host-card">
+    <div class="host-mask"></div>
+    <div class="host-full">
       <div class="host-head">
-        <span><span class="host-emoji">📊</span><b>${esc(name)}</b> · 个人统计</span>
+        <span class="host-avatar">${esc(name).slice(0,1)}</span>
+        <div class="host-head-text">
+          <div class="host-head-name">${esc(name)}</div>
+          <div class="host-head-sub">📊 个人统计看板</div>
+        </div>
         <span class="host-close">×</span>
       </div>
-      <div class="host-total">
-        <div class="ht-lab">📈 累计（${months.length} 个月）</div>
-        <div class="ht-grid">
-          <div><div class="ht-lab2">场次</div><div class="ht-val">${fmt(tot.work)}</div></div>
-          <div><div class="ht-lab2">加班</div><div class="ht-val">${fmt(tot.ot)}h</div></div>
-          <div><div class="ht-lab2">休假</div><div class="ht-val">${fmt(tot.leaveDays)}天</div></div>
-          <div><div class="ht-lab2">请假</div><div class="ht-val">${fmt(tot.leaveH)}h</div></div>
-          <div><div class="ht-lab2">绩效</div><div class="ht-val">${fmt(tot.perf)}</div></div>
-        </div>
-      </div>
       <div class="host-months">${monthHtml}</div>
+      <div class="host-tip">↑ 截图发给主播核对 · 点空白处或 × 关闭</div>
     </div>
   `;
   wrap.classList.remove('hidden');
   currentHostCard=name;
-  // 高亮当前选中的名字 + 滚到顶部
+  // 高亮当前选中的名字
   document.querySelectorAll('#boardBody td.name').forEach(td=>{
     td.classList.toggle('host-active', td.dataset.host===name);
   });
-  wrap.querySelector('.host-close').onclick=()=>toggleHostCard(name);
-  // 滚到卡片（手机端体验）
-  wrap.scrollIntoView({behavior:'smooth', block:'start'});
+  // 关闭交互
+  wrap.querySelector('.host-close').onclick=closeHostCard;
+  wrap.querySelector('.host-mask').onclick=closeHostCard;
+  // 自动滚到顶部（让看板成为视觉中心）
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function closeHostCard(){
+  const wrap=$('#hostCardWrap');
+  wrap.classList.add('hidden');
+  wrap.innerHTML='';
+  currentHostCard=null;
+  document.querySelectorAll('#boardBody td.name').forEach(td=>td.classList.remove('host-active'));
 }
 function renderBoard(){
   $('#monLabel').textContent=attMonth.replace('-','年')+'月';
