@@ -62,6 +62,9 @@ async function uploadToGitHub(filename,base64,token){
 /* ---------- 全局状态 ---------- */
 let assets=[], copies=[], tasks=[], ideas=[], hots=[], attend=[], hosts=[];
 let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='all', assetMode='file', copyFabric='';
+let tagFilters=new Set();          // 多选标签筛选（AND 关系：图必须含全部选中标签）
+let multiMode=false;               // 素材库多选模式
+const selectedIds=new Set();       // 多选模式下被勾选的素材 id
 // v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
 // ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
 const FABRICS=['纯棉','莱赛尔','莫代尔棉','云朵棉','雪花绒','半边绒','羊毛绒','夹棉'];
@@ -109,6 +112,7 @@ $$('nav .n-item').forEach(b=>b.onclick=()=>{
   $('#pageTitle').textContent=titles[curView];
   $('#searchWrap').style.display = (curView==='mine'||curView==='attend')?'none':'flex';
   $('#fab').style.display = (curView==='mine')?'none':'flex';
+  if(curView!=='assets' && multiMode){ multiMode=false; selectedIds.clear(); }
   render();
 });
 $('#searchInput').oninput = e=>{ keyword=e.target.value.trim().toLowerCase(); render(); };
@@ -242,11 +246,35 @@ function matchAsset(a){
   if(assetFilter==='cloud') return a.kind==='cloud';
   if(assetFilter!=='all' && a.type!==assetFilter) return false;
   if(catFilter && a.cat!==catFilter) return false;
+  if(tagFilters.size){
+    for(const t of tagFilters){ if(!a.tags.includes(t)) return false; }
+  }
   if(keyword){
     const hay=(a.name+' '+(a.cat||'')+' '+a.tags.join(' ')).toLowerCase();
     if(!hay.includes(keyword)) return false;
   }
   return true;
+}
+
+/* ---- 标签 chips 二级筛选 ---- */
+function renderTagBar(){
+  const counts=new Map();
+  for(const a of assets){
+    if(assetFilter==='cloud' && a.kind!=='cloud') continue;
+    if(assetFilter!=='all' && assetFilter!=='cloud' && a.type!==assetFilter) continue;
+    for(const t of a.tags){ counts.set(t,(counts.get(t)||0)+1); }
+  }
+  // 出现次数倒序，最多 18 个
+  const list=[...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,18);
+  const tb=$('#tagBar');
+  if(!list.length){ tb.classList.add('hidden'); return; }
+  tb.classList.remove('hidden');
+  tb.innerHTML=list.map(([t,c])=>`<div class="chip ${tagFilters.has(t)?'on':''}" data-t="${esc(t)}">#${esc(t)} <span style="opacity:.5">${c}</span></div>`).join('');
+  tb.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+    const t=ch.dataset.t;
+    if(tagFilters.has(t)) tagFilters.delete(t); else tagFilters.add(t);
+    render();
+  });
 }
 
 function renderAssets(){
@@ -259,11 +287,16 @@ function renderAssets(){
     cc.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{catFilter=ch.dataset.c;render();});
   }else{ cc.classList.add('hidden'); catFilter=''; }
 
+  // 标签 chips
+  renderTagBar();
+
   const list=assets.filter(matchAsset).sort((a,b)=>b.created-a.created);
   const g=$('#assetGrid'); g.innerHTML='';
   $('#assetEmpty').classList.toggle('hidden', assets.length>0);
   list.forEach(a=>{
-    const d=document.createElement('div'); d.className='g-item';
+    const d=document.createElement('div'); d.className='g-item'+(multiMode?' multi':'')+(selectedIds.has(a.id)?' sel':'');
+    d.dataset.id=a.id;
+    // 图片
     if(a.kind==='link'){
       const tu=thumbUrl(a);
       if(tu) d.innerHTML=`<img src="${tu}" loading="lazy">`;
@@ -279,19 +312,123 @@ function renderAssets(){
       if(a.type==='video') d.innerHTML+=`<div class="g-badge">▶ 视频</div>`;
       if(a.kind==='cloud') d.innerHTML+=`<div class="g-badge">☁ 云端</div>`;
     }
-    d.innerHTML+=`<div class="g-name">${esc(a.name)}</div>`;
-    d.onclick=()=>openPreview(a);
+    // 多选勾选圈
+    if(multiMode){
+      d.innerHTML+=`<div class="g-check ${selectedIds.has(a.id)?'on':''}">${selectedIds.has(a.id)?'✓':''}</div>`;
+    }
+    // 底部名称 + 标签（标签可点击筛选）
+    let nameHtml=`<span class="g-name-text">${esc(a.name)}</span>`;
+    if(a.tags && a.tags.length){
+      const shown=a.tags.slice(0,2);
+      const more=a.tags.length-shown.length;
+      nameHtml+=`<div class="g-tags">${shown.map(t=>`<span class="g-tag" data-t="${esc(t)}">#${esc(t)}</span>`).join('')}${more>0?`<span class="g-tag more">+${more}</span>`:''}</div>`;
+    }
+    d.innerHTML+=`<div class="g-name">${nameHtml}</div>`;
+    // 事件：长按进多选 / 普通点开预览 / 多选下点 = 切换
+    attachItemEvents(d,a);
     g.appendChild(d);
   });
   if(assets.length && !list.length){
     g.innerHTML='<div class="empty" style="grid-column:1/-1">没有匹配的素材</div>';
   }
+  // 批量栏
+  updateBatchBar();
 }
-$('#assetChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
-  assetFilter=c.dataset.f;
-  $('#assetChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
-  render();
+
+/* 单图事件绑定（长按进入多选 / 点开预览 / 多选切换 / 点标签筛选） */
+let pressTimer=null, pressTriggered=false;
+function attachItemEvents(d,a){
+  d.oncontextmenu=e=>e.preventDefault();
+  d.onpointerdown=e=>{
+    if(e.target.classList.contains('g-tag')) return;   // 点标签不触发长按
+    pressTriggered=false;
+    pressTimer=setTimeout(()=>{
+      pressTriggered=true;
+      if(!multiMode) toggleMulti(true);
+      if(!selectedIds.has(a.id)){ selectedIds.add(a.id); }
+      render(); navigator.vibrate?.(15);
+    },500);
+  };
+  d.onpointerup=d.onpointerleave=d.onpointercancel=()=>{ clearTimeout(pressTimer); };
+  d.onclick=e=>{
+    if(pressTriggered){ pressTriggered=false; return; }
+    // 点标签 chip：进入筛选
+    const tagEl=e.target.closest('.g-tag');
+    if(tagEl && !tagEl.classList.contains('more')){
+      const t=tagEl.dataset.t;
+      if(tagFilters.has(t)) tagFilters.delete(t); else tagFilters.add(t);
+      render();
+      return;
+    }
+    if(multiMode){
+      if(selectedIds.has(a.id)) selectedIds.delete(a.id); else selectedIds.add(a.id);
+      render();
+    }else{
+      openPreview(a);
+    }
+  };
+}
+
+$('#assetChips').querySelectorAll('.chip').forEach(c=>{
+  if(c.id==='multiBtn') return;   // 多选按钮单独绑定
+  c.onclick=()=>{
+    assetFilter=c.dataset.f;
+    $('#assetChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+    render();
+  };
 });
+$('#multiBtn').onclick=()=>toggleMulti(!multiMode);
+$('#bCancel').onclick=()=>toggleMulti(false);
+$('#bDel').onclick=batchDelete;
+
+/* ---- 多选 / 批量删除 ---- */
+function toggleMulti(on){
+  multiMode=on;
+  $('#multiBtn').classList.toggle('on',on);
+  $('#multiBtn').textContent=on?'☑ 多选中':'☑ 多选';
+  if(!on) selectedIds.clear();
+  render();
+}
+function updateBatchBar(){
+  const bar=$('#batchBar');
+  if(!bar) return;
+  if(!multiMode){ bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  $('#bCnt').textContent=selectedIds.size;
+  $('#bDel').disabled=selectedIds.size===0;
+  $('#bDel').style.opacity=selectedIds.size===0?.4:1;
+}
+async function batchDelete(){
+  if(!selectedIds.size) return;
+  const items=assets.filter(a=>selectedIds.has(a.id));
+  const cloudCount=items.filter(a=>a.kind==='cloud').length;
+  const localCount=items.length-cloudCount;
+  const tip=`确定删除 ${items.length} 张素材吗？\n`
+    +(cloudCount?`· ${cloudCount} 张为云端文件，将同步删除云端，其他设备拉取后也会消失\n`:'')
+    +(localCount?`· ${localCount} 张仅本机删除\n`:'');
+  if(!confirm(tip.trim())) return;
+
+  // 先删云端（批量并行）
+  if(cloudCount){
+    const cloudItems=items.filter(a=>a.kind==='cloud');
+    toast(`正在删除云端文件 0/${cloudItems.length}…`);
+    let ok=0, fail=0;
+    let i=0;
+    for(const a of cloudItems){
+      i++;
+      try{ await deleteFromCloud(a); ok++; }catch(e){ fail++; console.error('[batchDelete cloud]',a.name,e); }
+      toast(`正在删除云端文件 ${i}/${cloudItems.length}…`);
+    }
+    if(fail) toast(`云端删除：${ok} 成功 ${fail} 失败（仅成功的已同步）`);
+  }
+
+  // 再删本机
+  for(const a of items){ await dbDel('assets',a.id); objURLs.delete(a.id); objURLs.delete('t_'+a.id); }
+  selectedIds.clear();
+  toggleMulti(false);
+  await load(); render();
+  toast(`✅ 已删除 ${items.length} 张`);
+}
 
 /* ---- 预览 ---- */
 let previewItem=null;
