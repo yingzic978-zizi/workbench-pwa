@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v4';  // v38: bump 强制刷新所有客户端缓存
+const CACHE = 'mao-villain-v5';  // v39: bump 强制刷新所有客户端缓存（模板化：自动识别各 fork 仓库）
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

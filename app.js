@@ -35,7 +35,25 @@ const kvGet = k=>new Promise((res,rej)=>{const q=tx('kv','readonly').get(k);q.on
 const kvPut = (k,v)=>new Promise((res,rej)=>{const q=tx('kv','readwrite').put({k,v});q.onsuccess=res;q.onerror=()=>rej(q.error)});
 
 /* ---------- GitHub 图床 ---------- */
-const GH={owner:'yingzic978-zizi',repo:'workbench-pwa',branch:'main',dir:'assets-img'};
+// v39: 支持「模板化」——同事把仓库 fork 到自己的 GitHub 账号后，
+// 自动从当前 GitHub Pages 网址识别 owner/repo，云端读写各自命中自己的仓库，
+// 不再写死作者的仓库。这样一份代码就能做团队模板，人人独立备份、互不干扰。
+function detectGH(){
+  const def={owner:'yingzic978-zizi',repo:'workbench-pwa',branch:'main',dir:'assets-img'};
+  try{
+    const h=location.hostname;
+    if(h.endsWith('.github.io')){
+      const owner=h.split('.')[0];
+      const seg=location.pathname.split('/').filter(Boolean);
+      // 用户/组织站点：https://owner.github.io/        → 仓库名 = owner.github.io
+      // 项目站点：    https://owner.github.io/repo/     → 仓库名取第一段
+      const repo=(owner+'.github.io'===h && seg.length===0) ? (owner+'.github.io') : (seg[0]||'');
+      if(owner && repo) return {owner,repo,branch:def.branch,dir:def.dir};
+    }
+  }catch(e){}
+  return def;
+}
+const GH=detectGH();
 function fileToB64(file){ return new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.readAsDataURL(file); }); }
 function compressImage(file,maxDim=1280,q=0.82){
   return new Promise(res=>{
@@ -1395,7 +1413,7 @@ function bindCloudUI(){
     try{
       const r=await fetch('https://api.github.com/user',{headers:{'Authorization':`Bearer ${t}`}});
       const d=await r.json();
-      if(r.ok){ $('#ghStatus').textContent='✅ 已连接：'+d.login; }
+      if(r.ok){ $('#ghStatus').textContent='✅ 已连接：'+d.login+' → 云端仓库 '+GH.owner+'/'+GH.repo; }
       else $('#ghStatus').textContent='❌ '+d.message;
     }catch(e){ $('#ghStatus').textContent='❌ '+e.message; }
   });
@@ -1404,6 +1422,7 @@ function bindCloudUI(){
 /* ================= 启动 ================= */
 (async function init(){
   bindCloudUI();   // 提前绑定云存储按钮，确保即使后续 DB 加载异常按钮也能用
+  if($('#ghRepo')) $('#ghRepo').textContent='当前同步仓库：'+GH.owner+'/'+GH.repo;  // v39 模板化：显示各自命中的仓库
   const d=new Date();
   $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
   await openDB(); await load(); render(); scheduleCheck();
