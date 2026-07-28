@@ -205,7 +205,9 @@ $('#aSave').onclick = async ()=>{
   if($('#aCloud').checked && !token) toast('未配置 GitHub Token，已转存本地');
   $('#aSave').disabled=true; $('#aSave').textContent='保存中…';
   let cloudOk=0, localOk=0, cloudErr=null;
+  const total=pickedFiles.length; let done=0;
   for(const f of pickedFiles){
+    done++; $('#aSave').textContent=`保存中 ${done}/${total}…`;
     const type = f.type.startsWith('image/')?'image':f.type.startsWith('video/')?'video':'file';
     if(useCloud && type==='image'){
       try{
@@ -225,6 +227,7 @@ $('#aSave').onclick = async ()=>{
     localOk++;
   }
   $('#aSave').disabled=false; $('#aSave').textContent='保存到素材库';
+  $('#aTags').value=''; initAssetFabricChips();
   closeSheets(); await load(); render();
   const sum=`已保存 ${cloudOk?cloudOk+' 张云端 ':''}${localOk?localOk+' 张本地':''}素材`;
   toast(cloudErr?`❌ 云端失败：${cloudErr}（已转本地）— ${sum}`:sum, cloudErr?5500:2200);
@@ -236,6 +239,7 @@ function renderCatList(){
 }
 
 function matchAsset(a){
+  if(assetFilter==='cloud') return a.kind==='cloud';
   if(assetFilter!=='all' && a.type!==assetFilter) return false;
   if(catFilter && a.cat!==catFilter) return false;
   if(keyword){
@@ -377,6 +381,21 @@ function initFabricChips(){
     renderCopies();
   });
 }
+function initAssetFabricChips(){
+  const box=$('#assetFabricChips'); if(!box) return;
+  box.innerHTML='';
+  FABRICS.forEach(f=>{
+    const d=document.createElement('div'); d.className='chip'; d.dataset.f=f; d.textContent=f;
+    d.onclick=()=>{
+      const cur=$('#aTags').value.trim().split(/\s+/).filter(Boolean);
+      const i=cur.indexOf(f);
+      if(i>=0){ cur.splice(i,1); d.classList.remove('on'); }
+      else { cur.push(f); d.classList.add('on'); }
+      $('#aTags').value=cur.join(' ');
+    };
+    box.appendChild(d);
+  });
+}
 function refreshFabricHint(){
   const el=$('#fabricHint'); if(!el) return;
   const hit=detectFabrics($('#cTitle').value+' '+$('#cBody').value);
@@ -411,6 +430,7 @@ $('#copyBackfill').onclick=async ()=>{
   else toast('没有需要补全的旧文案');
 };
 initFabricChips();
+initAssetFabricChips();
 refreshFabricHint();
 
 /* ================= 计划 / 提醒 ================= */
