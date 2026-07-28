@@ -59,24 +59,25 @@ main{flex:1;overflow-y:auto;padding:4px 16px 24px calc(16px + var(--nav-w) + var
 .batch-bar .b-cancel{background:rgba(255,255,255,.22);color:#fff}
 .batch-bar .b-del{background:#fff;color:var(--brand)}
 /* 卡片 / 列表 */
-.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--line)}
-.copy-title{font-weight:600;font-size:15px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.copy-body{font-size:13px;color:#555c6e;line-height:1.6;max-height:66px;overflow:hidden;white-space:pre-wrap}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;border:1px solid var(--line);position:relative}
+.card.multi .copy-check{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:2px solid #c9cdd8;background:var(--card);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;z-index:2;transition:all .15s}
+.card.multi .copy-check.on{background:var(--brand);border-color:var(--brand)}
+.card.multi.sel{border-color:var(--brand);background:rgba(79,110,247,.04)}
+.copy-title{font-weight:600;font-size:15px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-right:30px}
+.copy-body{font-size:13px;color:#555c6e;line-height:1.6;white-space:pre-wrap;word-break:break-word}
 .copy-body.open{max-height:none}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 /* v15: 文案面料筛选工具条 */
-.copy-tools{margin-bottom:4px}
-.copy-tools .chips{padding-bottom:8px}
-.copy-bar{display:flex;gap:8px;margin:0 0 10px}
-.copy-all{flex:1;padding:10px 12px;border:1px solid var(--brand);background:var(--card);color:var(--brand);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
-.copy-all:active{background:var(--brand);color:#fff}
-.copy-back{flex:none;padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:10px;font-size:13px;cursor:pointer;white-space:nowrap}
-.copy-back:active{background:var(--bg)}
+.copy-tools{margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.copy-tools .chips{padding-bottom:8px;flex:1;min-width:0}
+#copyMultiBtn{flex:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#copyMultiBtn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.copy-bar,.copy-all,.copy-back{display:none}  /* 已废弃样式，留空防误用 */
 .f-hint{font-size:12px;color:var(--sub);margin:2px 0 4px;padding:9px 11px;background:var(--bg);border-radius:8px;line-height:1.4}
 .f-hint.has{color:var(--brand);background:rgba(79,110,247,.08);font-weight:600}
 .tag{font-size:11px;color:var(--brand);background:#eef1fe;padding:2px 8px;border-radius:6px}
 .row-actions{display:flex;gap:14px;margin-top:10px;font-size:13px}
-.row-actions span{color:var(--brand)}
+.row-actions span{color:var(--brand);cursor:pointer}
 .row-actions .del{color:var(--danger)}
 /* 计划 */
 .plan-group{font-size:13px;color:var(--sub);margin:14px 2px 8px;font-weight:600}
@@ -252,9 +253,13 @@ progress{width:100%;height:6px}
   <section class="view" id="view-copy">
     <div class="copy-tools">
       <div class="chips" id="fabricChips"><div class="chip on" data-f="">全部</div></div>
-      <div class="copy-bar">
-        <button class="copy-all" id="copyAllBtn">📋 复制筛选结果 <span id="copyCnt">0</span></button>
-        <button class="copy-back" id="copyBackfill">↻ 补旧文案</button>
+      <div class="chip" id="copyMultiBtn">☑ 多选</div>
+    </div>
+    <div class="batch-bar hidden" id="copyBatchBar">
+      <span class="b-info">已选 <b id="copyBCnt">0</b> 条</span>
+      <div class="b-actions">
+        <button class="b-cancel" id="copyBCancel">取消</button>
+        <button class="b-del" id="copyBDel">🗑 删除选中</button>
       </div>
     </div>
     <div id="copyList"></div>
@@ -533,6 +538,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=26"></script>
+<script src="app.js?v=28"></script>
 </body>
 </html>

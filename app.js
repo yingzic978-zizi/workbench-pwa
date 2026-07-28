@@ -65,6 +65,8 @@ let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='al
 let tagFilters=new Set();          // 多选标签筛选（AND 关系：图必须含全部选中标签）
 let multiMode=false;               // 素材库多选模式
 const selectedIds=new Set();       // 多选模式下被勾选的素材 id
+let copyMultiMode=false;           // 文案库多选模式
+const copySelectedIds=new Set();   // 多选模式下被勾选的文案 id
 let selFabrics=new Set();          // 上传弹层已选中的面料（保存时拼「账号-面料」）
 // v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
 // ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
@@ -114,6 +116,7 @@ $$('nav .n-item').forEach(b=>b.onclick=()=>{
   $('#searchWrap').style.display = (curView==='mine'||curView==='attend')?'none':'flex';
   $('#fab').style.display = (curView==='mine')?'none':'flex';
   if(curView!=='assets' && multiMode){ multiMode=false; selectedIds.clear(); }
+  if(curView!=='copy' && copyMultiMode){ copyMultiMode=false; copySelectedIds.clear(); }
   render();
 });
 $('#searchInput').oninput = e=>{ keyword=e.target.value.trim().toLowerCase(); render(); };
@@ -489,21 +492,75 @@ function renderCopies(){
   }).sort((a,b)=>b.updated-a.updated);
   const box=$('#copyList'); box.innerHTML='';
   $('#copyEmpty').classList.toggle('hidden',copies.length>0);
-  const cnt=$('#copyCnt'); if(cnt) cnt.textContent=list.length;
   list.forEach(c=>{
-    const d=document.createElement('div'); d.className='card';
-    d.innerHTML=`<div class="copy-title"><span>${esc(c.title)}</span></div>
+    const d=document.createElement('div');
+    d.className='card'+(copyMultiMode?' multi':'')+(copySelectedIds.has(c.id)?' sel':'');
+    d.innerHTML=`<div class="copy-title"><span>${esc(c.title||'未命名')}</span></div>
       <div class="copy-body">${esc(c.body)}</div>
       ${c.tags.length?`<div class="tags">${c.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
-      <div class="row-actions"><span data-act="copy">📋 复制内容</span><span data-act="edit">✏️ 编辑</span><span data-act="expand">展开</span><span class="del" data-act="del">删除</span></div>`;
-    d.querySelector('[data-act=copy]').onclick=async ()=>{ try{ await navigator.clipboard.writeText(c.body); toast('已复制，去粘贴吧'); }catch(e){ toast('复制失败，请长按文本手动复制'); } };
+      <div class="row-actions"><span data-act="edit">✏️ 编辑</span><span class="del" data-act="del">🗑 删除</span></div>`;
+    if(copyMultiMode) d.innerHTML += `<div class="copy-check ${copySelectedIds.has(c.id)?'on':''}">${copySelectedIds.has(c.id)?'✓':''}</div>`;
     d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); refreshFabricHint(); openSheet('#sheetCopy'); };
-    d.querySelector('[data-act=expand]').onclick=e=>{ const bd=d.querySelector('.copy-body'); bd.classList.toggle('open'); e.target.textContent=bd.classList.contains('open')?'收起':'展开'; };
     d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await dbDel('copies',c.id); await load(); render(); };
+    attachCopyEvents(d,c);
     box.appendChild(d);
   });
   if(copies.length&&!list.length) box.innerHTML='<div class="empty">没有匹配的文案</div>';
+  updateCopyBatchBar();
 }
+/* 文案卡片事件：长按 500ms 进多选 + 选中 + 震动；多选模式点卡片切换选中；按钮区不触发 */
+function attachCopyEvents(d,c){
+  let timer=null, triggered=false;
+  d.oncontextmenu=e=>e.preventDefault();
+  d.onpointerdown=e=>{
+    if(e.target.closest('.row-actions')) return;     // 编辑/删除按钮不触发长按
+    triggered=false;
+    timer=setTimeout(()=>{
+      triggered=true;
+      if(!copyMultiMode) toggleCopyMulti(true);
+      if(!copySelectedIds.has(c.id)) copySelectedIds.add(c.id);
+      renderCopies(); navigator.vibrate?.(15);
+    },500);
+  };
+  d.onpointerup=d.onpointerleave=d.onpointercancel=()=>{ clearTimeout(timer); };
+  d.onclick=e=>{
+    if(triggered){ triggered=false; return; }
+    if(copyMultiMode){
+      if(e.target.closest('.row-actions')) return;
+      if(copySelectedIds.has(c.id)) copySelectedIds.delete(c.id); else copySelectedIds.add(c.id);
+      renderCopies();
+    }
+  };
+}
+function updateCopyBatchBar(){
+  const bar=$('#copyBatchBar');
+  if(!bar) return;
+  if(!copyMultiMode){ bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  $('#copyBCnt').textContent=copySelectedIds.size;
+  const btn=$('#copyBDel');
+  btn.disabled=copySelectedIds.size===0;
+  btn.style.opacity=copySelectedIds.size===0?.4:1;
+}
+function toggleCopyMulti(on){
+  copyMultiMode=on;
+  $('#copyMultiBtn').classList.toggle('on',on);
+  $('#copyMultiBtn').textContent=on?'☑ 多选中':'☑ 多选';
+  if(!on) copySelectedIds.clear();
+  renderCopies();
+}
+async function batchDeleteCopies(){
+  if(!copySelectedIds.size) return;
+  const items=copies.filter(c=>copySelectedIds.has(c.id));
+  if(!confirm(`确定删除选中的 ${items.length} 条文案？`)) return;
+  await Promise.all(items.map(c=>dbDel('copies',c.id)));
+  toast(`已删除 ${items.length} 条文案`);
+  copySelectedIds.clear();
+  await load(); render();
+}
+$('#copyMultiBtn').onclick=()=>toggleCopyMulti(!copyMultiMode);
+$('#copyBCancel').onclick=()=>toggleCopyMulti(false);
+$('#copyBDel').onclick=batchDeleteCopies;
 
 /* ================= v15 文案面料：筛选条 / 批量复制 / 旧文案补全 ================= */
 function initFabricChips(){
@@ -548,31 +605,6 @@ function refreshFabricHint(){
 }
 $('#cTitle').oninput=refreshFabricHint;
 $('#cBody').oninput=refreshFabricHint;
-// 复制当前筛选（关键词 + 面料）下的全部文案正文，拼好一次性复制
-$('#copyAllBtn').onclick=async ()=>{
-  const list=copies.filter(c=>{
-    const okKw=!keyword||(c.title+' '+c.body+' '+(c.tags||[]).join(' ')).toLowerCase().includes(keyword);
-    const okFab=!copyFabric||(c.tags||[]).includes(copyFabric);
-    return okKw&&okFab;
-  }).sort((a,b)=>b.updated-a.updated);
-  if(!list.length) return toast('当前筛选没有可复制的文案');
-  const text=list.map(c=>'【'+(c.title||'未命名文案')+'】\n'+c.body).join('\n\n————————\n\n');
-  try{ await navigator.clipboard.writeText(text); toast('已复制 '+list.length+' 条文案到剪贴板'); }
-  catch(e){ toast('复制失败，请手动复制'); }
-};
-// 给历史旧文案补跑面料识别（只在确实新增了标签时才写库）
-$('#copyBackfill').onclick=async ()=>{
-  let n=0;
-  for(const c of copies){
-    const hit=detectFabrics((c.title||'')+' '+(c.body||''));
-    if(hit.length){
-      const tags=[...new Set([...(c.tags||[]), ...hit])];
-      if(tags.length!==(c.tags||[]).length){ c.tags=tags; await dbPut('copies',c); n++; }
-    }
-  }
-  if(n){ await load(); render(); toast('已为 '+n+' 条旧文案补上面料标签'); }
-  else toast('没有需要补全的旧文案');
-};
 initFabricChips();
 initAssetFabricChips();
 refreshFabricHint();
