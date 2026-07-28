@@ -909,17 +909,36 @@ function render(){
   else renderStats();
 }
 
+/* ================= 云存储 UI 绑定（提前执行，不依赖数据库加载） ================= */
+function bindCloudUI(){
+  const saveBtn=$('#ghSave'), testBtn=$('#ghTest');
+  if(!saveBtn||!testBtn) return;
+  saveBtn.addEventListener('click', async ()=>{
+    const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token');
+    await kvPut('gh_token',t); toast('Token 已保存 ✓');
+  });
+  testBtn.addEventListener('click', async ()=>{
+    const t=$('#ghToken').value.trim()||(await kvGet('gh_token')); if(!t)return toast('先填 Token');
+    $('#ghStatus').textContent='测试中…';
+    try{
+      const r=await fetch('https://api.github.com/user',{headers:{'Authorization':`Bearer ${t}`}});
+      const d=await r.json();
+      if(r.ok){ $('#ghStatus').textContent='✅ 已连接：'+d.login; }
+      else $('#ghStatus').textContent='❌ '+d.message;
+    }catch(e){ $('#ghStatus').textContent='❌ '+e.message; }
+  });
+}
+
 /* ================= 启动 ================= */
 (async function init(){
+  bindCloudUI();   // 提前绑定云存储按钮，确保即使后续 DB 加载异常按钮也能用
   const d=new Date();
   $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
   await openDB(); await load(); render(); scheduleCheck();
-  // 云存储：加载已存 token + 绑定按钮
+  // 云存储：加载已存 token（按钮已在 bindCloudUI 提前绑定）
   try{
     const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
   }catch(e){}
-  if($('#ghSave')) $('#ghSave').onclick=async()=>{ const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token'); await kvPut('gh_token',t); toast('Token 已保存 ✓'); };
-  if($('#ghTest')) $('#ghTest').onclick=async()=>{ const t=$('#ghToken').value.trim()||(await kvGet('gh_token')); if(!t)return toast('先填 Token'); $('#ghStatus').textContent='测试中…'; try{ const r=await fetch('https://api.github.com/user',{headers:{'Authorization':`Bearer ${t}`}}); const d=await r.json(); if(r.ok){ $('#ghStatus').textContent='✅ 已连接：'+d.login; } else $('#ghStatus').textContent='❌ '+d.message; }catch(e){ $('#ghStatus').textContent='❌ '+e.message; } };
   // 请求持久化存储，降低系统自动清理数据的概率
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
