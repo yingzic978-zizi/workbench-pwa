@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v14'; // v47.1: 紧急恢复——文案库被清时一键从云端 cloud-data/copies.json 拉回（管理分类弹层+启动红条双入口），启动时申请 navigator.storage.persist 防再被浏览器自动清
+const CACHE = 'mao-villain-v15'; // v47.2: 「我的」页按钮全卡急救——init 加 try/catch + 错误吐屏、autoSync 延后 3s（不抢 UI）、lostCopyBar 200ms 立即弹（不等 1.5s）+ 加🔄重载按钮、全局 unhandled error 兜底提示
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

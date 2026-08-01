@@ -1748,34 +1748,48 @@ function bindCatMgrUI(){
 
 /* ================= 启动 ================= */
 (async function init(){
-  bindCloudUI();   // 提前绑定云存储按钮，确保即使后续 DB 加载异常按钮也能用
-  bindCatMgrUI();  // v47: 分类管理弹层按钮
-  if($('#ghRepo')) $('#ghRepo').textContent='当前同步仓库：'+GH.owner+'/'+GH.repo;  // v39 模板化：显示各自命中的仓库
-  const d=new Date();
-  $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
-  await openDB(); await load(); render(); scheduleCheck();
-  // 云存储：加载已存 token（按钮已在 bindCloudUI 提前绑定）
+  // v47.2: 全局错误兜底——任何 unhandled error 立刻吐在屏幕上（不静默吞），方便定位"按钮点不动"
+  window.addEventListener('error', e=>{ try{ toast('⚠️ 脚本错误：'+(e.message||'未知')+'（建议 Ctrl+Shift+R 强制刷新）'); }catch(_){} });
+  window.addEventListener('unhandledrejection', e=>{ try{ toast('⚠️ 网络/异步失败：'+(e.reason&&e.reason.message||e.reason||'未知')); }catch(_){} });
   try{
-    const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
-    const pd=await kvGet('copy_del'); if(Array.isArray(pd)) pendingDel=new Set(pd);
-    const ad=await kvGet('att_del'); if(Array.isArray(ad)) attPendingDel=new Set(ad);
-  }catch(e){}
-  // 请求持久化存储，降低系统自动清理数据的概率
-  try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
-  if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
-  autoSync();   // 后台静默同步云端素材：任一端删/增，其他设备打开即自动对齐
-  // v47.1: 启动后自动检测文案库是否被清空 → 顶部红条提醒（不打扰，只在 0 条时出现）
-  if(copies.length===0){
-    setTimeout(()=>{
-      const bar=document.createElement('div');
-      bar.id='lostCopyBar';
-      bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#ff5252,#ff7b7b);color:#fff;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)';
-      bar.innerHTML=`<span>⚠️ 检测到本地文案库为空（0 条）。云端可能有备份，请点下方按钮拉回 →</span>
-        <button id="lostCopyRestore" style="background:#fff;color:#ff5252;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">☁ 一键拉回文案</button>
-        <button id="lostCopyDismiss" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.6);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px">× 忽略</button>`;
-      document.body.appendChild(bar);
-      $('#lostCopyRestore').onclick=async ()=>{ bar.remove(); await restoreCopiesFromCloud(); };
-      $('#lostCopyDismiss').onclick=()=>bar.remove();
-    }, 1500);  // 延迟 1.5s，让 UI 先渲染出来
+    bindCloudUI();   // 提前绑定云存储按钮，确保即使后续 DB 加载异常按钮也能用
+    bindCatMgrUI();  // v47: 分类管理弹层按钮
+    if($('#ghRepo')) $('#ghRepo').textContent='当前同步仓库：'+GH.owner+'/'+GH.repo;  // v39 模板化：显示各自命中的仓库
+    const d=new Date();
+    $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;
+    await openDB(); await load(); render(); scheduleCheck();
+    // 云存储：加载已存 token（按钮已在 bindCloudUI 提前绑定）
+    try{
+      const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
+      const pd=await kvGet('copy_del'); if(Array.isArray(pd)) pendingDel=new Set(pd);
+      const ad=await kvGet('att_del'); if(Array.isArray(ad)) attPendingDel=new Set(ad);
+    }catch(e){}
+    // 请求持久化存储，降低系统自动清理数据的概率
+    try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
+    if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+    // v47.2: autoSync 延后 3s 启动——之前 0s 启动会和 UI 渲染抢网络，导致按钮点不动（perceived 假死）
+    setTimeout(()=>{ autoSync(); }, 3000);
+    // v47.1: 启动后自动检测文案库是否被清空 → 顶部红条提醒（不打扰，只在 0 条时出现）
+    if(copies.length===0){
+      // v47.2: 从 1.5s 改为 200ms 立刻弹，让用户先看到提示，UI 跑顺了再点
+      setTimeout(()=>{
+        if($('#lostCopyBar')) return;   // 已有就别重复弹
+        const bar=document.createElement('div');
+        bar.id='lostCopyBar';
+        bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#ff5252,#ff7b7b);color:#fff;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);flex-wrap:wrap';
+        bar.innerHTML=`<span style="flex:1;min-width:200px">⚠️ 本地文案库为空（0 条）。云端 cloud-data/copies.json 可能有备份 →</span>
+          <button id="lostCopyRestore" style="background:#fff;color:#ff5252;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">☁ 一键拉回</button>
+          <button id="lostCopyReload" style="background:#fff;color:#333;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px" title="清缓存重载（按钮全卡时点这个）">🔄 重载</button>
+          <button id="lostCopyDismiss" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.6);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px">× 忽略</button>`;
+        document.body.appendChild(bar);
+        $('#lostCopyRestore').onclick=async ()=>{ bar.remove(); await restoreCopiesFromCloud(); };
+        $('#lostCopyReload').onclick=()=>{ try{ if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); } }catch(e){}; location.reload(true); };
+        $('#lostCopyDismiss').onclick=()=>bar.remove();
+      }, 200);
+    }
+  }catch(e){
+    // v47.2: init 自身崩了，强制显示错误（不再静默死）
+    console.error('[init failed]',e);
+    try{ toast('🚨 启动失败：'+e.message+'（请 Ctrl+Shift+R 强制刷新）'); }catch(_){}
   }
 })();
