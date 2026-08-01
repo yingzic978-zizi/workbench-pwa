@@ -780,9 +780,14 @@ const SPARKS=[
 ];
 let editIdeaId=null, sparkSeed=0;
 let sparkPlatform='all';
+const SPARK_PAGE_SIZE=10;       // 灵感每页条数（v40 新增分页）
+let sparkAllItems=[];           // 平台筛选后的全部灵感（分页源）
+let sparkPage=1;                // 当前页
+let sparkObserver=null;         // 触底 IntersectionObserver
 const PF_COLORS={'抖音':'#fe2c55','小红书':'#ff2442','淘宝':'#ff5000','微博':'#e6162d','快手':'#ff4906','综合':'#6c5ce7'};
 async function renderSparks(){
   const box=$('#sparkList'); box.innerHTML='<div class="spark-loading">正在拉取今日灵感…</div>';
+  if(sparkObserver){sparkObserver.disconnect();sparkObserver=null;}
   let items=null;
   try{
     const res=await fetch('inspirations.json?t='+Date.now());
@@ -806,21 +811,76 @@ async function renderSparks(){
     box.innerHTML='<div class="spark-err">该平台暂时没有灵感，点其他平台看看</div>';
     return;
   }
-  items.forEach(it=> addSparkItem(box, it.body||it.title, it));
+  sparkAllItems=items; sparkPage=1; renderSparkPage();
+}
+// 分页渲染：v40 新增，触底自动加载下一页
+function renderSparkPage(){
+  const box=$('#sparkList');
+  if(sparkObserver){sparkObserver.disconnect();sparkObserver=null;}
+  box.innerHTML='';
+  const slice=sparkAllItems.slice(0, sparkPage*SPARK_PAGE_SIZE);
+  slice.forEach(it=> addSparkItem(box, it.body||it.title, it));
+  // 触底加载
+  if(slice.length<sparkAllItems.length){
+    const more=document.createElement('div');
+    more.className='spark-loadmore';
+    more.id='sparkLoadMore';
+    more.textContent='— 上滑加载更多（还剩 '+(sparkAllItems.length-slice.length)+' 条）—';
+    box.appendChild(more);
+    sparkObserver=new IntersectionObserver(entries=>{
+      if(entries[0].isIntersecting){
+        sparkPage++;
+        renderSparkPage();
+      }
+    },{rootMargin:'120px'});
+    sparkObserver.observe(more);
+  }
 }
 function addSparkItem(box, text, it){
   const d=document.createElement('div'); d.className='spark-item';
+  // v40: ⭐ 收藏按钮（仅联网灵感才显示；离线降级没有 it.id，无法去重）
+  const starred = it ? ideas.some(i => i.sourceInspId===it.id) : false;
+  const starBtn = it ? `<span class="spark-star ${starred?'starred':''}" data-a="star" title="${starred?'取消收藏':'⭐ 收藏到选题库'}">${starred?'⭐':'☆'}</span>` : '';
   const pf = it&&it.platform ? `<span class="pf-badge" style="background:${PF_COLORS[it.platform]||'#999'}">${esc(it.platform)}</span>` : '';
-  const src = it&&it.source ? `<span class="spark-src">${esc(it.source)}</span>` : '';
+  const heat = it&&it.heat ? `<span class="spark-heat" title="平台热度">🔥 ${esc(it.heat)}</span>` : '';
   const date = it&&it.date ? `<span class="spark-date">${esc(it.date)}</span>` : '';
   const link = it&&it.url ? ` <a class="spark-src" href="${esc(it.url)}" target="_blank" rel="noopener">查看来源</a>` : '';
-  d.innerHTML=`<div class="spark-main"><span class="spark-text">${esc(text)}</span><div class="spark-meta">${pf}${src}${date}${link}</div></div><span class="add">＋ 存为选题</span>`;
-  d.querySelector('.add').onclick=async ()=>{
-    const tags=['灵感'];
-    if(it&&Array.isArray(it.tags)) it.tags.forEach(t=>{ if(!tags.includes(t)) tags.push(t); });
-    await dbPut('ideas',{id:uid(),body:text,tags,used:false,created:Date.now()});
-    await load(); render(); toast('已加入选题库');
-  };
+  d.innerHTML=`<div class="spark-main"><span class="spark-text">${esc(text)}</span><div class="spark-meta">${pf}${heat}${date}${link}</div></div>${starBtn}`;
+  if(it){
+    const star=d.querySelector('[data-a=star]');
+    star.onclick=async (e)=>{
+      e.stopPropagation();
+      // 找已存在的收藏（用 sourceInspId 去重）
+      const exist=ideas.find(i => i.sourceInspId===it.id);
+      if(exist){
+        if(!confirm('已在「选题库」里，取消收藏？'))return;
+        await dbDel('ideas', exist.id);
+        await load();
+        star.classList.remove('starred');
+        star.textContent='☆';
+        star.title='⭐ 收藏到选题库';
+        toast('已取消收藏');
+      }else{
+        const tags=['灵感', it.platform, ...(Array.isArray(it.tags)?it.tags.filter(t=>t!=='灵感'&&t!==it.platform):[])];
+        await dbPut('ideas',{
+          id:uid(),
+          body:it.body||it.title,
+          tags:[...new Set(tags)],
+          used:false,
+          created:Date.now(),
+          sourceInspId:it.id,
+          sourceInspPlatform:it.platform,
+          sourceInspHeat:it.heat||'',
+          sourceInspUrl:it.url||'',
+        });
+        await load();
+        star.classList.add('starred');
+        star.textContent='⭐';
+        star.title='取消收藏';
+        toast('⭐ 已加入选题库');
+      }
+    };
+  }
   box.appendChild(d);
 }
 $('#sparkRefresh').onclick=()=>{ renderSparks(); };
