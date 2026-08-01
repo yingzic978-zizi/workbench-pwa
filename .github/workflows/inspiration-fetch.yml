@@ -1,0 +1,49 @@
+name: 灵感同步（飞书多维表格）
+
+# 触发方式（二选一，不再每天定时跑）：
+#  1) repository_dispatch：飞书多维表格「自动化」在记录新增/改动时主动 POST 触发（推荐，事件驱动）
+#  2) workflow_dispatch：在 Actions 页面手动点 "Run workflow" 立即跑（兜底）
+on:
+  repository_dispatch:
+    types: [feishu-sync]
+  workflow_dispatch: {}
+
+# 允许 GITHUB_TOKEN 把生成的 JSON push 回仓库（触发 Pages 自动重部署）
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 运行飞书同步脚本
+        # FEISHU_APP_ID / FEISHU_APP_SECRET 在仓库 Settings → Secrets 里配置
+        # 需要先到飞书开放平台建自建 app、加 bitable:app:readonly 权限、把 app 安装到 base
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: node scripts/fetch-feishu-inspirations.js
+
+      - name: 提交并推送（仅当有变化）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain inspirations.json)" ]; then
+            git add inspirations.json
+            git commit -m "chore: 灵感同步自飞书多维表格 $(date +%Y-%m-%dT%H:%M:%S)"
+            git push
+            echo "✅ 已推送更新"
+          else
+            echo "ℹ️ 无变化，跳过提交"
+          fi
