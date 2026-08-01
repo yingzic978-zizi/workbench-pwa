@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v10';  // v46: 考勤模块新增跨设备云同步(attend store 双向合并)
+const CACHE = 'mao-villain-v11'; // v46.1: 修复考勤云同步 SHA 竞态(多设备写入时拉-合-PUT 循环最多 3 次)，silent 模式不再 toast
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

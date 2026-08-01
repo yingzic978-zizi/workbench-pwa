@@ -1520,40 +1520,52 @@ async function syncCopies(silent){
 
 // 考勤云端同步：云端存 cloud-data/attendance.json = {attend:[...], deleted:[id...]}
 // 双向合并：本机优先（同 id 取本机）；删除意图跨设备传播。复用文案云同步模式
+// v46.1: sha 冲突时不再简单换 sha 重试（会把云端新数据覆盖丢），改为重新拉云端→重新合并→重 PUT，最多重试 3 次；silent 模式不 toast
 async function syncAttendance(silent){
   const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
   if(!token){ if(!silent) toast('先去「我的」填 GitHub Token 才能同步考勤'); return; }
   const path='cloud-data/attendance.json';
   const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
   if(!silent) $('#ghStatus').textContent='考勤云同步中…';
+  let added=0, removed=0;
   try{
-    let cloudAtt=[], cloudDel=[], sha=null;
-    const r1=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
-    if(r1.ok){ const j=await r1.json(); sha=j.sha; const obj=JSON.parse(b64ToUtf8(j.content)); cloudAtt=Array.isArray(obj.attend)?obj.attend:[]; cloudDel=Array.isArray(obj.deleted)?obj.deleted:[]; }
-    else if(r1.status!==404){ const e=await r1.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r1.status)); }
-    // 合并 attend：本机优先（同 id 取本机）
-    const map=new Map();
-    for(const a of cloudAtt) map.set(a.id,a);
-    for(const a of attend) map.set(a.id,a);
-    // 合并 deleted（云端已有的 + 本机待删的）
-    const delSet=new Set([...cloudDel, ...attPendingDel]);
-    for(const id of delSet) map.delete(id);
-    const merged=[...map.values()];
-    const mergedDel=[...delSet];
-    // 写回本机：upsert 云端新增、清理本机被删的
-    const localIds=new Set(attend.map(a=>a.id));
-    let added=0, removed=0;
-    for(const a of merged){ if(!localIds.has(a.id)){ await dbPut('attend',a); added++; } }
-    for(const a of attend){ if(!map.has(a.id)){ await dbDel('attend',a.id); removed++; } }
-    // PUT 云端（sha 乐观锁；冲突重试一次）
-    const body={message:'sync attendance '+new Date().toISOString().slice(0,19),content:utf8ToB64(JSON.stringify({attend:merged,deleted:mergedDel},null,1)),branch:GH.branch};
-    if(sha) body.sha=sha;
-    let r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r2.status===409 && sha){
-      const r3=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}}); const j3=await r3.json();
-      body.sha=j3.sha; r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    // 重试上限：解决多设备同时写入的 SHA 竞态（最坏 3 次内必收敛）
+    for(let attempt=1; attempt<=3; attempt++){
+      let cloudAtt=[], cloudDel=[], sha=null;
+      const r1=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+      if(r1.ok){ const j=await r1.json(); sha=j.sha; const obj=JSON.parse(b64ToUtf8(j.content)); cloudAtt=Array.isArray(obj.attend)?obj.attend:[]; cloudDel=Array.isArray(obj.deleted)?obj.deleted:[]; }
+      else if(r1.status!==404){ const e=await r1.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r1.status)); }
+
+      // 合并 attend：本机优先（同 id 取本机）
+      const map=new Map();
+      for(const a of cloudAtt) map.set(a.id,a);
+      for(const a of attend) map.set(a.id,a);
+      // 合并 deleted（云端已有的 + 本机待删的）
+      const delSet=new Set([...cloudDel, ...attPendingDel]);
+      for(const id of delSet) map.delete(id);
+      const merged=[...map.values()];
+      const mergedDel=[...delSet];
+
+      // 首轮：本机新增/被删的 upsert/清理进本地
+      if(attempt===1){
+        const localIds=new Set(attend.map(a=>a.id));
+        for(const a of merged){ if(!localIds.has(a.id)){ await dbPut('attend',a); added++; } }
+        for(const a of attend){ if(!map.has(a.id)){ await dbDel('attend',a.id); removed++; } }
+      }
+
+      // PUT 云端（带最新 sha；竞态下其他设备可能又抢先一步）
+      const body={message:'sync attendance '+new Date().toISOString().slice(0,19),content:utf8ToB64(JSON.stringify({attend:merged,deleted:mergedDel},null,1)),branch:GH.branch};
+      if(sha) body.sha=sha;
+      const r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(r2.ok) break;                            // 成功
+      if(r2.status===409 || r2.status===422){      // SHA 不匹配 / 校验失败 → 重新拉再合
+        if(attempt<3) continue;
+        const e=await r2.json().catch(()=>({}));
+        throw new Error(e.message||('HTTP '+r2.status));
+      }
+      const e=await r2.json().catch(()=>({}));
+      throw new Error(e.message||('HTTP '+r2.status));
     }
-    if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r2.status)); }
     attPendingDel.clear(); try{ await kvPut('att_del',[]); }catch(e){}
     await load(); render();
     if(!silent) toast(`考勤同步完成：新增 ${added} 条、清理 ${removed} 条`);
