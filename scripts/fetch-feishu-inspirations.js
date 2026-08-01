@@ -144,7 +144,7 @@ function toInspiration(fields, index) {
     || `爆款记录 #${index + 1}`;
 
   let url = asText(fields['视频链接']);
-  const linkMatch = url.match(/\((https?:\/\/[^)]+)\)/);
+  const linkMatch = url.match(/$(https?:\/\/[^)]+)$/);
   if (linkMatch) url = linkMatch[1];
 
   // 结构化字段：只输出用户要的 10 个，过滤空值
