@@ -779,17 +779,26 @@ const SPARKS=[
  '过程满足向：打包/贴标/封箱解压视频','店铺日常vlog：早上开门到晚上打烊','蹭热点BGM：用当下最火的音乐拍产品'
 ];
 let editIdeaId=null, sparkSeed=0;
-let sparkCategory='all';           // v44: 按产品类别自动分类（替代 v40 的平台筛选）
+let sparkCategory='all';           // v45: 固定大类别筛选（睡衣家居服/美妆个护/内衣裤袜/小家电/零食）
 const SPARK_PAGE_SIZE=10;       // 灵感每页条数（v40 新增分页）
 let sparkAllItems=[];           // 分类筛选后的全部灵感（分页源）
 let sparkPage=1;                // 当前页
 let sparkObserver=null;         // 触底 IntersectionObserver
 const PF_COLORS={'抖音':'#fe2c55','小红书':'#ff2442','淘宝':'#ff5000','微博':'#e6162d','快手':'#ff4906','综合':'#6c5ce7'};
 
-// v44: 提取一条记录的所有产品类别（支持多选字段以「/」分隔）
+// v45: 固定大类别（睡衣家居服/美妆个护/内衣裤袜/小家电/零食），按关键词匹配归类
+const CATEGORIES=['睡衣家居服','美妆个护','内衣裤袜','小家电','零食'];
+const CATEGORY_KEYWORDS={
+  '睡衣家居服':['睡衣','家居服','居家服','睡裙','棉绸','冰丝','凉感','家居','可外穿','情侣','孕妈','孕妇','宿舍','银发','全棉','大码','小个子','儿童','穿搭','哺乳'],
+  '美妆个护':['美妆','护肤','彩妆','口红','面膜','个护','卸妆','洗发','沐浴','身体乳','香水','美甲','精华','防晒','洁面'],
+  '内衣裤袜':['内衣','内裤','袜子','丝袜','文胸','bra','打底裤','船袜','内衣裤'],
+  '小家电':['小家电','加湿器','电风扇','电扇','饮水机','料理机','破壁机','电饭煲','空气炸锅','炸锅','吹风机','吸尘器','扫地机器人','挂烫机','电热水壶','养生壶','卷发','直发','熨烫','除螨'],
+  '零食':['零食','坚果','辣条','饼干','薯片','糖果','巧克力','肉脯','果干','饮料','速食','膨化','蜜饯','糕点','冲饮']
+};
+// v45: 返回一条记录命中的大类别（关键词匹配 title+body+tags+platform）
 function getItemCats(it){
-  const v = (it && it.detail && it.detail['产品类别']) || '';
-  return v.split('/').map(s=>s.trim()).filter(Boolean);
+  const text=[it.title,it.body,(it.tags||[]).join(' '),it.platform].join(' ');
+  return CATEGORIES.filter(cat=>(CATEGORY_KEYWORDS[cat]||[]).some(k=>text.includes(k)));
 }
 async function renderSparks(){
   const box=$('#sparkList'); box.innerHTML='<div class="spark-loading">正在拉取今日灵感…</div>';
@@ -825,46 +834,34 @@ async function renderSparks(){
   sparkAllItems=items; sparkPage=1; renderSparkPage();
 }
 
-// v44: 按产品类别自动分类归纳，新分类自动出现在最上方
+// v45: 固定大类别分类条（全部 + 5 大类别），可左滑右滑
 function renderSparkChips(items){
-  // 收集所有出现过的分类（去重）→ 按「在数据中首次出现顺序」记录
-  // 反向展示 = 后出现的分类靠前（新分类自动加在上方）
-  const catSet = new Set();
-  const catFirstSeen = new Map(); // 分类 → 首次出现索引
-  items.forEach((it, idx)=>{
-    getItemCats(it).forEach(c=>{
-      if(!catFirstSeen.has(c)) catFirstSeen.set(c, idx);
-      catSet.add(c);
-    });
-  });
-  const catsInOrder = [...catSet]; // 按首次出现顺序
-  // v44 健壮性：当前选中分类若已不在数据里（如飞书同步后该类别消失），自动回退「全部」，避免卡在「该分类下还没有灵感」
-  if(sparkCategory!=='all' && !catSet.has(sparkCategory)) sparkCategory='all';
-  const catsReversed = [...catsInOrder].reverse(); // 反向 = 新分类靠前
-
+  if(sparkCategory!=='all' && !CATEGORIES.includes(sparkCategory)) sparkCategory='all';
   const chipBox = $('#pfChips');
   if(!chipBox) return;
   chipBox.innerHTML = '';
-  // 第一项：全部
-  const allChip = document.createElement('span');
-  allChip.className = 'pf-chip' + (sparkCategory==='all'?' on':'');
-  allChip.dataset.cat = 'all';
-  allChip.textContent = '全部 (' + items.length + ')';
-  chipBox.appendChild(allChip);
-  // 后续：各分类
-  catsReversed.forEach(cat=>{
+  chipBox.appendChild(makeChip('all', '全部 (' + items.length + ')'));
+  CATEGORIES.forEach(cat=>{
     const count = items.filter(it => getItemCats(it).includes(cat)).length;
-    const c = document.createElement('span');
-    c.className = 'pf-chip' + (sparkCategory===cat?' on':'');
-    c.dataset.cat = cat;
-    c.textContent = cat + ' (' + count + ')';
-    chipBox.appendChild(c);
+    chipBox.appendChild(makeChip(cat, cat + ' (' + count + ')'));
   });
-  // 绑定点击
-  chipBox.querySelectorAll('.pf-chip').forEach(ch=>ch.onclick=()=>{
-    sparkCategory=ch.dataset.cat;
-    renderSparks();
-  });
+  enableDragScroll(chipBox);
+}
+function makeChip(cat, label){
+  const c = document.createElement('span');
+  c.className = 'pf-chip' + (sparkCategory===cat?' on':'');
+  c.dataset.cat = cat;
+  c.textContent = label;
+  c.onclick = ()=>{ sparkCategory=cat; renderSparks(); };
+  return c;
+}
+// v45: 鼠标拖拽横滑（移动端原生 touch 已支持）
+function enableDragScroll(el){
+  let down=false, startX=0, sl=0;
+  el.addEventListener('mousedown', e=>{ down=true; startX=e.pageX; sl=el.scrollLeft; el.classList.add('drag'); });
+  el.addEventListener('mouseleave', ()=>{ down=false; el.classList.remove('drag'); });
+  el.addEventListener('mouseup', ()=>{ down=false; el.classList.remove('drag'); });
+  el.addEventListener('mousemove', e=>{ if(!down) return; e.preventDefault(); el.scrollLeft = sl - (e.pageX - startX); });
 }
 // 分页渲染：v40 新增，触底自动加载下一页
 function renderSparkPage(){
@@ -951,7 +948,7 @@ function addSparkItem(box, text, it){
   box.appendChild(d);
 }
 $('#sparkRefresh').onclick=()=>{ renderSparks(); };
-// v44: 平台 chips 已废弃，分类 chips 在 renderSparkChips 内动态绑定
+// v45: 分类 chips 在 renderSparkChips 内按固定大类别动态绑定
 $('#iSave').onclick=async ()=>{
   const body=$('#iBody').value.trim();
   if(!body) return toast('先写下选题内容');

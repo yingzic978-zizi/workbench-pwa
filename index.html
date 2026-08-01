@@ -215,8 +215,9 @@ progress{width:100%;height:6px}
 /* v40: 触底加载提示 */
 .spark-loadmore{text-align:center;padding:18px 0;font-size:12px;color:var(--sub);letter-spacing:.5px}
 .spark-loading,.spark-err{padding:12px 0;font-size:13px;color:var(--sub)}
-.pf-chips{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:10px;padding-bottom:2px}
-.pf-chips .pf-chip{flex:none;padding:5px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--txt);cursor:pointer;user-select:none;white-space:nowrap}
+.pf-chips{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;margin-bottom:10px;padding-bottom:2px;cursor:grab;scroll-behavior:smooth}
+.pf-chips.drag{cursor:grabbing;scroll-behavior:auto}
+.pf-chips .pf-chip{flex:none;scroll-snap-align:start;padding:5px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--txt);cursor:pointer;user-select:none;white-space:nowrap}
 .pf-chips .pf-chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
 .pf-badge{display:inline-block;font-size:10px;color:#fff;padding:1px 6px;border-radius:5px;margin-right:2px;vertical-align:middle;line-height:1.5}
 .idea-status{font-size:11px;padding:2px 8px;border-radius:6px;background:#fff3e0;color:#e8871e}
@@ -319,7 +320,7 @@ progress{width:100%;height:6px}
   <section class="view" id="view-ideas">
     <div class="card">
       <div class="spark-head">📡 每日灵感 <span id="sparkRefresh">🔄 刷新</span></div>
-      <div class="pf-chips" id="pfChips"></div><!-- v44: 静态平台 chips 已废弃，分类由 renderSparkChips 按产品类别动态生成 -->
+      <div class="pf-chips" id="pfChips"></div><!-- v45: 分类条按固定大类别渲染，可左滑右滑 -->
       <div id="sparkList"></div>
     </div>
     <div class="plan-group">📚 我的选题库</div>
@@ -577,6 +578,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=44"></script>
+<script src="app.js?v=45"></script>
 </body>
 </html>
