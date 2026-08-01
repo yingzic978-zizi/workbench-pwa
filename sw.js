@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v11'; // v46.1: 修复考勤云同步 SHA 竞态(多设备写入时拉-合-PUT 循环最多 3 次)，silent 模式不再 toast
+const CACHE = 'mao-villain-v12'; // v46.2: 考勤 silent 云同步后给轻量反馈（右下角 toastLite），不再无声
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

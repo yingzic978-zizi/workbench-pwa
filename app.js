@@ -124,6 +124,21 @@ function toast(msg,ms=2200){
   const t=$('#toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),ms);
 }
+// v46.2: 轻量反馈——右下角小气泡，不抢主视图，用于 silent 云同步后的状态播报
+function toastLite(msg,ok=true){
+  let el=$('#toastLite');
+  if(!el){
+    el=document.createElement('div'); el.id='toastLite';
+    el.style.cssText='position:fixed;right:14px;bottom:60px;padding:6px 12px;border-radius:18px;font-size:12px;line-height:1.2;z-index:9998;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;transform:translateY(6px);box-shadow:0 4px 14px rgba(0,0,0,.12)';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.background=ok?'rgba(40,160,80,.92)':'rgba(220,80,80,.92)';
+  el.style.color='#fff';
+  clearTimeout(el._h);
+  requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)';});
+  el._h=setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(6px)';},1500);
+}
 const fmtSize = n=>{ if(!n)return'0B'; const u=['B','KB','MB','GB']; let i=0; while(n>=1024&&i<3){n/=1024;i++} return n.toFixed(i?1:0)+u[i]; };
 const todayStr = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const esc = s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1569,8 +1584,10 @@ async function syncAttendance(silent){
     attPendingDel.clear(); try{ await kvPut('att_del',[]); }catch(e){}
     await load(); render();
     if(!silent) toast(`考勤同步完成：新增 ${added} 条、清理 ${removed} 条`);
+    else toastLite(`☁ 考勤已同步（+${added}）`);  // v46.2: silent 模式轻量反馈
   }catch(e){
     if(!silent) toast('考勤同步失败：'+e.message);
+    else toastLite('☁ 考勤同步失败', false);     // v46.2: silent 失败也提示（红色）
     console.error('[syncAttendance failed]',e);
   }finally{
     const b=$('#ghSyncAtt');
