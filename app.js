@@ -678,8 +678,21 @@ function renderCopyCatChips(){
 async function openCatManager(){
   const box=$('#catMgrList'); if(!box) return;
   box.innerHTML='';
+  // v47.1: 自动检测——本地无文案但云端可能有时，在弹层顶部显示"一键拉回"按钮
+  const restoreBar=document.createElement('div');
+  restoreBar.id='catMgrRestoreBar';
+  restoreBar.style.cssText='background:linear-gradient(135deg,#fff5e6,#ffeed9);border:1px solid #f5b66c;border-radius:10px;padding:12px;margin-bottom:12px';
+  if(copies.length===0){
+    restoreBar.innerHTML=`<div style="font-size:13px;color:#8a4500;margin-bottom:8px"><b>⚠️ 本地文案库为空（0 条）</b><br>可能云端 cloud-data/copies.json 里有备份，点下方按钮一键拉回。</div>
+      <button class="btn" id="catMgrRestore" style="background:linear-gradient(135deg,#f5804e,#f0a24f);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px">☁ 从云端拉回文案</button>`;
+    box.appendChild(restoreBar);
+  }else if(copies.length>0){
+    restoreBar.innerHTML=`<div style="font-size:12px;color:#8a4500;margin-bottom:6px">本地有 ${copies.length} 条。如确认云端有更新，可一键覆盖拉回：</div>
+      <button class="btn" id="catMgrRestore" style="background:#fff;color:#8a4500;border:1px solid #f5b66c;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px">☁ 从云端拉回（覆盖本机）</button>`;
+    box.appendChild(restoreBar);
+  }
   if(!copyCats.length){
-    box.innerHTML='<div style="color:var(--muted);padding:12px 0">暂无分类，先在上面输入框新增</div>';
+    box.innerHTML+='<div style="color:var(--muted);padding:12px 0">暂无分类，先在上面输入框新增</div>';
   }else{
     copyCats.forEach((cat,idx)=>{
       const row=document.createElement('div');
@@ -693,6 +706,9 @@ async function openCatManager(){
     box.querySelectorAll('.btn-rename').forEach(b=>b.onclick=()=>renameCatAt(+b.dataset.i));
     box.querySelectorAll('.btn-del').forEach(b=>b.onclick=()=>delCatAt(+b.dataset.i));
   }
+  // v47.1: 绑定拉回按钮
+  const restoreBtn=$('#catMgrRestore');
+  if(restoreBtn) restoreBtn.onclick=restoreCopiesFromCloud;
   openSheet('#sheetCatMgr');
 }
 async function renameCatAt(i){
@@ -748,6 +764,48 @@ async function addCatFromInput(){
   await openCatManager();
   renderCopies();
   toast('已新增');
+}
+// v47.1: 从云端 cloud-data/copies.json 单向拉回文案（不 PUT 回云端，避免覆盖）
+// 用法：本地 IndexedDB 里的 copies 库被清/丢失时（浏览器自动清、换设备、清站点数据等）一键恢复
+async function restoreCopiesFromCloud(){
+  const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
+  if(!token){ toast('先去「我的」填 GitHub Token 才能从云端拉回'); return; }
+  if(!confirm('从云端 cloud-data/copies.json 拉回文案？\n\n会把云端所有文案覆盖到本地（云端未删的 + 云端 deleted 列表里的会被跳过）。'+(copies.length?`\n\n⚠️ 本地当前还有 ${copies.length} 条，会被云端覆盖。`:'\n\n（本地当前 0 条，安全拉回）'))) return;
+  const path='cloud-data/copies.json';
+  const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  const btn=$('#catMgrRestore');
+  const old=btn?btn.textContent:null;
+  if(btn){ btn.disabled=true; btn.textContent='拉取中…'; }
+  try{
+    const r=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+    if(r.status===404){ toast('云端 cloud-data/copies.json 还没建过（没开过云同步）'); return; }
+    if(!r.ok){ const e=await r.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r.status)); }
+    const j=await r.json();
+    const obj=JSON.parse(b64ToUtf8(j.content));
+    const cloudCopies=Array.isArray(obj.copies)?obj.copies:[];
+    const cloudDel=new Set(Array.isArray(obj.deleted)?obj.deleted:[]);
+    // 跳过云端 deleted 列表里的
+    const toPut=cloudCopies.filter(c=>!cloudDel.has(c.id));
+    let ok=0, skip=0;
+    for(const c of toPut){ try{ await dbPut('copies',c); ok++; }catch(e){ skip++; } }
+    // 同步刷新分类列表（用恢复出来的文案里出现过的分类名）
+    for(const c of toPut){
+      if(c.title && !copyCats.includes(c.title)){
+        copyCats.push(c.title);
+      }
+    }
+    await saveCopyCats();
+    await load();
+    renderCopyCatChips();
+    renderCopies();
+    await openCatManager();   // 刷新弹层
+    toast(`拉回完成：恢复 ${ok} 条${skip?`、跳过 ${skip} 条`:''}`);
+  }catch(e){
+    toast('拉回失败：'+e.message);
+    console.error('[restoreCopiesFromCloud failed]',e);
+  }finally{
+    if(btn){ btn.disabled=false; if(old!==null) btn.textContent=old; }
+  }
 }
 initAssetFabricChips();
 
@@ -1706,4 +1764,18 @@ function bindCatMgrUI(){
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
   autoSync();   // 后台静默同步云端素材：任一端删/增，其他设备打开即自动对齐
+  // v47.1: 启动后自动检测文案库是否被清空 → 顶部红条提醒（不打扰，只在 0 条时出现）
+  if(copies.length===0){
+    setTimeout(()=>{
+      const bar=document.createElement('div');
+      bar.id='lostCopyBar';
+      bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#ff5252,#ff7b7b);color:#fff;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)';
+      bar.innerHTML=`<span>⚠️ 检测到本地文案库为空（0 条）。云端可能有备份，请点下方按钮拉回 →</span>
+        <button id="lostCopyRestore" style="background:#fff;color:#ff5252;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">☁ 一键拉回文案</button>
+        <button id="lostCopyDismiss" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.6);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px">× 忽略</button>`;
+      document.body.appendChild(bar);
+      $('#lostCopyRestore').onclick=async ()=>{ bar.remove(); await restoreCopiesFromCloud(); };
+      $('#lostCopyDismiss').onclick=()=>bar.remove();
+    }, 1500);  // 延迟 1.5s，让 UI 先渲染出来
+  }
 })();
