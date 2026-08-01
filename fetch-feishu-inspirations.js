@@ -75,15 +75,16 @@ async function listStrongReuseRecords(token) {
     url.searchParams.set('page_size', '100');
     url.searchParams.set('automatic_fields', 'false');
     if (pageToken) url.searchParams.set('page_token', pageToken);
-    // 过滤：「是否值得复用」=「强复用」（单选字段 → operator 必须是 'is'，不能用 'contains'）
-    url.searchParams.set('filter', JSON.stringify({
-      conjunction: 'and',
-      conditions: [{
-        field_name: '是否值得复用',
-        operator: 'is',
-        value: ['强复用'],
-      }],
-    }));
+    // 不在 URL 端做 filter（避免中文单选字段名 + 空格选项导致 InvalidFilter），改为本地筛选
+    // const filterStr = JSON.stringify({
+    //   conjunction: 'and',
+    //   conditions: [{
+    //     field_name: '是否值得复用',
+    //     operator: 'is',
+    //     value: ['强复用'],
+    //   }],
+    // });
+    // url.searchParams.set('filter', filterStr);
 
     const r = await http('GET', url.toString(), null, { 'Authorization': `Bearer ${token}` });
     const items = (r.data && r.data.items) || [];
@@ -92,7 +93,22 @@ async function listStrongReuseRecords(token) {
     pageToken = r.data && r.data.page_token;
     if (!r.data || !r.data.has_more) break;
   } while (pageToken);
-  return allItems;
+
+  // 本地筛选：「是否值得复用」=「强复用」（宽松匹配：去空格 / 去全角半角差）
+  const norm = s => String(s || '').replace(/\s+/g, '').trim();
+  const strongItems = allItems.filter(item => {
+    const f = item.fields || {};
+    const fieldVal = f['是否值得复用'] && f['是否值得复用'].value;
+    if (!fieldVal) return false;
+    // 单选字段 value 是字符串（不是数组），但兼容数组情况
+    const v = Array.isArray(fieldVal) ? fieldVal[0] : fieldVal;
+    return norm(v) === norm('强复用');
+  });
+  console.log(`[飞书] 共拉 ${allItems.length} 条，其中「强复用」${strongItems.length} 条`);
+  if (strongItems.length === 0 && allItems.length > 0) {
+    console.log('[飞书] ⚠️ 没有任何「强复用」记录，请到飞书表给某些记录把「是否值得复用」选为「强复用」');
+  }
+  return strongItems;
 }
 
 // ===== 字段映射 =====
