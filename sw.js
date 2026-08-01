@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v9';  // v45: 灵感分类改为固定大类别(睡衣家居服/美妆个护/内衣裤袜/小家电/零食)，支持横滑
+const CACHE = 'mao-villain-v10';  // v46: 考勤模块新增跨设备云同步(attend store 双向合并)
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

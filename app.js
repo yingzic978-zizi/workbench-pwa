@@ -1017,6 +1017,7 @@ function renderHot(){
 
 /* ================= 考勤统计（多主播工时表） ================= */
 let attMonth=todayStr().slice(0,7); // YYYY-MM
+const attPendingDel=new Set();   // v46: 本机删过的考勤 id，待云同步时传播删除意图
 
 /* ================= 考勤模块 v6（极简录入 + 智能解析 + 看板汇总） =================
 - 录入只剩「日期 + 备注」两字段；备注里手写「主播 类型 数字」，自动识别成多条结构化记录。
@@ -1106,6 +1107,7 @@ $('#attSave').onclick=async ()=>{
   }
   closeSheets(); await load(); render();
   toast('已保存 '+saved+' 条');
+  if(await kvGet('gh_token')) syncAttendance(true);  // v46: 后台静默同步到云端
 };
 $('#monPrev').onclick=()=>{ const [y,m]=attMonth.split('-').map(Number); attMonth=m===1?(y-1)+'-12':y+'-'+String(m-1).padStart(2,'0'); render(); };
 $('#monNext').onclick=()=>{ const [y,m]=attMonth.split('-').map(Number); attMonth=m===12?(y+1)+'-01':y+'-'+String(m+1).padStart(2,'0'); render(); };
@@ -1237,6 +1239,12 @@ function renderBoard(){
     td.onclick=e=>{ e.stopPropagation(); toggleHostCard(td.dataset.host); };
   });
 }
+// v46: 本地删除考勤 + 记录删除意图（跨设备传播）
+async function delAtt(id){
+  await dbDel('attend',id);
+  attPendingDel.add(id);
+  try{ await kvPut('att_del',[...attPendingDel]); }catch(e){}
+}
 function renderAttendLog(){
   const box=$('#attendLog');
   if(!box) return;
@@ -1281,8 +1289,9 @@ function renderAttendLog(){
     const r=attend.find(x=>x.id===id);
     if(!r) return;
     const u= r.type==='加班'?'h' : (r.type==='请假'?((r.unit||'天')==='h'?'h':'天') : '');
-    if(!confirm('删除「'+cleanHostName(r.hostName)+' '+r.type+' '+r.hours+u+'」这条记录？'))return;
-    await dbDel('attend',id); await load(); render(); toast('已删除');
+      if(!confirm('删除「'+cleanHostName(r.hostName)+' '+r.type+' '+r.hours+u+'」这条记录？'))return;
+      await delAtt(id); await load(); render(); toast('已删除');
+      if(await kvGet('gh_token')) syncAttendance(true);  // v46: 删除后同步
   });
   box.querySelectorAll('[data-del-day]').forEach(el=>el.onclick=async e=>{
     e.stopPropagation();
@@ -1290,8 +1299,9 @@ function renderAttendLog(){
     const n=(groups[d]||[]).length;
     if(!n) return;
     if(!confirm('删除「'+d+'」这一天的全部 '+n+' 条记录？\\n（删除后看板统计会同步刷新）'))return;
-    for(const r of groups[d]) await dbDel('attend',r.id);
-    await load(); render(); toast('已清空 '+d+' 的记录');
+      for(const r of groups[d]) await delAtt(r.id);
+      await load(); render(); toast('已清空 '+d+' 的记录');
+      if(await kvGet('gh_token')) syncAttendance(true);  // v46: 删除后同步
   });
 }
 
@@ -1508,6 +1518,54 @@ async function syncCopies(silent){
   }
 }
 
+// 考勤云端同步：云端存 cloud-data/attendance.json = {attend:[...], deleted:[id...]}
+// 双向合并：本机优先（同 id 取本机）；删除意图跨设备传播。复用文案云同步模式
+async function syncAttendance(silent){
+  const token=$('#ghToken').value.trim()||(await kvGet('gh_token'));
+  if(!token){ if(!silent) toast('先去「我的」填 GitHub Token 才能同步考勤'); return; }
+  const path='cloud-data/attendance.json';
+  const api=`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  if(!silent) $('#ghStatus').textContent='考勤云同步中…';
+  try{
+    let cloudAtt=[], cloudDel=[], sha=null;
+    const r1=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}});
+    if(r1.ok){ const j=await r1.json(); sha=j.sha; const obj=JSON.parse(b64ToUtf8(j.content)); cloudAtt=Array.isArray(obj.attend)?obj.attend:[]; cloudDel=Array.isArray(obj.deleted)?obj.deleted:[]; }
+    else if(r1.status!==404){ const e=await r1.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r1.status)); }
+    // 合并 attend：本机优先（同 id 取本机）
+    const map=new Map();
+    for(const a of cloudAtt) map.set(a.id,a);
+    for(const a of attend) map.set(a.id,a);
+    // 合并 deleted（云端已有的 + 本机待删的）
+    const delSet=new Set([...cloudDel, ...attPendingDel]);
+    for(const id of delSet) map.delete(id);
+    const merged=[...map.values()];
+    const mergedDel=[...delSet];
+    // 写回本机：upsert 云端新增、清理本机被删的
+    const localIds=new Set(attend.map(a=>a.id));
+    let added=0, removed=0;
+    for(const a of merged){ if(!localIds.has(a.id)){ await dbPut('attend',a); added++; } }
+    for(const a of attend){ if(!map.has(a.id)){ await dbDel('attend',a.id); removed++; } }
+    // PUT 云端（sha 乐观锁；冲突重试一次）
+    const body={message:'sync attendance '+new Date().toISOString().slice(0,19),content:utf8ToB64(JSON.stringify({attend:merged,deleted:mergedDel},null,1)),branch:GH.branch};
+    if(sha) body.sha=sha;
+    let r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r2.status===409 && sha){
+      const r3=await fetch(api,{headers:{'Authorization':`Bearer ${token}`}}); const j3=await r3.json();
+      body.sha=j3.sha; r2=await fetch(api,{method:'PUT',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    }
+    if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.message||('HTTP '+r2.status)); }
+    attPendingDel.clear(); try{ await kvPut('att_del',[]); }catch(e){}
+    await load(); render();
+    if(!silent) toast(`考勤同步完成：新增 ${added} 条、清理 ${removed} 条`);
+  }catch(e){
+    if(!silent) toast('考勤同步失败：'+e.message);
+    console.error('[syncAttendance failed]',e);
+  }finally{
+    const b=$('#ghSyncAtt');
+    if(b){ b.disabled=false; b.textContent='☁ 考勤云同步'; }
+  }
+}
+
 // 启动后静默自动同步云端素材（仅当已配置 token，不弹 toast、不碰按钮）
 async function autoSync(){
   try{
@@ -1515,6 +1573,7 @@ async function autoSync(){
     if(!t) return;                  // 没配云存储就不自动拉
     await syncFromCloud(true);      // silent 模式（图片）
     await syncCopies(true);         // silent 模式（文案）
+    await syncAttendance(true);     // silent 模式（考勤）v46
   }catch(e){ console.warn('[autoSync]',e); }
 }
 
@@ -1523,6 +1582,7 @@ function bindCloudUI(){
   if(!saveBtn||!testBtn) return;
   if(syncBtn) syncBtn.addEventListener('click', syncFromCloud);
   const copySyncBtn=$('#ghSyncCopy'); if(copySyncBtn) copySyncBtn.addEventListener('click', ()=>syncCopies(false));
+  const attSyncBtn=$('#ghSyncAtt'); if(attSyncBtn) attSyncBtn.addEventListener('click', ()=>syncAttendance(false));
   saveBtn.addEventListener('click', async ()=>{
     const t=$('#ghToken').value.trim(); if(!t)return toast('先粘贴 Token');
     await kvPut('gh_token',t); toast('Token 已保存 ✓');
@@ -1550,6 +1610,7 @@ function bindCloudUI(){
   try{
     const t=await kvGet('gh_token'); if(t && $('#ghToken')) $('#ghToken').value=t;
     const pd=await kvGet('copy_del'); if(Array.isArray(pd)) pendingDel=new Set(pd);
+    const ad=await kvGet('att_del'); if(Array.isArray(ad)) attPendingDel=new Set(ad);
   }catch(e){}
   // 请求持久化存储，降低系统自动清理数据的概率
   try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist(); }catch(e){}
