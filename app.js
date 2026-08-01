@@ -779,12 +779,18 @@ const SPARKS=[
  '过程满足向：打包/贴标/封箱解压视频','店铺日常vlog：早上开门到晚上打烊','蹭热点BGM：用当下最火的音乐拍产品'
 ];
 let editIdeaId=null, sparkSeed=0;
-let sparkPlatform='all';
+let sparkCategory='all';           // v44: 按产品类别自动分类（替代 v40 的平台筛选）
 const SPARK_PAGE_SIZE=10;       // 灵感每页条数（v40 新增分页）
-let sparkAllItems=[];           // 平台筛选后的全部灵感（分页源）
+let sparkAllItems=[];           // 分类筛选后的全部灵感（分页源）
 let sparkPage=1;                // 当前页
 let sparkObserver=null;         // 触底 IntersectionObserver
 const PF_COLORS={'抖音':'#fe2c55','小红书':'#ff2442','淘宝':'#ff5000','微博':'#e6162d','快手':'#ff4906','综合':'#6c5ce7'};
+
+// v44: 提取一条记录的所有产品类别（支持多选字段以「/」分隔）
+function getItemCats(it){
+  const v = (it && it.detail && it.detail['产品类别']) || '';
+  return v.split('/').map(s=>s.trim()).filter(Boolean);
+}
 async function renderSparks(){
   const box=$('#sparkList'); box.innerHTML='<div class="spark-loading">正在拉取今日灵感…</div>';
   if(sparkObserver){sparkObserver.disconnect();sparkObserver=null;}
@@ -806,12 +812,59 @@ async function renderSparks(){
     box.appendChild(tip);
     return;
   }
-  if(sparkPlatform!=='all') items=items.filter(x=>x.platform===sparkPlatform);
+  // v44: 按产品类别分组 → 生成动态 chips
+  renderSparkChips(items);
+  // 按当前分类筛
+  if(sparkCategory!=='all'){
+    items = items.filter(it => getItemCats(it).includes(sparkCategory));
+  }
   if(!items.length){
-    box.innerHTML='<div class="spark-err">该平台暂时没有灵感，点其他平台看看</div>';
+    box.innerHTML='<div class="spark-err">该分类下还没有灵感，点其他分类看看</div>';
     return;
   }
   sparkAllItems=items; sparkPage=1; renderSparkPage();
+}
+
+// v44: 按产品类别自动分类归纳，新分类自动出现在最上方
+function renderSparkChips(items){
+  // 收集所有出现过的分类（去重）→ 按「在数据中首次出现顺序」记录
+  // 反向展示 = 后出现的分类靠前（新分类自动加在上方）
+  const catSet = new Set();
+  const catFirstSeen = new Map(); // 分类 → 首次出现索引
+  items.forEach((it, idx)=>{
+    getItemCats(it).forEach(c=>{
+      if(!catFirstSeen.has(c)) catFirstSeen.set(c, idx);
+      catSet.add(c);
+    });
+  });
+  const catsInOrder = [...catSet]; // 按首次出现顺序
+  // v44 健壮性：当前选中分类若已不在数据里（如飞书同步后该类别消失），自动回退「全部」，避免卡在「该分类下还没有灵感」
+  if(sparkCategory!=='all' && !catSet.has(sparkCategory)) sparkCategory='all';
+  const catsReversed = [...catsInOrder].reverse(); // 反向 = 新分类靠前
+
+  const chipBox = $('#pfChips');
+  if(!chipBox) return;
+  chipBox.innerHTML = '';
+  // 第一项：全部
+  const allChip = document.createElement('span');
+  allChip.className = 'pf-chip' + (sparkCategory==='all'?' on':'');
+  allChip.dataset.cat = 'all';
+  allChip.textContent = '全部 (' + items.length + ')';
+  chipBox.appendChild(allChip);
+  // 后续：各分类
+  catsReversed.forEach(cat=>{
+    const count = items.filter(it => getItemCats(it).includes(cat)).length;
+    const c = document.createElement('span');
+    c.className = 'pf-chip' + (sparkCategory===cat?' on':'');
+    c.dataset.cat = cat;
+    c.textContent = cat + ' (' + count + ')';
+    chipBox.appendChild(c);
+  });
+  // 绑定点击
+  chipBox.querySelectorAll('.pf-chip').forEach(ch=>ch.onclick=()=>{
+    sparkCategory=ch.dataset.cat;
+    renderSparks();
+  });
 }
 // 分页渲染：v40 新增，触底自动加载下一页
 function renderSparkPage(){
@@ -841,13 +894,13 @@ function addSparkItem(box, text, it){
   // v40: ⭐ 收藏按钮（仅联网灵感才显示；离线降级没有 it.id，无法去重）
   const starred = it ? ideas.some(i => i.sourceInspId===it.id) : false;
   const starBtn = it ? `<span class="spark-star ${starred?'starred':''}" data-a="star" title="${starred?'取消收藏':'⭐ 收藏到选题库'}">${starred?'⭐':'☆'}</span>` : '';
-  const pf = it&&it.platform ? `<span class="pf-badge" style="background:${PF_COLORS[it.platform]||'#999'}">${esc(it.platform)}</span>` : '';
   const date = it&&it.date ? `<span class="spark-date">${esc(it.date)}</span>` : '';
   const link = it&&it.url ? ` <a class="spark-src" href="${esc(it.url)}" target="_blank" rel="noopener">查看来源</a>` : '';
+  // v44: 去掉大字标题 + 平台徽标（按用户要求，标题已不再渲染，只留结构化字段列表）
   // 结构化字段区（飞书同步来的 detail，按用户指定字段展示）
   let detailHtml='';
   if(it && it.detail && Object.keys(it.detail).length){
-    detailHtml='<div style="margin:8px 0 2px;border-top:1px dashed #e6e6ec;padding-top:8px">'+Object.entries(it.detail).map(([k,v])=>{
+    detailHtml='<div style="margin:0;border-top:1px dashed #e6e6ec;padding-top:8px">'+Object.entries(it.detail).map(([k,v])=>{
       const long=(v&&v.length>50);
       return `<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.55;margin:4px 0;${long?'align-items:flex-start':'align-items:baseline'}">`+
         `<span style="flex:0 0 80px;color:#9aa0ab;font-weight:600;text-align:right;padding-right:2px">${esc(k)}</span>`+
@@ -855,11 +908,10 @@ function addSparkItem(box, text, it){
       `</div>`;
     }).join('')+'</div>';
   }
-  const title = it ? (it.title||text) : text;
+  // v44: 不再渲染大字标题；离线降级时 text 仍是题库句子，原样显示
   d.innerHTML=`<div class="spark-main">`+
-    `<div style="font-weight:600;font-size:15px;line-height:1.45;color:#1a1d23;margin-bottom:4px">${esc(title)}</div>`+
     (detailHtml || `<div class="spark-text">${esc(text)}</div>`)+
-    `<div class="spark-meta">${pf}${date}${link}</div>`+
+    `<div class="spark-meta">${date}${link}</div>`+
   `</div>${starBtn}`;
   if(it){
     const star=d.querySelector('[data-a=star]');
@@ -899,11 +951,7 @@ function addSparkItem(box, text, it){
   box.appendChild(d);
 }
 $('#sparkRefresh').onclick=()=>{ renderSparks(); };
-$('#pfChips').querySelectorAll('.pf-chip').forEach(c=>c.onclick=()=>{
-  sparkPlatform=c.dataset.pf;
-  $('#pfChips').querySelectorAll('.pf-chip').forEach(x=>x.classList.toggle('on',x===c));
-  renderSparks();
-});
+// v44: 平台 chips 已废弃，分类 chips 在 renderSparkChips 内动态绑定
 $('#iSave').onclick=async ()=>{
   const body=$('#iBody').value.trim();
   if(!body) return toast('先写下选题内容');

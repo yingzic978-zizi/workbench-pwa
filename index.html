@@ -319,14 +319,7 @@ progress{width:100%;height:6px}
   <section class="view" id="view-ideas">
     <div class="card">
       <div class="spark-head">📡 每日灵感 <span id="sparkRefresh">🔄 刷新</span></div>
-      <div class="pf-chips" id="pfChips">
-        <span class="pf-chip on" data-pf="all">全部</span>
-        <span class="pf-chip" data-pf="抖音">抖音</span>
-        <span class="pf-chip" data-pf="小红书">小红书</span>
-        <span class="pf-chip" data-pf="淘宝">淘宝</span>
-        <span class="pf-chip" data-pf="微博">微博</span>
-        <span class="pf-chip" data-pf="快手">快手</span>
-      </div>
+      <div class="pf-chips" id="pfChips"></div><!-- v44: 静态平台 chips 已废弃，分类由 renderSparkChips 按产品类别动态生成 -->
       <div id="sparkList"></div>
     </div>
     <div class="plan-group">📚 我的选题库</div>
@@ -584,6 +577,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=40"></script>
+<script src="app.js?v=44"></script>
 </body>
 </html>
