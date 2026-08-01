@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v6';  // v40: 灵感改造（⭐收藏+分页加载+真抓5平台脚本）
+const CACHE = 'mao-villain-v7';  // v41: 灵感卡片改为结构化字段展示（飞书 10 字段列表）
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

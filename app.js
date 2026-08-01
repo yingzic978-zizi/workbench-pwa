@@ -819,7 +819,7 @@ function renderSparkPage(){
   if(sparkObserver){sparkObserver.disconnect();sparkObserver=null;}
   box.innerHTML='';
   const slice=sparkAllItems.slice(0, sparkPage*SPARK_PAGE_SIZE);
-  slice.forEach(it=> addSparkItem(box, it.body||it.title, it));
+  slice.forEach(it=> addSparkItem(box, it.title||'', it));
   // 触底加载
   if(slice.length<sparkAllItems.length){
     const more=document.createElement('div');
@@ -842,10 +842,25 @@ function addSparkItem(box, text, it){
   const starred = it ? ideas.some(i => i.sourceInspId===it.id) : false;
   const starBtn = it ? `<span class="spark-star ${starred?'starred':''}" data-a="star" title="${starred?'取消收藏':'⭐ 收藏到选题库'}">${starred?'⭐':'☆'}</span>` : '';
   const pf = it&&it.platform ? `<span class="pf-badge" style="background:${PF_COLORS[it.platform]||'#999'}">${esc(it.platform)}</span>` : '';
-  const heat = it&&it.heat ? `<span class="spark-heat" title="平台热度">🔥 ${esc(it.heat)}</span>` : '';
   const date = it&&it.date ? `<span class="spark-date">${esc(it.date)}</span>` : '';
   const link = it&&it.url ? ` <a class="spark-src" href="${esc(it.url)}" target="_blank" rel="noopener">查看来源</a>` : '';
-  d.innerHTML=`<div class="spark-main"><span class="spark-text">${esc(text)}</span><div class="spark-meta">${pf}${heat}${date}${link}</div></div>${starBtn}`;
+  // 结构化字段区（飞书同步来的 detail，按用户指定字段展示）
+  let detailHtml='';
+  if(it && it.detail && Object.keys(it.detail).length){
+    detailHtml='<div style="margin:8px 0 2px;border-top:1px dashed #e6e6ec;padding-top:8px">'+Object.entries(it.detail).map(([k,v])=>{
+      const long=(v&&v.length>50);
+      return `<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.55;margin:4px 0;${long?'align-items:flex-start':'align-items:baseline'}">`+
+        `<span style="flex:0 0 80px;color:#9aa0ab;font-weight:600;text-align:right;padding-right:2px">${esc(k)}</span>`+
+        `<span style="flex:1;color:#2b2f36;word-break:break-word;${long?'max-height:96px;overflow:auto':''}">${esc(v)}</span>`+
+      `</div>`;
+    }).join('')+'</div>';
+  }
+  const title = it ? (it.title||text) : text;
+  d.innerHTML=`<div class="spark-main">`+
+    `<div style="font-weight:600;font-size:15px;line-height:1.45;color:#1a1d23;margin-bottom:4px">${esc(title)}</div>`+
+    (detailHtml || `<div class="spark-text">${esc(text)}</div>`)+
+    `<div class="spark-meta">${pf}${date}${link}</div>`+
+  `</div>${starBtn}`;
   if(it){
     const star=d.querySelector('[data-a=star]');
     star.onclick=async (e)=>{
@@ -861,10 +876,10 @@ function addSparkItem(box, text, it){
         star.title='⭐ 收藏到选题库';
         toast('已取消收藏');
       }else{
-        const tags=['灵感', it.platform, ...(Array.isArray(it.tags)?it.tags.filter(t=>t!=='灵感'&&t!==it.platform):[])];
+        const tags=['灵感', it.platform, ...(it.detail?Object.keys(it.detail).slice(0,4):[])];
         await dbPut('ideas',{
           id:uid(),
-          body:it.body||it.title,
+          body:it.title||text,
           tags:[...new Set(tags)],
           used:false,
           created:Date.now(),

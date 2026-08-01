@@ -109,55 +109,59 @@ function pickPlatform(fields) {
   return '综合';
 }
 
+// 用户要求灵感卡片只展示这 10 个字段（顺序即展示顺序）
+// 每项：[展示标签, 飞书列名候选列表] —— 取第一个存在且有值的
+const DETAIL_FIELDS = [
+  ['账号来源',         ['来源账号', '账号来源', '来源']],
+  ['产品类别',         ['产品类别']],
+  ['目标人群',         ['目标人群', '目标群人', '人群画像', '人群']],
+  ['核心情绪',         ['核心情绪', '情绪']],
+  ['用户痛点',         ['用户痛点', '痛点']],
+  ['黄金3秒钩子类型',   ['黄金3秒钩子类型', '黄金3秒钩子', '3秒钩子类型', '3秒钩子']],
+  ['爆款公式',         ['爆款公式', '公式']],
+  ['核心卖点',         ['核心卖点', '卖点']],
+  ['可复制元素',       ['可复制元素', '可复制', '复制元素']],
+  ['原视频文案',       ['原视频文案', '视频文案', '原文案', '口播文案', '原口播']],
+];
+function findField(fields, candidates) {
+  for (const name of candidates) {
+    if (fields[name] != null) {
+      const v = asText(fields[name]).trim();
+      if (v) return v;
+    }
+  }
+  return '';
+}
+
 function toInspiration(fields, index) {
   const platform = pickPlatform(fields);
   const platformAbbr = PF_ABBR[platform] || 'all';
 
-  // 标题：飞书表「爆款速览」字段，就是一句话精炼
+  // 标题：飞书表「爆款速览」字段
   const title = asText(fields['爆款速览']).trim()
     || asText(fields['我的产品改编方向']).split('\n')[0].trim()
     || asText(fields['视频ID']).trim()
     || `爆款记录 #${index + 1}`;
 
-  // 摘要：只取「视频结构拆解」前 80 字（一两句钩子，一眼能扫读）
-  // 不要再把卖点/改编/人工总结拼进来——那些字段各自进不同的卡片槽位
-  const structure = asText(fields['视频结构拆解']).slice(0, 80).trim();
-  const summary = asText(fields['人工总结']).slice(0, 80).trim();
-  const body = (structure || summary || title).replace(/\s+$/g, '');
-
-  const source = asText(fields['来源账号']).trim()
-    || ('视频' + asText(fields['视频ID']).trim())
-    || '飞书爆款素材库';
-
-  // 标签：精选 6 个以内（按优先级：钩子类型 > 爆点 > 卖点 > 人群 > 场景 > 类型）
-  const tagsRaw = [
-    ...asTextList(fields['黄金3秒钩子类型']),
-    ...asTextList(fields['爆点标签']),
-    ...asTextList(fields['核心卖点']),
-    ...asTextList(fields['目标人群']),
-    ...asTextList(fields['使用场景']),
-    ...asTextList(fields['视频类型']),
-  ];
-  const tags = [...new Set(tagsRaw.filter(t => t && typeof t === 'string' && t.length <= 8))].slice(0, 6);
-
   let url = asText(fields['视频链接']);
   const linkMatch = url.match(/\((https?:\/\/[^)]+)\)/);
   if (linkMatch) url = linkMatch[1];
 
-  // 改编方向：单独字段（供前端"展开"按钮显示）
-  const adapt = asText(fields['我的产品改编方向']).slice(0, 200).trim();
+  // 结构化字段：只输出用户要的 10 个，过滤空值
+  const detail = {};
+  for (const [label, cands] of DETAIL_FIELDS) {
+    const v = findField(fields, cands);
+    if (v) detail[label] = v;
+  }
 
   return {
     id: `insp-${platformAbbr}-${String(index + 1).padStart(2, '0')}`,
     platform,
     title,
-    body,                              // 摘要（≤80 字）
-    source,
-    tags,
     date: TODAY,
     url,
     heat: '',
-    adapt: adapt || undefined,          // 改编方向（独立字段，前端按需展开）
+    detail,
   };
 }
 
@@ -183,6 +187,15 @@ function toInspiration(fields, index) {
       return;
     }
     const items = records.map((r, i) => toInspiration(r.fields, i));
+    // 调试：打印首条记录的字段命中情况，方便确认飞书列名是否对得上
+    if (items[0]) {
+      const d0 = items[0].detail || {};
+      const hit = Object.keys(d0);
+      const all = DETAIL_FIELDS.map(x => x[0]);
+      const miss = all.filter(k => !hit.includes(k));
+      console.log('[飞书][调试] 首条「' + items[0].title + '」命中字段(' + hit.length + '/' + all.length + ')：' + hit.join('、'));
+      if (miss.length) console.log('[飞书][调试] 未命中字段：' + miss.join('、') + '（飞书列名可能与脚本映射不同，核对后可微调）');
+    }
     const order = { '抖音': 0, '小红书': 1, '淘宝': 2, '快手': 3, '微博': 4, '综合': 5 };
     items.sort((a, b) => {
       const oa = order[a.platform] ?? 9, ob = order[b.platform] ?? 9;
