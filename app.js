@@ -82,25 +82,18 @@ function utf8ToB64(str){ const b=new TextEncoder().encode(str); let s=''; for(co
 function b64ToUtf8(b64){ const bin=atob(b64); const arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return new TextDecoder().decode(arr); }
 /* ---------- 全局状态 ---------- */
 let assets=[], copies=[], tasks=[], ideas=[], hots=[], attend=[], hosts=[];
-let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='all', assetMode='file', copyFabric='';
+let curView='assets', assetFilter='all', catFilter='', keyword='', hotFilter='all', assetMode='file', copyCatFilter='';  // v47: 文案分类筛选（替代 copyFabric）
 let tagFilters=new Set();          // 多选标签筛选（AND 关系：图必须含全部选中标签）
 let multiMode=false;               // 素材库多选模式
 const selectedIds=new Set();       // 多选模式下被勾选的素材 id
 let copyMultiMode=false;           // 文案库多选模式
 const copySelectedIds=new Set();   // 多选模式下被勾选的文案 id
-let selFabrics=new Set();          // 上传弹层已选中的面料（保存时拼「账号-面料」）
 let pendingDel=new Set();         // 本机删过的文案 id，待云同步时写入云端 deleted 列表（跨设备传播删除意图）
-// v15: 面料词库（录入文案时自动识别打标签，方便按面料筛选复制）。
-// ★ 要加新面料，直接往这个数组里加一项即可（例如 '天丝','冰丝'）
+// v47: 文案分类改为手动维护（不再用面料词库自动识别）
+const DEFAULT_COPYCATS=['大麦纯棉"宽松版"','草本"莱赛尔"～夏','草本"莫代尔"～夏','草本"口播"文案','大麦"口播"文案','草本睡裙～"莱赛尔"'];
+let copyCats=[];                   // 当前文案分类列表（从 KV 加载；首次启动回填默认 6 个）
+// v47: FABRICS 词库仍保留（仅给素材库 initAssetFabricChips 用），文案库不再做面料自动识别
 const FABRICS=['纯棉','莱赛尔','莫代尔棉','云朵棉','雪花绒','半边绒','羊毛绒','夹棉'];
-// 长词优先 + 命中后从文本移除，避免“莫代尔棉”被“棉”二次误抓
-function detectFabrics(text){
-  let t=text||''; const hit=[];
-  FABRICS.slice().sort((a,b)=>b.length-a.length).forEach(f=>{
-    if(t.includes(f)){ hit.push(f); t=t.split(f).join(''); }
-  });
-  return hit;
-}
 let attSort={key:'name',dir:1};
 const objURLs = new Map(); // id -> objectURL 缓存
 
@@ -164,7 +157,7 @@ function closeSheets(){ $('#mask').classList.remove('show'); $$('.sheet').forEac
 $('#mask').onclick=closeSheets;
 $('#fab').onclick=()=>{
   if(curView==='assets'){ pickedFiles=[]; $('#pickPreview').innerHTML=''; $('#filePick').value=''; $('#aCat').value=catFilter||''; resetAssetTagInputs(); assetMode='file'; document.querySelectorAll('#sheetAsset .seg button').forEach(x=>x.classList.toggle('on',x.dataset.m==='file')); $('#assetFilePanel').style.display='block'; $('#assetLinkPanel').style.display='none'; $('#assetCloudRow').style.display='flex'; $('#aUrl').value=''; $('#aName').value=''; $('#aThumb').value=''; renderCatList(); openSheet('#sheetAsset'); }
-  else if(curView==='copy'){ editCopyId=null; $('#copySheetTitle').textContent='新建文案'; $('#cTitle').value=''; $('#cBody').value=''; $('#cTags').value=''; refreshFabricHint(); openSheet('#sheetCopy'); }
+  else if(curView==='copy'){ editCopyId=null; $('#copySheetTitle').textContent='新建文案'; $('#cTitle').value=''; $('#cBody').value=''; $('#cTags').value=''; openSheet('#sheetCopy'); }
   else if(curView==='plan'){ $('#tTitle').value=''; $('#tDate').value=todayStr(); $('#tTime').value=''; $('#tRepeat').value='none'; openSheet('#sheetTask'); }
   else if(curView==='ideas'){ editIdeaId=null; $('#ideaSheetTitle').textContent='添加选题'; $('#iBody').value=''; $('#iTags').value=''; openSheet('#sheetIdea'); }
   else if(curView==='hot'){ editHotId=null; $('#hotSheetTitle').textContent='收藏热点视频'; $('#hTitle').value=''; $('#hUrl').value=''; $('#hPlat').value='抖音'; $('#hStatus').value='ref'; $('#hNote').value=''; openSheet('#sheetHot'); }
@@ -512,22 +505,22 @@ $('#pvDelete').onclick=async ()=>{
 let editCopyId=null;
 $('#cSave').onclick=async ()=>{
   const title=$('#cTitle').value.trim(), body=$('#cBody').value;
-  if(!title && !body.trim()) return toast('写点内容再保存吧');
+  if(!title) return toast('请先填写分类名称');   // v47: 分类名是必填（也是文案标题/分类筛选依据）
+  if(!body.trim()) return toast('写点内容再保存吧');
   const manualTags=$('#cTags').value.trim().split(/\s+/).filter(Boolean);
-  const autoFab=detectFabrics(title+' '+body);            // 自动识别面料
-  const tags=[...new Set([...manualTags, ...autoFab])];  // 合并去重
+  const tags=[...new Set(manualTags)];                       // v47: 不再做面料自动识别
   const old=editCopyId?copies.find(c=>c.id===editCopyId):null;
-  await dbPut('copies',{id:editCopyId||uid(),title:title||'未命名文案',body,tags,created:old?old.created:Date.now(),updated:Date.now()});
+  await dbPut('copies',{id:editCopyId||uid(),title,body,tags,created:old?old.created:Date.now(),updated:Date.now()});
+  await autoAddCat(title);  // v47: 填了新分类自动加到分类管理列表
   closeSheets(); await load(); render();
-  toast('文案已保存'+(autoFab.length?'（面料：'+autoFab.join('、')+'）':''));
+  toast('文案已保存');
 };
 function renderCopies(){
-  ensureFabricTags();
-  initFabricChips();   // chips 跟着当前文案动态生成（新面料自动出现）
+  renderCopyCatChips();   // v47: 顶部分类条改成从 copyCats（手动维护）取
   const list=copies.filter(c=>{
     const okKw=!keyword||(c.title+' '+c.body+' '+(c.tags||[]).join(' ')).toLowerCase().includes(keyword);
-    const okFab=!copyFabric||(c.tags||[]).includes(copyFabric);
-    return okKw&&okFab;
+    const okCat=!copyCatFilter||c.title===copyCatFilter;   // v47: 按分类名(=title)筛选
+    return okKw&&okCat;
   }).sort((a,b)=>b.updated-a.updated);
   const box=$('#copyList'); box.innerHTML='';
   $('#copyEmpty').classList.toggle('hidden',copies.length>0);
@@ -544,7 +537,7 @@ function renderCopies(){
       try{ await navigator.clipboard.writeText(c.body); toast('已复制到剪贴板'); }
       catch(err){ toast('复制失败，请长按文本手动复制'); }
     };
-    d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); refreshFabricHint(); openSheet('#sheetCopy'); };
+    d.querySelector('[data-act=edit]').onclick=()=>{ editCopyId=c.id; $('#copySheetTitle').textContent='编辑文案'; $('#cTitle').value=c.title; $('#cBody').value=c.body; $('#cTags').value=(c.tags||[]).join(' '); openSheet('#sheetCopy'); };
     d.querySelector('[data-act=del]').onclick=async ()=>{ if(!confirm('删除这条文案？'))return; await delCopy(c.id); await load(); render(); };
     attachCopyEvents(d,c);
     box.appendChild(d);
@@ -606,51 +599,8 @@ $('#copyMultiBtn').onclick=()=>toggleCopyMulti(!copyMultiMode);
 $('#copyBCancel').onclick=()=>toggleCopyMulti(false);
 $('#copyBDel').onclick=batchDeleteCopies;
 
-/* ================= 文案面料：动态 chips（从 copies.tags 实时收集，新面料自动出现） ================= */
-// 从所有文案的 tags 中去重收集；FABRICS 词库里的面料排前面，其他按使用频次倒序
-function collectCopyFabrics(){
-  const set=new Set();
-  copies.forEach(c=>(c.tags||[]).forEach(t=>{ if(t) set.add(t); }));
-  // 频次统计
-  const cnt={};
-  copies.forEach(c=>(c.tags||[]).forEach(t=>{ cnt[t]=(cnt[t]||0)+1; }));
-  const arr=[...set];
-  arr.sort((a,b)=>{
-    const ai=FABRICS.indexOf(a), bi=FABRICS.indexOf(b);
-    if(ai!==-1||bi!==-1) return (ai===-1?99:ai)-(bi===-1?99:bi);
-    if((cnt[b]||0)!==(cnt[a]||0)) return (cnt[b]||0)-(cnt[a]||0);
-    return a.localeCompare(b,'zh-Hans-CN');
-  });
-  return arr;
-}
-function initFabricChips(){
-  const box=$('#fabricChips'); if(!box) return;
-  box.innerHTML='';
-  const list=collectCopyFabrics();
-  if(!list.length){
-    const empty=document.createElement('div');
-    empty.className='chips-empty';
-    empty.textContent='暂无标签 · 新建/导入文案时按面料词自动打标签';
-    box.appendChild(empty);
-    return;
-  }
-  list.forEach(f=>{
-    const d=document.createElement('div');
-    d.className='chip';
-    d.dataset.f=f;
-    d.textContent=f;
-    box.appendChild(d);
-  });
-  box.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
-    // 再点同一个 chip → 取消过滤（回到全部）
-    if(copyFabric===ch.dataset.f){ copyFabric=''; ch.classList.remove('on'); renderCopies(); return; }
-    copyFabric=ch.dataset.f;
-    box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===ch));
-    renderCopies();
-  });
-  // 初始：刷新"on"高亮状态
-  box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on', x.dataset.f===copyFabric));
-}
+/* ================= v47: 文案分类手动维护（删除所有面料自动识别相关） ================= */
+// 分类列表持久化到 KV 'copy_cats'（JSON 数组）。首次启动回填默认 6 个，后续增删改全部手动。
 function initAssetFabricChips(){
   const box=$('#assetFabricChips'); if(!box) return;
   box.innerHTML='';
@@ -675,32 +625,131 @@ function buildAssetTags(){
 function resetAssetTagInputs(){
   $('#aTags').value=''; $('#aAccount').value=''; selFabrics.clear(); initAssetFabricChips();
 }
-function refreshFabricHint(){
-  const el=$('#fabricHint'); if(!el) return;
-  const hit=detectFabrics($('#cTitle').value+' '+$('#cBody').value);
-  if(hit.length){ el.textContent='已识别面料：'+hit.map(f=>'#'+f).join('  '); el.classList.add('has'); }
-  else { el.textContent='未识别到面料词（录入内容含面料会自动加标签）'; el.classList.remove('has'); }
+
+/* ================= v47: 文案分类手动维护（分类管理函数） ================= */
+async function loadCopyCats(){
+  try{
+    const raw=await kvGet('copy_cats');
+    if(Array.isArray(raw) && raw.length){ copyCats=raw; return; }
+  }catch(e){}
+  copyCats=[...DEFAULT_COPYCATS];
+  try{ await kvPut('copy_cats',copyCats); }catch(e){}
 }
-// 给没有面料标签的文案自动补（幂等），写到 IndexedDB 后重渲染
-async function ensureFabricTags(){
+async function saveCopyCats(){
+  try{ await kvPut('copy_cats',copyCats); }catch(e){}
+}
+async function autoAddCat(name){
+  if(!name) return;
+  if(!copyCats.includes(name)){
+    copyCats.push(name);
+    await saveCopyCats();
+  }
+}
+function renderCopyCatChips(){
+  const box=$('#copyCatChips'); if(!box) return;
+  box.innerHTML='';
+  // 全部
+  const all=document.createElement('div');
+  all.className='chip'+(copyCatFilter===''?' on':'');
+  all.dataset.cat='';
+  all.textContent='全部分类';
+  all.onclick=()=>{ copyCatFilter=''; renderCopies(); };
+  box.appendChild(all);
+  // 各分类
+  copyCats.forEach(cat=>{
+    const d=document.createElement('div');
+    d.className='chip'+(copyCatFilter===cat?' on':'');
+    d.dataset.cat=cat;
+    d.textContent=cat;
+    d.onclick=()=>{
+      if(copyCatFilter===cat){ copyCatFilter=''; } else { copyCatFilter=cat; }
+      renderCopies();
+    };
+    box.appendChild(d);
+  });
+  // ⚙ 管理分类入口
+  const mgr=document.createElement('div');
+  mgr.className='chip mgr';
+  mgr.textContent='⚙ 管理分类';
+  mgr.style.cssText='background:transparent;border:1px dashed var(--line);color:var(--muted);cursor:pointer';
+  mgr.onclick=openCatManager;
+  box.appendChild(mgr);
+}
+async function openCatManager(){
+  const box=$('#catMgrList'); if(!box) return;
+  box.innerHTML='';
+  if(!copyCats.length){
+    box.innerHTML='<div style="color:var(--muted);padding:12px 0">暂无分类，先在上面输入框新增</div>';
+  }else{
+    copyCats.forEach((cat,idx)=>{
+      const row=document.createElement('div');
+      row.className='cat-row';
+      row.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px';
+      row.innerHTML=`<div class="cat-row-name" style="flex:1;font-size:14px">${esc(cat)}</div>
+        <button class="btn-rename" data-i="${idx}" style="padding:4px 10px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--txt);font-size:12px;cursor:pointer">改名</button>
+        <button class="btn-del" data-i="${idx}" style="padding:4px 10px;border-radius:6px;border:1px solid var(--danger);background:#fff;color:var(--danger);font-size:12px;cursor:pointer">删除</button>`;
+      box.appendChild(row);
+    });
+    box.querySelectorAll('.btn-rename').forEach(b=>b.onclick=()=>renameCatAt(+b.dataset.i));
+    box.querySelectorAll('.btn-del').forEach(b=>b.onclick=()=>delCatAt(+b.dataset.i));
+  }
+  openSheet('#sheetCatMgr');
+}
+async function renameCatAt(i){
+  const old=copyCats[i]; if(!old) return;
+  const nv=prompt(`将「${old}」改名为：`, old);
+  if(nv===null) return;
+  const n=nv.trim();
+  if(!n) return toast('名字不能为空');
+  if(n===old) return;
+  if(copyCats.includes(n)) return toast('已存在同名分类');
+  copyCats[i]=n;
   let changed=0;
   for(const c of copies){
-    if(!(c.tags||[]).some(t=>FABRICS.includes(t))){
-      const hit=detectFabrics((c.title||'')+' '+(c.body||''));
-      if(hit.length){
-        c.tags=[...new Set([...(c.tags||[]), ...hit])];
-        await dbPut('copies',c);
-        changed++;
-      }
+    if(c.title===old){
+      c.title=n; c.updated=Date.now();
+      await dbPut('copies',c);
+      changed++;
     }
   }
-  return changed;
+  if(copyCatFilter===old) copyCatFilter=n;
+  await saveCopyCats();
+  await openCatManager();
+  renderCopies();
+  toast(`已改名（同步更新 ${changed} 条文案）`);
 }
-$('#cTitle').oninput=refreshFabricHint;
-$('#cBody').oninput=refreshFabricHint;
-initFabricChips();
+async function delCatAt(i){
+  const cat=copyCats[i]; if(!cat) return;
+  const used=copies.filter(c=>c.title===cat).length;
+  if(!confirm(`删除分类「${cat}」？\n\n该分类下 ${used} 条文案的标题会清空（变"未命名"），但文案内容不受影响。`)) return;
+  let changed=0;
+  for(const c of copies){
+    if(c.title===cat){
+      c.title=''; c.updated=Date.now();
+      await dbPut('copies',c);
+      changed++;
+    }
+  }
+  copyCats.splice(i,1);
+  if(copyCatFilter===cat) copyCatFilter='';
+  await saveCopyCats();
+  await openCatManager();
+  renderCopies();
+  toast(`已删除（${changed} 条文案归入"未命名"）`);
+}
+async function addCatFromInput(){
+  const inp=$('#catMgrNewName');
+  const n=inp.value.trim();
+  if(!n) return toast('先写个分类名');
+  if(copyCats.includes(n)) return toast('已存在同名分类');
+  copyCats.push(n);
+  await saveCopyCats();
+  inp.value='';
+  await openCatManager();
+  renderCopies();
+  toast('已新增');
+}
 initAssetFabricChips();
-refreshFabricHint();
 
 /* ================= 计划 / 提醒 ================= */
 $('#tSave').onclick=async ()=>{
@@ -1396,6 +1445,7 @@ $('#importFile').onchange=async e=>{
 /* ================= 统计 & 渲染入口 ================= */
 async function load(){
   [assets,copies,tasks,ideas,hots,attend,hosts]=await Promise.all([dbAll('assets'),dbAll('copies'),dbAll('tasks'),dbAll('ideas'),dbAll('hots'),dbAll('attend'),dbAll('hosts')]);
+  await loadCopyCats();   // v47: 文案分类列表（KV 'copy_cats'）
   // 旧版"打卡"数据迁移为工时表记录（无主播字段的归到"未分配"）
   for(const a of attend){
     if(a.in!==undefined||a.out!==undefined){
@@ -1628,9 +1678,20 @@ function bindCloudUI(){
   });
 }
 
+/* ================= v47: 分类管理弹层事件绑定 ================= */
+function bindCatMgrUI(){
+  const addBtn=$('#catMgrAddBtn');
+  const closeBtn=$('#catMgrClose');
+  const inp=$('#catMgrNewName');
+  if(addBtn) addBtn.addEventListener('click', addCatFromInput);
+  if(closeBtn) closeBtn.addEventListener('click', ()=>closeSheet('#sheetCatMgr'));
+  if(inp) inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addCatFromInput(); } });
+}
+
 /* ================= 启动 ================= */
 (async function init(){
   bindCloudUI();   // 提前绑定云存储按钮，确保即使后续 DB 加载异常按钮也能用
+  bindCatMgrUI();  // v47: 分类管理弹层按钮
   if($('#ghRepo')) $('#ghRepo').textContent='当前同步仓库：'+GH.owner+'/'+GH.repo;  // v39 模板化：显示各自命中的仓库
   const d=new Date();
   $('#todayStr').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`;

@@ -1,5 +1,5 @@
 /* 离线缓存：让工作台断网也能打开（数据本来就在本机） */
-const CACHE = 'mao-villain-v12'; // v46.2: 考勤 silent 云同步后给轻量反馈（右下角 toastLite），不再无声
+const CACHE = 'mao-villain-v13'; // v47: 文案分类改为手动维护(预置 6 个)+分类管理弹层(增删改+改名同步文案);删除面料自动识别
 const SHELL = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {

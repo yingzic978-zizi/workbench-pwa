@@ -34,9 +34,9 @@ main{flex:1;overflow-y:auto;padding:4px 16px 24px calc(16px + var(--nav-w) + var
 .view{display:none}.view.active{display:block}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0 12px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-/* v32: 文案库面料 chips 自动换行，不再横向左滑右滑 */
-#fabricChips{flex-wrap:wrap;overflow-x:visible;padding-bottom:6px}
-#fabricChips .chip{font-size:12.5px;padding:5px 12px}
+/* v32: 文案库面料 chips 自动换行，不再横向左滑右滑（v47: ID 改为 #copyCatChips，逻辑也改为手动分类） */
+#copyCatChips{flex-wrap:wrap;overflow-x:visible;padding-bottom:6px}
+#copyCatChips .chip{font-size:12.5px;padding:5px 12px}
 .chips-empty{font-size:12px;color:var(--sub);padding:6px 2px;line-height:1.5}
 .chip{flex:none;padding:6px 24px 6px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--sub);position:relative}
 .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -296,7 +296,7 @@ progress{width:100%;height:6px}
   <!-- 文案库 -->
   <section class="view" id="view-copy">
     <div class="copy-tools">
-      <div class="chips" id="fabricChips"></div>
+      <div class="chips" id="copyCatChips"></div><!-- v47: 文案分类条（手动维护，替代面料自动识别） -->
       <div class="chip" id="copyMultiBtn">☑ 多选</div>
     </div>
     <div class="batch-bar hidden" id="copyBatchBar">
@@ -490,14 +490,25 @@ progress{width:100%;height:6px}
 <!-- 文案弹层 -->
 <div class="sheet" id="sheetCopy">
   <h3 id="copySheetTitle">新建文案</h3>
-  <div class="f-label">标题</div>
-  <input class="f-input f-input-lg" id="cTitle" placeholder="例如：连衣裙详情页文案">
+  <div class="f-label">分类名称</div><!-- v47: 改"标题"→"分类名称"，作为分类筛选/卡片标题用 -->
+  <input class="f-input f-input-lg" id="cTitle" placeholder="如：草本睡裙～"莱赛尔"">
   <div class="f-label">内容</div>
   <textarea class="f-area f-area-lg" id="cBody" placeholder="粘贴或输入文案内容…"></textarea>
   <div class="f-label">标签（空格分隔，可留空）</div>
   <textarea class="f-area f-area-tags" id="cTags" placeholder="如：夏季 爆款"></textarea>
-  <div class="f-hint" id="fabricHint">录入内容含面料词会自动加标签</div>
   <button class="btn" id="cSave">保存</button>
+</div>
+
+<!-- 分类管理弹层（v47 新增） -->
+<div class="sheet" id="sheetCatMgr">
+  <h3>分类管理</h3>
+  <p style="color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 12px">新建类目，或删除不再需要的类目。删除后该类目下的文案会自动归入「未命名」。</p>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input class="f-input" id="catMgrNewName" placeholder="输入新类目名称" style="flex:1">
+    <button class="btn" id="catMgrAddBtn" style="flex:0 0 auto;background:linear-gradient(135deg,#f5804e,#f0a24f);color:#fff;border:0;padding:0 18px;border-radius:8px;font-size:14px;cursor:pointer">新建</button>
+  </div>
+  <div id="catMgrList"></div>
+  <button class="btn" id="catMgrClose" style="margin-top:8px">关闭</button>
 </div>
 
 <!-- 计划弹层 -->
@@ -579,6 +590,6 @@ progress{width:100%;height:6px}
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=46.2"></script>
+<script src="app.js?v=47"></script>
 </body>
 </html>
