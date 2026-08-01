@@ -5,6 +5,12 @@
  *   base_token: N7rqbZvpeahjsksLfQDcqNPcnac
  *   table_id:   tblAcu4IJVMclq7V
  * 筛选：是否值得复用 = 强复用（本地字符串匹配）
+ *
+ * 重要：每次 Run 都是「全量拉取 + 本地筛选」重新生成 inspirations.json，
+ * 不是增量同步——表里原有强复用、新标强复用都会同步；改成非强复用则下次消失。
+ *
+ * 鉴权：飞书自建应用 OAuth（tenant_access_token，每次现取，2h 过期）
+ *   需要环境变量: FEISHU_APP_ID / FEISHU_APP_SECRET（GitHub Secrets）
  */
 const fs = require('fs');
 const path = require('path');
@@ -19,6 +25,7 @@ const TODAY = new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
 const PF_ABBR = { '抖音': 'dy', '小红书': 'xhs', '淘宝': 'tb', '微博': 'wb', '快手': 'ks', '综合': 'all' };
 
 // 飞书字段统一取值：文本=string，单选={text,value}，多选=[{text,value}]
+// ⚠️ 飞书单选字段 API 返回的 .value 是 option 内部 ID（如 optxxxx），文本在 .text
 function asText(field) {
   if (field == null) return '';
   if (typeof field === 'string') return field;
@@ -47,13 +54,18 @@ async function http(method, url, body, headers = {}) {
 }
 
 async function getTenantToken() {
-  if (!APP_ID || !APP_SECRET) throw new Error('缺少环境变量 FEISHU_APP_ID 或 FEISHU_APP_SECRET。');
-  const r = await http('POST', 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', { app_id: APP_ID, app_secret: APP_SECRET });
+  if (!APP_ID || !APP_SECRET) {
+    throw new Error('缺少环境变量 FEISHU_APP_ID 或 FEISHU_APP_SECRET。请到 GitHub Secrets 配置后再运行。');
+  }
+  const r = await http('POST', 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+    app_id: APP_ID, app_secret: APP_SECRET,
+  });
   if (!r.tenant_access_token) throw new Error('未拿到 tenant_access_token: ' + JSON.stringify(r));
   console.log('[飞书] ✓ tenant_access_token 已获取（' + r.expire + 's 有效）');
   return r.tenant_access_token;
 }
 
+// ===== 拉所有记录，本地筛选「强复用」 =====
 async function listStrongReuseRecords(token) {
   const allItems = [];
   let pageToken;
@@ -64,6 +76,7 @@ async function listStrongReuseRecords(token) {
     url.searchParams.set('page_size', '100');
     url.searchParams.set('automatic_fields', 'false');
     if (pageToken) url.searchParams.set('page_token', pageToken);
+
     const r = await http('GET', url.toString(), null, { 'Authorization': `Bearer ${token}` });
     const items = (r.data && r.data.items) || [];
     allItems.push(...items);
@@ -85,6 +98,7 @@ async function listStrongReuseRecords(token) {
   return strongItems;
 }
 
+// ===== 字段映射 =====
 function pickPlatform(fields) {
   const p = asText(fields['来源平台']);
   if (/抖音/.test(p)) return '抖音';
@@ -99,62 +113,71 @@ function toInspiration(fields, index) {
   const platform = pickPlatform(fields);
   const platformAbbr = PF_ABBR[platform] || 'all';
 
+  // 标题：飞书表「爆款速览」字段，就是一句话精炼
   const title = asText(fields['爆款速览']).trim()
     || asText(fields['我的产品改编方向']).split('\n')[0].trim()
     || asText(fields['视频ID']).trim()
     || `爆款记录 #${index + 1}`;
 
-  const bodyParts = [
-    asText(fields['视频结构拆解']),
-    asText(fields['卖点表达方式']),
-    asText(fields['我的产品改编方向']),
-    asText(fields['人工总结']),
-  ].filter(Boolean);
-  const body = bodyParts.join('\n\n');
+  // 摘要：只取「视频结构拆解」前 80 字（一两句钩子，一眼能扫读）
+  // 不要再把卖点/改编/人工总结拼进来——那些字段各自进不同的卡片槽位
+  const structure = asText(fields['视频结构拆解']).slice(0, 80).trim();
+  const summary = asText(fields['人工总结']).slice(0, 80).trim();
+  const body = (structure || summary || title).replace(/\s+$/g, '');
 
   const source = asText(fields['来源账号']).trim()
     || ('视频' + asText(fields['视频ID']).trim())
     || '飞书爆款素材库';
 
+  // 标签：精选 6 个以内（按优先级：钩子类型 > 爆点 > 卖点 > 人群 > 场景 > 类型）
   const tagsRaw = [
-    platform,
+    ...asTextList(fields['黄金3秒钩子类型']),
     ...asTextList(fields['爆点标签']),
     ...asTextList(fields['核心卖点']),
     ...asTextList(fields['目标人群']),
-    ...asTextList(fields['产品类别']),
-    ...asTextList(fields['视频类型']),
-    ...asTextList(fields['黄金3秒钩子类型']),
-    ...asTextList(fields['核心情绪']),
     ...asTextList(fields['使用场景']),
+    ...asTextList(fields['视频类型']),
   ];
-  const tags = [...new Set(tagsRaw.filter(t => t && typeof t === 'string' && t.length <= 12))];
+  const tags = [...new Set(tagsRaw.filter(t => t && typeof t === 'string' && t.length <= 8))].slice(0, 6);
 
   let url = asText(fields['视频链接']);
-  const linkMatch = url.match(/$(https?:\/\/[^)]+)$/);
+  const linkMatch = url.match(/\((https?:\/\/[^)]+)\)/);
   if (linkMatch) url = linkMatch[1];
+
+  // 改编方向：单独字段（供前端"展开"按钮显示）
+  const adapt = asText(fields['我的产品改编方向']).slice(0, 200).trim();
 
   return {
     id: `insp-${platformAbbr}-${String(index + 1).padStart(2, '0')}`,
     platform,
-    title: title.length > 80 ? title.slice(0, 80) + '…' : title,
-    body: body || title,
+    title,
+    body,                              // 摘要（≤80 字）
     source,
     tags,
     date: TODAY,
     url,
     heat: '',
+    adapt: adapt || undefined,          // 改编方向（独立字段，前端按需展开）
   };
 }
 
 (async () => {
   console.log('[飞书] 同步脚本启动，日期 ' + TODAY);
-  if (!APP_ID || !APP_SECRET) { console.error('❌ 缺少环境变量'); process.exit(1); }
+  if (!APP_ID || !APP_SECRET) {
+    console.error('❌ 缺少环境变量 FEISHU_APP_ID / FEISHU_APP_SECRET');
+    process.exit(1);
+  }
   try {
     const token = await getTenantToken();
     const records = await listStrongReuseRecords(token);
     console.log(`[飞书] 共拉到 ${records.length} 条「强复用」记录`);
     if (records.length === 0) {
-      const out = { updated: TODAY, note: '暂无「强复用」爆款记录。请在飞书多维表格「01_爆款素材库」里把需要推送的记录的「是否值得复用」字段改成「强复用」后，重新 Run workflow。', items: [] };
+      console.warn('[飞书] ⚠️ 没有任何「强复用」记录。请在飞书表「是否值得复用」字段选「强复用」');
+      const out = {
+        updated: TODAY,
+        note: '暂无「强复用」爆款记录。请在飞书多维表格「01_爆款素材库」里把需要推送的记录的「是否值得复用」字段改成「强复用」后，重新 Run workflow。',
+        items: [],
+      };
       fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n', 'utf8');
       console.log('[飞书] 已写入空 inspirations.json');
       return;
@@ -167,7 +190,12 @@ function toInspiration(fields, index) {
       return (b.url ? 1 : 0) - (a.url ? 1 : 0);
     });
     items.forEach((it, i) => { it.id = `insp-${PF_ABBR[it.platform] || 'all'}-${String(i + 1).padStart(2, '0')}`; });
-    const out = { updated: TODAY, note: `每日灵感由 GitHub Actions 自动同步自飞书多维表格「01_爆款素材库」（仅含「是否值得复用=强复用」的记录，共 ${items.length} 条）。`, items };
+
+    const out = {
+      updated: TODAY,
+      note: `每日灵感由 GitHub Actions 自动同步自飞书多维表格「01_爆款素材库」（仅含「是否值得复用=强复用」的记录，共 ${items.length} 条）。点击「查看来源」跳转真实视频链接。灵感页打开即自动拉取，可按平台筛选。`,
+      items,
+    };
     fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n', 'utf8');
     const stats = items.reduce((m, it) => { m[it.platform] = (m[it.platform] || 0) + 1; return m; }, {});
     console.log(`[飞书] ✓ 已写入 ${OUT}，共 ${items.length} 条，平台分布：${JSON.stringify(stats)}`);
