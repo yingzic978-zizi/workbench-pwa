@@ -1,5 +1,105 @@
 {
- "attend": [],
+ "attend": [
+  {
+   "id": "msag1teaqypgc",
+   "date": "2026-08-01",
+   "hostId": "msag1teavmhkq",
+   "hostName": "吉吉",
+   "type": "加班",
+   "hours": 3,
+   "unit": "h",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135890
+  },
+  {
+   "id": "msag1tebd06x0",
+   "date": "2026-08-01",
+   "hostId": "msag1tebsb0nu",
+   "hostName": "曼玲",
+   "type": "加班",
+   "hours": 2,
+   "unit": "h",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135891
+  },
+  {
+   "id": "msag1tec9yhou",
+   "date": "2026-08-01",
+   "hostId": "msag1tecqysdy",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135892
+  },
+  {
+   "id": "msag1tecaln38",
+   "date": "2026-08-01",
+   "hostId": "msag1tecf6g0s",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135892
+  },
+  {
+   "id": "msag1tecrjv2u",
+   "date": "2026-08-01",
+   "hostId": "msag1tecmf5n4",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135892
+  },
+  {
+   "id": "msag1tectw7is",
+   "date": "2026-08-01",
+   "hostId": "msag1tebrhl6d",
+   "hostName": "育锈",
+   "type": "加班",
+   "hours": 3,
+   "unit": "h",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135892
+  },
+  {
+   "id": "msag1ted33pxt",
+   "date": "2026-08-01",
+   "hostId": "msag1tedsz7pa",
+   "hostName": "梓敏",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135893
+  },
+  {
+   "id": "msag1tedcw83v",
+   "date": "2026-08-01",
+   "hostId": "msag1ted71gbg",
+   "hostName": "英姿",
+   "type": "出勤",
+   "hours": 3,
+   "unit": "",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135893
+  },
+  {
+   "id": "msag1tedv66hd",
+   "date": "2026-08-01",
+   "hostId": "msag1tedtuaz3",
+   "hostName": "悦虹",
+   "type": "绩效",
+   "hours": 5,
+   "unit": "",
+   "note": "吉吉加班3小时，曼玲加班2小时，育锈加班3小时，婷婷休假，梦淇休假，珀琪休假，梓敏休假，英姿场次3，悦虹绩效5",
+   "created": 1785593135893
+  }
+ ],
  "deleted": [
   "msafqrfc2ymus",
   "msafqrff7spk1",
