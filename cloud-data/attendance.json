@@ -175,6 +175,17 @@
    "unit": "h",
    "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
    "created": 1785751800706
+  },
+  {
+   "id": "msd4gvrby6owg",
+   "date": "2026-08-03",
+   "hostId": "msd4gvr0kka4o",
+   "hostName": "江丹丹上班",
+   "type": null,
+   "hours": 3,
+   "unit": "",
+   "note": "江丹丹上班3小时",
+   "created": 1785755081927
   }
  ],
  "deleted": [
