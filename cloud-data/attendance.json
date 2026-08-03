@@ -307,6 +307,28 @@
    "unit": "天",
    "note": "昭芹休假",
    "created": 1785773768090
+  },
+  {
+   "id": "msdfljwb4bwcz",
+   "date": "2026-08-10",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "昭芹休假",
+   "created": 1785773775611
+  },
+  {
+   "id": "msdgl2tca3uag",
+   "date": "2026-08-04",
+   "hostId": "msdgl2t5w56xi",
+   "hostName": "晓琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓琳休假",
+   "created": 1785775433088
   }
  ],
  "deleted": [
