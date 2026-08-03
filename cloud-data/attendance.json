@@ -296,6 +296,17 @@
    "unit": "天",
    "note": "静端休假",
    "created": 1785773699796
+  },
+  {
+   "id": "msdfle3e951qj",
+   "date": "2026-08-09",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "昭芹休假",
+   "created": 1785773768090
   }
  ],
  "deleted": [
