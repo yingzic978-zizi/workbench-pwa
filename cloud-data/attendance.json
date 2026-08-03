@@ -263,6 +263,28 @@
    "unit": "天",
    "note": "婷婷请假",
    "created": 1785755514503
+  },
+  {
+   "id": "msd92xpyuivlr",
+   "date": "2026-08-04",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，",
+   "created": 1785762829366
+  },
+  {
+   "id": "msd92xq07fcw2",
+   "date": "2026-08-04",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，",
+   "created": 1785762829368
   }
  ],
  "deleted": [
@@ -287,6 +309,7 @@
   "msd2apxbnsop4",
   "msd2apxd5zcf9",
   "msd2gqhd3al9q",
-  "msd4oyr2k51qe"
+  "msd4oyr2k51qe",
+  "msd92xpzuk8mi"
  ]
 }
