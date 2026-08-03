@@ -1,26 +1,15 @@
 {
  "attend": [
   {
-   "id": "msd29zu5qrg8d",
+   "id": "msd2b7j6s5ruq",
    "date": "2026-08-01",
    "hostId": "msd29zu4ka7x4",
    "hostName": "月茹",
    "type": "请假",
    "hours": 1,
    "unit": "天",
-   "note": "1号月茹休假\n1号玉叶，嘉仪，依琳，各加班1小时",
-   "created": 1785751401389
-  },
-  {
-   "id": "msd29zu8yus3g",
-   "date": "2026-08-01",
-   "hostId": "msd29zu73rj1k",
-   "hostName": "各",
-   "type": "加班",
-   "hours": 1,
-   "unit": "h",
-   "note": "1号月茹休假\n1号玉叶，嘉仪，依琳，各加班1小时",
-   "created": 1785751401392
+   "note": "1号月茹休假",
+   "created": 1785751458018
   }
  ],
  "deleted": [
@@ -39,6 +28,10 @@
   "msag1tectw7is",
   "msag1ted33pxt",
   "msag1tedcw83v",
-  "msag1tedv66hd"
+  "msag1tedv66hd",
+  "msd29zu5qrg8d",
+  "msd29zu8yus3g",
+  "msd2apxbnsop4",
+  "msd2apxd5zcf9"
  ]
 }
