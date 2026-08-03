@@ -241,6 +241,28 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1785755499682
+  },
+  {
+   "id": "msd4pzrs0zv91",
+   "date": "2026-08-03",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷请假",
+   "created": 1785755507032
+  },
+  {
+   "id": "msd4q5jbg1y6q",
+   "date": "2026-08-04",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷请假",
+   "created": 1785755514503
   }
  ],
  "deleted": [
