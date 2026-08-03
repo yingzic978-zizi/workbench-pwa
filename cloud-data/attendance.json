@@ -197,6 +197,50 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1785755412013
+  },
+  {
+   "id": "msd4o4epgfwyc",
+   "date": "2026-08-07",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1785755419729
+  },
+  {
+   "id": "msd4oglvm4e65",
+   "date": "2026-08-08",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1785755435539
+  },
+  {
+   "id": "msd4osv11t0ym",
+   "date": "2026-08-01",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1785755451421
+  },
+  {
+   "id": "msd4pu3mgn6x0",
+   "date": "2026-08-02",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1785755499682
   }
  ],
  "deleted": [
@@ -220,6 +264,7 @@
   "msd29zu8yus3g",
   "msd2apxbnsop4",
   "msd2apxd5zcf9",
-  "msd2gqhd3al9q"
+  "msd2gqhd3al9q",
+  "msd4oyr2k51qe"
  ]
 }
