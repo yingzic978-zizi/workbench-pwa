@@ -285,6 +285,17 @@
    "unit": "h",
    "note": "昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，",
    "created": 1785762829368
+  },
+  {
+   "id": "msdfjxecdsamo",
+   "date": "2026-08-04",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1785773699796
   }
  ],
  "deleted": [
