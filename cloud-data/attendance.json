@@ -100,15 +100,81 @@
    "created": 1785751624757
   },
   {
-   "id": "msd2gqhd3al9q",
+   "id": "msd2ijxyyr6gw",
    "date": "2026-08-03",
-   "hostId": "msd2gqhb1fd8c",
-   "hostName": "江丹丹",
+   "hostId": "msd2ijxv3o7hz",
+   "hostName": "吉吉",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800694
+  },
+  {
+   "id": "msd2ijy0v2f4v",
+   "date": "2026-08-03",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800696
+  },
+  {
+   "id": "msd2ijy53xqxb",
+   "date": "2026-08-03",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
    "type": "加班",
    "hours": 1,
    "unit": "h",
-   "note": "江丹丹加班1",
-   "created": 1785751715857
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800701
+  },
+  {
+   "id": "msd2ijy5h4657",
+   "date": "2026-08-03",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800701
+  },
+  {
+   "id": "msd2ijy82r8wk",
+   "date": "2026-08-03",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800704
+  },
+  {
+   "id": "msd2ijya4pbcj",
+   "date": "2026-08-03",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800706
+  },
+  {
+   "id": "msd2ijyaullcl",
+   "date": "2026-08-03",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "吉吉休假，育锈休假，曼玲休假\n昭芹加班1小时，嘉仪加班1小时，依琳加班1小时，珀琪加班1小时",
+   "created": 1785751800706
   }
  ],
  "deleted": [
@@ -131,6 +197,7 @@
   "msd29zu5qrg8d",
   "msd29zu8yus3g",
   "msd2apxbnsop4",
-  "msd2apxd5zcf9"
+  "msd2apxd5zcf9",
+  "msd2gqhd3al9q"
  ]
 }
