@@ -329,6 +329,17 @@
    "unit": "天",
    "note": "晓琳休假",
    "created": 1785775433088
+  },
+  {
+   "id": "msdgqymdipyu0",
+   "date": "2026-08-04",
+   "hostId": "msdgqym8kjtk7",
+   "hostName": "梓敏",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梓敏加班1小时",
+   "created": 1785775707589
   }
  ],
  "deleted": [
