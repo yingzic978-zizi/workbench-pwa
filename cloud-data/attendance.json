@@ -186,6 +186,17 @@
    "unit": "",
    "note": "江丹丹上班3小时",
    "created": 1785755081927
+  },
+  {
+   "id": "msd4nygdlc4lu",
+   "date": "2026-08-06",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1785755412013
   }
  ],
  "deleted": [
