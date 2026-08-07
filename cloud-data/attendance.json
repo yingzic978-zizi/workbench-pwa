@@ -362,6 +362,28 @@
    "unit": "天",
    "note": "6号梓敏休假",
    "created": 1785867554138
+  },
+  {
+   "id": "mshp5h8zvsp3z",
+   "date": "2026-08-07",
+   "hostId": "mshp5h8v7mixx",
+   "hostName": "炎如",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "炎如休假",
+   "created": 1786031686547
+  },
+  {
+   "id": "msio9vczt9nhd",
+   "date": "2026-08-08",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "8号泽玲休假",
+   "created": 1786090678019
   }
  ],
  "deleted": [
@@ -391,9 +413,9 @@
  ],
  "hosts": [
   {
-   "id": "msfrkmk8o33wt",
+   "id": "msd2gqhb1fd8c",
    "name": "江丹丹",
-   "created": 1785914820152,
+   "created": 1785751715855,
    "note": "新工上班"
   },
   {
@@ -470,6 +492,18 @@
    "id": "msdgqym8kjtk7",
    "name": "梓敏",
    "created": 1785775707584
+  },
+  {
+   "id": "mshp5h8v7mixx",
+   "name": "炎如",
+   "note": "",
+   "created": 1786031686545
+  },
+  {
+   "id": "msio9vcy0wa17",
+   "name": "泽玲",
+   "note": "",
+   "created": 1786090678018
   }
  ]
 }
