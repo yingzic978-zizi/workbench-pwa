@@ -384,6 +384,17 @@
    "unit": "天",
    "note": "8号泽玲休假",
    "created": 1786090678019
+  },
+  {
+   "id": "msirin9lrk39k",
+   "date": "2026-08-08",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "8号陈阳休假",
+   "created": 1786096126281
   }
  ],
  "deleted": [
@@ -504,6 +515,12 @@
    "name": "泽玲",
    "note": "",
    "created": 1786090678018
+  },
+  {
+   "id": "msirin9k9k8oq",
+   "name": "陈阳",
+   "note": "",
+   "created": 1786096126280
   }
  ]
 }
