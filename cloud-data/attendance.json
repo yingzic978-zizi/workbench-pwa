@@ -395,6 +395,17 @@
    "unit": "天",
    "note": "8号陈阳休假",
    "created": 1786096126281
+  },
+  {
+   "id": "msk1h474zs2i6",
+   "date": "2026-08-09",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1786173317248
   }
  ],
  "deleted": [
@@ -521,6 +532,12 @@
    "name": "陈阳",
    "note": "",
    "created": 1786096126280
+  },
+  {
+   "id": "msk1h47268vhz",
+   "name": "佳欣",
+   "note": "",
+   "created": 1786173317246
   }
  ]
 }
