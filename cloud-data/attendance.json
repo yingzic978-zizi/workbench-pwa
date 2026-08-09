@@ -417,6 +417,17 @@
    "unit": "h",
    "note": "丹丹加班1小时，玉叶加班1小时",
    "created": 1786196478657
+  },
+  {
+   "id": "mslpxr6lu6lvg",
+   "date": "2026-08-12",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1786274870493
   }
  ],
  "deleted": [
