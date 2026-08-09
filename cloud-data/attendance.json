@@ -428,6 +428,61 @@
    "unit": "天",
    "note": "曼玲休假",
    "created": 1786274870493
+  },
+  {
+   "id": "mslpy035v21ym",
+   "date": "2026-08-13",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1786274882033
+  },
+  {
+   "id": "mslpy5r8awigp",
+   "date": "2026-08-14",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1786274889380
+  },
+  {
+   "id": "mslpyary3bx7s",
+   "date": "2026-08-15",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1786274895886
+  },
+  {
+   "id": "mslpyg0xgn7bm",
+   "date": "2026-08-16",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1786274902689
+  },
+  {
+   "id": "mslszzekhhbpu",
+   "date": "2026-08-10",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "依琳加班1小时",
+   "created": 1786280013308
   }
  ],
  "deleted": [
