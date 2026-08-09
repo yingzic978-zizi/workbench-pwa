@@ -483,6 +483,39 @@
    "unit": "h",
    "note": "依琳加班1小时",
    "created": 1786280013308
+  },
+  {
+   "id": "mslt0fji29mwy",
+   "date": "2026-08-10",
+   "hostId": "mskf9jnibis04",
+   "hostName": "丹丹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "丹丹加班1小时，玉叶加班1小时",
+   "created": 1786280034222
+  },
+  {
+   "id": "mslt0fk22tdki",
+   "date": "2026-08-10",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "丹丹加班1小时，玉叶加班1小时",
+   "created": 1786280034242
+  },
+  {
+   "id": "msm8a6nniwbnq",
+   "date": "2026-08-10",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1786305683508
   }
  ],
  "deleted": [
