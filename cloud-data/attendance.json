@@ -538,6 +538,28 @@
    "unit": "",
    "note": "江丹丹上班",
    "created": 1786353058495
+  },
+  {
+   "id": "msn0iap4ph4um",
+   "date": "2026-08-11",
+   "hostId": "msn0iap2u2u23",
+   "hostName": "章欣畅",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "章欣畅上班",
+   "created": 1786353091240
+  },
+  {
+   "id": "msne1chghdx53",
+   "date": "2026-08-12",
+   "hostId": "mshp5h8v7mixx",
+   "hostName": "炎如",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "12号炎如休假",
+   "created": 1786375815028
   }
  ],
  "deleted": [
@@ -690,6 +712,12 @@
    "name": "章欣畅 新工",
    "note": "",
    "created": 1786352880358
+  },
+  {
+   "id": "msn0iap2u2u23",
+   "name": "章欣畅",
+   "note": "",
+   "created": 1786353091238
   }
  ]
 }
