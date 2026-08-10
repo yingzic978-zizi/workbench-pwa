@@ -527,17 +527,6 @@
    "unit": "天",
    "note": "11号晓铃休假",
    "created": 1786352776899
-  },
-  {
-   "id": "msn0drzcjaj1s",
-   "date": "2026-08-11",
-   "hostId": "msn0drz8uxdpo",
-   "hostName": "章欣畅 新工",
-   "type": "出勤",
-   "hours": 1,
-   "unit": "",
-   "note": "章欣畅 新工上班",
-   "created": 1786352880360
   }
  ],
  "deleted": [
@@ -564,7 +553,8 @@
   "msd2gqhd3al9q",
   "msd4oyr2k51qe",
   "msd92xpzuk8mi",
-  "msk1h474zs2i6"
+  "msk1h474zs2i6",
+  "msn0drzcjaj1s"
  ],
  "hosts": [
   {
@@ -663,7 +653,7 @@
   {
    "id": "msirin9k9k8oq",
    "name": "陈阳",
-   "note": "章欣畅～新工上班",
+   "note": "章欣畅～上班",
    "created": 1786096126280
   },
   {
