@@ -527,6 +527,17 @@
    "unit": "天",
    "note": "11号晓铃休假",
    "created": 1786352776899
+  },
+  {
+   "id": "msn0hlfjsekbq",
+   "date": "2026-08-03",
+   "hostId": "msd2gqhb1fd8c",
+   "hostName": "江丹丹",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "江丹丹上班",
+   "created": 1786353058495
   }
  ],
  "deleted": [
