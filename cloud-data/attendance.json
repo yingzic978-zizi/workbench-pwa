@@ -560,6 +560,17 @@
    "unit": "天",
    "note": "12号炎如休假",
    "created": 1786375815028
+  },
+  {
+   "id": "msop2id9z8kvf",
+   "date": "2026-08-12",
+   "hostId": "msdgqym8kjtk7",
+   "hostName": "梓敏",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梓敏加班1小时",
+   "created": 1786454811261
   }
  ],
  "deleted": [
