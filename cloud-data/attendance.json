@@ -659,6 +659,17 @@
    "unit": "天",
    "note": "晓婷休假",
    "created": 1786617814831
+  },
+  {
+   "id": "msresmipwq9xi",
+   "date": "2026-08-14",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓铃休假",
+   "created": 1786618952449
   }
  ],
  "deleted": [
