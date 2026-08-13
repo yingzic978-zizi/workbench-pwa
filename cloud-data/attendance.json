@@ -648,6 +648,17 @@
    "unit": "天",
    "note": "妙虹休假",
    "created": 1786615383107
+  },
+  {
+   "id": "msre48q76q63l",
+   "date": "2026-08-14",
+   "hostId": "msre48q6j3c0q",
+   "hostName": "晓婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓婷休假",
+   "created": 1786617814831
   }
  ],
  "deleted": [
@@ -812,6 +823,12 @@
    "name": "妙虹",
    "note": "",
    "created": 1786615383094
+  },
+  {
+   "id": "msre48q6j3c0q",
+   "name": "晓婷",
+   "note": "",
+   "created": 1786617814830
   }
  ]
 }
