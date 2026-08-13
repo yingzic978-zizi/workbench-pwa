@@ -571,6 +571,17 @@
    "unit": "h",
    "note": "梓敏加班1小时",
    "created": 1786454811261
+  },
+  {
+   "id": "msr01qdkafply",
+   "date": "2026-08-13",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓铃休假",
+   "created": 1786594183112
   }
  ],
  "deleted": [
