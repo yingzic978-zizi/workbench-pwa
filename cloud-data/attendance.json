@@ -604,6 +604,17 @@
    "unit": "天",
    "note": "晓琳休假",
    "created": 1786602167021
+  },
+  {
+   "id": "msr910nexkmre",
+   "date": "2026-08-14",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1786609266314
   }
  ],
  "deleted": [
