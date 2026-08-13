@@ -582,6 +582,17 @@
    "unit": "天",
    "note": "晓铃休假",
    "created": 1786594183112
+  },
+  {
+   "id": "msr2as5id9811",
+   "date": "2026-08-13",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1786597964550
   }
  ],
  "deleted": [
