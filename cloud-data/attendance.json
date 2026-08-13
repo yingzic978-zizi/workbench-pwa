@@ -615,6 +615,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1786609266314
+  },
+  {
+   "id": "msr93pusjhsj5",
+   "date": "2026-08-15",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1786609392292
   }
  ],
  "deleted": [
