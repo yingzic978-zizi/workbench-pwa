@@ -703,6 +703,17 @@
    "unit": "天",
    "note": "嘉仪休假",
    "created": 1786687557893
+  },
+  {
+   "id": "msstnjhy8172g",
+   "date": "2026-08-15",
+   "hostId": "msdgqym8kjtk7",
+   "hostName": "梓敏",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梓敏休假",
+   "created": 1786704375670
   }
  ],
  "deleted": [
