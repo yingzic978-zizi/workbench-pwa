@@ -681,6 +681,17 @@
    "unit": "h",
    "note": "婷婷加班1小时",
    "created": 1786621778964
+  },
+  {
+   "id": "mssdz57k9bvjx",
+   "date": "2026-08-14",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假",
+   "created": 1786678043168
   }
  ],
  "deleted": [
@@ -851,6 +862,12 @@
    "name": "晓婷",
    "note": "",
    "created": 1786617814830
+  },
+  {
+   "id": "mssdz57ibvi67",
+   "name": "曼虹",
+   "note": "",
+   "created": 1786678043166
   }
  ]
 }
