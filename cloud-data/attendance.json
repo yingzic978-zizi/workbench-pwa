@@ -692,6 +692,17 @@
    "unit": "天",
    "note": "曼虹休假",
    "created": 1786678043168
+  },
+  {
+   "id": "mssjn2th04hdd",
+   "date": "2026-08-15",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1786687557893
   }
  ],
  "deleted": [
