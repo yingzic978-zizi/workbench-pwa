@@ -747,6 +747,17 @@
    "unit": "h",
    "note": "昭芹加班1小时，依琳加班1小时，玉叶加班1小时",
    "created": 1786705454478
+  },
+  {
+   "id": "msumuqx26v6l0",
+   "date": "2026-08-16",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1786813886918
   }
  ],
  "deleted": [
