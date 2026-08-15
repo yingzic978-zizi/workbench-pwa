@@ -758,6 +758,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1786813886918
+  },
+  {
+   "id": "msur7krd7bcsc",
+   "date": "2026-08-16",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梦淇休假",
+   "created": 1786821203929
   }
  ],
  "deleted": [
@@ -934,6 +945,12 @@
    "name": "曼虹",
    "note": "",
    "created": 1786678043166
+  },
+  {
+   "id": "msur7krbq78wg",
+   "name": "梦淇",
+   "note": "",
+   "created": 1786821203927
   }
  ]
 }
