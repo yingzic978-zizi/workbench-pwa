@@ -177,17 +177,6 @@
    "created": 1785751800706
   },
   {
-   "id": "msd4gvrby6owg",
-   "date": "2026-08-03",
-   "hostId": "msd4gvr0kka4o",
-   "hostName": "江丹丹上班",
-   "type": null,
-   "hours": 3,
-   "unit": "",
-   "note": "江丹丹上班3小时",
-   "created": 1785755081927
-  },
-  {
    "id": "msd4nygdlc4lu",
    "date": "2026-08-06",
    "hostId": "msd4nyg4kkdv2",
@@ -384,17 +373,6 @@
    "unit": "天",
    "note": "8号泽玲休假",
    "created": 1786090678019
-  },
-  {
-   "id": "msirin9lrk39k",
-   "date": "2026-08-08",
-   "hostId": "msirin9k9k8oq",
-   "hostName": "陈阳",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "8号陈阳休假",
-   "created": 1786096126281
   },
   {
    "id": "mskf9jnkqdxrb",
@@ -796,7 +774,9 @@
   "msd4oyr2k51qe",
   "msd92xpzuk8mi",
   "msk1h474zs2i6",
-  "msn0drzcjaj1s"
+  "msn0drzcjaj1s",
+  "msd4gvrby6owg",
+  "msirin9lrk39k"
  ],
  "hosts": [
   {
