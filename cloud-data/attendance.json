@@ -747,6 +747,17 @@
    "unit": "天",
    "note": "梦淇休假",
    "created": 1786821203929
+  },
+  {
+   "id": "msurb7d97c1wd",
+   "date": "2026-08-08",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1786821373197
   }
  ],
  "deleted": [
