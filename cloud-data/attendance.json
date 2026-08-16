@@ -758,17 +758,6 @@
    "unit": "天",
    "note": "静端休假",
    "created": 1786855104229
-  },
-  {
-   "id": "msvbnugolpz0z",
-   "date": "2026-08-16",
-   "hostId": "msk1h47268vhz",
-   "hostName": "佳欣",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "佳欣休假",
-   "created": 1786855555320
   }
  ],
  "deleted": [
@@ -799,7 +788,8 @@
   "msn0drzcjaj1s",
   "msd4gvrby6owg",
   "msirin9lrk39k",
-  "msumuqx26v6l0"
+  "msumuqx26v6l0",
+  "msvbnugolpz0z"
  ],
  "hosts": [
   {
