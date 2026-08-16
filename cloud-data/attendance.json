@@ -727,17 +727,6 @@
    "created": 1786705454478
   },
   {
-   "id": "msumuqx26v6l0",
-   "date": "2026-08-16",
-   "hostId": "msk1h47268vhz",
-   "hostName": "佳欣",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "佳欣休假",
-   "created": 1786813886918
-  },
-  {
    "id": "msur7krd7bcsc",
    "date": "2026-08-16",
    "hostId": "msur7krbq78wg",
@@ -758,6 +747,17 @@
    "unit": "天",
    "note": "陈阳休假",
    "created": 1786821373197
+  },
+  {
+   "id": "msvbe6ed8s49u",
+   "date": "2026-08-16",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1786855104229
   }
  ],
  "deleted": [
@@ -787,7 +787,8 @@
   "msk1h474zs2i6",
   "msn0drzcjaj1s",
   "msd4gvrby6owg",
-  "msirin9lrk39k"
+  "msirin9lrk39k",
+  "msumuqx26v6l0"
  ],
  "hosts": [
   {
