@@ -813,6 +813,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时，静加班5小时，曼虹加班5小时",
    "created": 1786858135728
+  },
+  {
+   "id": "msww14swg18fl",
+   "date": "2026-08-18",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1786950233744
   }
  ],
  "deleted": [
@@ -848,9 +859,9 @@
  ],
  "hosts": [
   {
-   "id": "msfrkmk8o33wt",
+   "id": "msd2gqhb1fd8c",
    "name": "江丹丹",
-   "created": 1785914820152,
+   "created": 1785751715855,
    "note": "新工上班"
   },
   {
