@@ -824,6 +824,17 @@
    "unit": "天",
    "note": "静端休假",
    "created": 1786950233744
+  },
+  {
+   "id": "msww1bgitthdq",
+   "date": "2026-08-18",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1786950242370
   }
  ],
  "deleted": [
