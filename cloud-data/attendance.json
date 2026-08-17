@@ -879,6 +879,39 @@
    "unit": "天",
    "note": "育锈休假",
    "created": 1786980631316
+  },
+  {
+   "id": "msxe4t8y8kbkm",
+   "date": "2026-08-27",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1786980638482
+  },
+  {
+   "id": "msxe4yn3be33s",
+   "date": "2026-08-28",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1786980645471
+  },
+  {
+   "id": "msxeba46ndoau",
+   "date": "2026-08-26",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假",
+   "created": 1786980940278
   }
  ],
  "deleted": [
