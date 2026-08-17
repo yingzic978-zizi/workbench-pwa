@@ -835,6 +835,39 @@
    "unit": "天",
    "note": "珀琪休假",
    "created": 1786950242370
+  },
+  {
+   "id": "msx7v5e0xl89o",
+   "date": "2026-08-18",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假，嘉琪休假",
+   "created": 1786970109960
+  },
+  {
+   "id": "msx7v5e22mbt8",
+   "date": "2026-08-18",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假，嘉琪休假",
+   "created": 1786970109962
+  },
+  {
+   "id": "msxa4u6xnm2yk",
+   "date": "2026-08-18",
+   "hostId": "msn0iap2u2u23",
+   "hostName": "章欣畅",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "章欣畅休假",
+   "created": 1786973921241
   }
  ],
  "deleted": [
