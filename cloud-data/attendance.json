@@ -868,6 +868,17 @@
    "unit": "天",
    "note": "章欣畅休假",
    "created": 1786973921241
+  },
+  {
+   "id": "msxe4npwemgob",
+   "date": "2026-08-26",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1786980631316
   }
  ],
  "deleted": [
