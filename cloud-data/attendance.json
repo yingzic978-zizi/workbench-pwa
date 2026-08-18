@@ -912,6 +912,28 @@
    "unit": "天",
    "note": "玉叶休假",
    "created": 1786980940278
+  },
+  {
+   "id": "msxebfhtqtdr0",
+   "date": "2026-08-27",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假",
+   "created": 1786980947249
+  },
+  {
+   "id": "msxebkp7rxu65",
+   "date": "2026-08-28",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假",
+   "created": 1786980953995
   }
  ],
  "deleted": [
