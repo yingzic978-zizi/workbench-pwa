@@ -934,6 +934,17 @@
    "unit": "天",
    "note": "玉叶休假",
    "created": 1786980953995
+  },
+  {
+   "id": "msyh98tnfdt3g",
+   "date": "2026-08-20",
+   "hostId": "mskf9jnibis04",
+   "hostName": "丹丹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "丹丹休假",
+   "created": 1787046350315
   }
  ],
  "deleted": [
