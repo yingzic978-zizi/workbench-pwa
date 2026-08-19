@@ -989,6 +989,17 @@
    "unit": "天",
    "note": "晓琳休假",
    "created": 1787137956031
+  },
+  {
+   "id": "mt01sgyxo7hwj",
+   "date": "2026-08-21",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "依琳休假",
+   "created": 1787141305833
   }
  ],
  "deleted": [
