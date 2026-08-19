@@ -1033,6 +1033,17 @@
    "unit": "h",
    "note": "昭芹加班1小时，玉叶加班1小时，嘉仪加班1小时",
    "created": 1787141478252
+  },
+  {
+   "id": "mt0mxwqqpe1ei",
+   "date": "2026-08-20",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1787176831490
   }
  ],
  "deleted": [
