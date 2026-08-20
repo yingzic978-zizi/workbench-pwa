@@ -1178,7 +1178,7 @@
    "created": 1787227751774
   },
   {
-   "id": "mt1hf90dacd26",
+   "id": "mt1hhh32457lb",
    "date": "2026-08-22",
    "hostId": "msirin9k9k8oq",
    "hostName": "陈阳",
@@ -1186,18 +1186,7 @@
    "hours": 1,
    "unit": "天",
    "note": "陈阳休假",
-   "created": 1787228029021
-  },
-  {
-   "id": "mt1hfn7ef9fqu",
-   "date": "2026-08-23",
-   "hostId": "msirin9k9k8oq",
-   "hostName": "陈阳",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "陈阳休假",
-   "created": 1787228047418
+   "created": 1787228132798
   }
  ],
  "deleted": [
@@ -1233,7 +1222,9 @@
   "mt1hcs8iaavqv",
   "mt1hcxdejjx19",
   "mt1hdu4635iv4",
-  "mt1he243ugj7b"
+  "mt1he243ugj7b",
+  "mt1hf90dacd26",
+  "mt1hfn7ef9fqu"
  ],
  "hosts": [
   {
