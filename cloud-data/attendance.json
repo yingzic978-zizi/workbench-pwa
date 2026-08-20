@@ -1198,6 +1198,17 @@
    "unit": "天",
    "note": "陈阳休假",
    "created": 1787228148479
+  },
+  {
+   "id": "mt1kzzcf3jpi0",
+   "date": "2026-08-21",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "静端加班5小时",
+   "created": 1787234035120
   }
  ],
  "deleted": [
@@ -1235,7 +1246,8 @@
   "mt1hdu4635iv4",
   "mt1he243ugj7b",
   "mt1hf90dacd26",
-  "mt1hfn7ef9fqu"
+  "mt1hfn7ef9fqu",
+  "mt1jys8ltku7n"
  ],
  "hosts": [
   {
