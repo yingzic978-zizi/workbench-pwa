@@ -1044,6 +1044,28 @@
    "unit": "天",
    "note": "小曼休假",
    "created": 1787176831490
+  },
+  {
+   "id": "mt0my1sq237ud",
+   "date": "2026-08-21",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1787176838042
+  },
+  {
+   "id": "mt0my7f2zdwow",
+   "date": "2026-08-22",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1787176845326
   }
  ],
  "deleted": [
