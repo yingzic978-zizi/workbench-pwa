@@ -1099,6 +1099,39 @@
    "unit": "天",
    "note": "静休假",
    "created": 1787215748523
+  },
+  {
+   "id": "mt1h49c1pmul4",
+   "date": "2026-08-20",
+   "hostId": "mt1h49br53slk",
+   "hostName": "炎如离职",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "炎如离职，晓琳离职，晓婷离职",
+   "created": 1787227516225
+  },
+  {
+   "id": "mt1h49c41tt30",
+   "date": "2026-08-20",
+   "hostId": "mt1h49c3at0sf",
+   "hostName": "晓琳离职",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "炎如离职，晓琳离职，晓婷离职",
+   "created": 1787227516228
+  },
+  {
+   "id": "mt1h49c5w68ns",
+   "date": "2026-08-20",
+   "hostId": "mt1h49c5m1l38",
+   "hostName": "晓婷离职",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "炎如离职，晓琳离职，晓婷离职",
+   "created": 1787227516229
   }
  ],
  "deleted": [
@@ -1297,6 +1330,24 @@
    "name": "小曼",
    "note": "",
    "created": 1787064007734
+  },
+  {
+   "id": "mt1h49br53slk",
+   "name": "炎如离职",
+   "note": "",
+   "created": 1787227516215
+  },
+  {
+   "id": "mt1h49c3at0sf",
+   "name": "晓琳离职",
+   "note": "",
+   "created": 1787227516227
+  },
+  {
+   "id": "mt1h49c5m1l38",
+   "name": "晓婷离职",
+   "note": "",
+   "created": 1787227516229
   }
  ]
 }
