@@ -1187,6 +1187,17 @@
    "unit": "天",
    "note": "陈阳休假",
    "created": 1787228132798
+  },
+  {
+   "id": "mt1hht6mc2juw",
+   "date": "2026-08-23",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1787228148479
   }
  ],
  "deleted": [
