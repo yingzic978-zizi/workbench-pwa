@@ -1132,6 +1132,50 @@
    "unit": "",
    "note": "炎如离职，晓琳离职，晓婷离职",
    "created": 1787227516229
+  },
+  {
+   "id": "mt1h5cm9x5t5m",
+   "date": "2026-08-11",
+   "hostId": "mt1h5cm61vv6p",
+   "hostName": "章欣畅入职",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "章欣畅入职",
+   "created": 1787227567137
+  },
+  {
+   "id": "mt1h9b2ymk8s6",
+   "date": "2026-08-21",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "玉叶加班1小时，丹丹加班1小时，昭芹加班1小时",
+   "created": 1787227751770
+  },
+  {
+   "id": "mt1h9b2zcozyr",
+   "date": "2026-08-21",
+   "hostId": "mskf9jnibis04",
+   "hostName": "丹丹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "玉叶加班1小时，丹丹加班1小时，昭芹加班1小时",
+   "created": 1787227751771
+  },
+  {
+   "id": "mt1h9b325p0sz",
+   "date": "2026-08-21",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "玉叶加班1小时，丹丹加班1小时，昭芹加班1小时",
+   "created": 1787227751774
   }
  ],
  "deleted": [
@@ -1348,6 +1392,12 @@
    "name": "晓婷离职",
    "note": "",
    "created": 1787227516229
+  },
+  {
+   "id": "mt1h5cm61vv6p",
+   "name": "章欣畅入职",
+   "note": "",
+   "created": 1787227567134
   }
  ]
 }
