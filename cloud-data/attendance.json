@@ -1176,6 +1176,17 @@
    "unit": "h",
    "note": "玉叶加班1小时，丹丹加班1小时，昭芹加班1小时",
    "created": 1787227751774
+  },
+  {
+   "id": "mt1hcs8iaavqv",
+   "date": "2026-08-22",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1787227913970
   }
  ],
  "deleted": [
