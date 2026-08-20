@@ -1088,6 +1088,17 @@
    "unit": "天",
    "note": "静休假",
    "created": 1787215742091
+  },
+  {
+   "id": "mt1a41bfonc44",
+   "date": "2026-08-22",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787215748523
   }
  ],
  "deleted": [
