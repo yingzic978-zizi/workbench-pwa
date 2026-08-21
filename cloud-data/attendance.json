@@ -1231,6 +1231,17 @@
    "unit": "h",
    "note": "曼虹加班5小时，嘉琪加班5小时",
    "created": 1787269360194
+  },
+  {
+   "id": "mt2svlq6ia7g3",
+   "date": "2026-08-23",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梦淇休假",
+   "created": 1787307733950
   }
  ],
  "deleted": [
