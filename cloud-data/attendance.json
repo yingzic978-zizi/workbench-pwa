@@ -1275,6 +1275,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时，静端加班5小时",
    "created": 1787377222950
+  },
+  {
+   "id": "mt4aft5u4z45k",
+   "date": "2026-08-22",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1787397696354
   }
  ],
  "deleted": [
