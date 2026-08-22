@@ -1286,6 +1286,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1787397696354
+  },
+  {
+   "id": "mt4agbelntk7a",
+   "date": "2026-08-23",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1787397719997
   }
  ],
  "deleted": [
