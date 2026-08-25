@@ -1363,6 +1363,17 @@
    "unit": "h",
    "note": "昭芹加班1小时，丹丹加班1小时，依琳加班1小时",
    "created": 1787664592647
+  },
+  {
+   "id": "mt8yjfgo6fdv0",
+   "date": "2026-08-24",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787680040712
   }
  ],
  "deleted": [
