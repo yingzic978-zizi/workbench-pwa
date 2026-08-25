@@ -1330,6 +1330,39 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时",
    "created": 1787554722606
+  },
+  {
+   "id": "mt8pcbnmvec0o",
+   "date": "2026-08-26",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，丹丹加班1小时，依琳加班1小时",
+   "created": 1787664592642
+  },
+  {
+   "id": "mt8pcbno9gejc",
+   "date": "2026-08-26",
+   "hostId": "mskf9jnibis04",
+   "hostName": "丹丹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，丹丹加班1小时，依琳加班1小时",
+   "created": 1787664592644
+  },
+  {
+   "id": "mt8pcbnr60rih",
+   "date": "2026-08-26",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，丹丹加班1小时，依琳加班1小时",
+   "created": 1787664592647
   }
  ],
  "deleted": [
