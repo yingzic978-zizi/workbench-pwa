@@ -1429,6 +1429,28 @@
    "unit": "h",
    "note": "昭芹加班1小时，嘉仪加班1小时，依琳加班1小时",
    "created": 1787748788388
+  },
+  {
+   "id": "mta8g28z8uxps",
+   "date": "2026-09-07",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假，婷婷休假",
+   "created": 1787757145955
+  },
+  {
+   "id": "mta8g2909nw5h",
+   "date": "2026-09-07",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假，婷婷休假",
+   "created": 1787757145956
   }
  ],
  "deleted": [
