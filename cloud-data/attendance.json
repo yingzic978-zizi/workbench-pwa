@@ -1374,6 +1374,17 @@
    "unit": "天",
    "note": "静休假",
    "created": 1787680040712
+  },
+  {
+   "id": "mta38vftrll1l",
+   "date": "2026-08-27",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1787748412457
   }
  ],
  "deleted": [
