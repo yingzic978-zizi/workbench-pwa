@@ -1385,6 +1385,17 @@
    "unit": "天",
    "note": "珀琪休假",
    "created": 1787748412457
+  },
+  {
+   "id": "mta3eg2rkkxyr",
+   "date": "2026-08-27",
+   "hostId": "msdgqym8kjtk7",
+   "hostName": "梓敏",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梓敏加班1小时",
+   "created": 1787748672485
   }
  ],
  "deleted": [
