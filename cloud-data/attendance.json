@@ -1451,6 +1451,17 @@
    "unit": "天",
    "note": "育锈休假，婷婷休假",
    "created": 1787757145956
+  },
+  {
+   "id": "mtb9blgz2s19y",
+   "date": "2026-08-27",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787819083379
   }
  ],
  "deleted": [
