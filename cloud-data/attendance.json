@@ -1517,6 +1517,17 @@
    "unit": "h",
    "note": "昭芹加班1小时，嘉仪加班1小时，依琳加班1小时",
    "created": 1787835206837
+  },
+  {
+   "id": "mtbjdepe712qv",
+   "date": "2026-08-28",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1787835964082
   }
  ],
  "deleted": [
