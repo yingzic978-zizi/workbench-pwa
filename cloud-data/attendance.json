@@ -1528,6 +1528,28 @@
    "unit": "天",
    "note": "嘉仪休假",
    "created": 1787835964082
+  },
+  {
+   "id": "mtbjdudutlv88",
+   "date": "2026-08-28",
+   "hostId": "mskf9jnibis04",
+   "hostName": "丹丹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "丹丹加班1小时",
+   "created": 1787835984402
+  },
+  {
+   "id": "mtbt9nunavrev",
+   "date": "2026-08-28",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1787852585471
   }
  ],
  "deleted": [
