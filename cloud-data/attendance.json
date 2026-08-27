@@ -1462,6 +1462,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1787819083379
+  },
+  {
+   "id": "mtbi61j84x54n",
+   "date": "2026-08-28",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "妙虹休假",
+   "created": 1787833940804
+  },
+  {
+   "id": "mtbi8eqnolter",
+   "date": "2026-08-28",
+   "hostId": "msdgqym8kjtk7",
+   "hostName": "梓敏",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梓敏加班1小时",
+   "created": 1787834051233
   }
  ],
  "deleted": [
