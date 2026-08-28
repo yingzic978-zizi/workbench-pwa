@@ -1550,6 +1550,28 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1787852585471
+  },
+  {
+   "id": "mtch25n5mjwvc",
+   "date": "2026-08-28",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1787892546065
+  },
+  {
+   "id": "mtch25n7k0jt9",
+   "date": "2026-08-28",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1787892546067
   }
  ],
  "deleted": [
