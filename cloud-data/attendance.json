@@ -1627,6 +1627,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时",
    "created": 1787959094469
+  },
+  {
+   "id": "mtdmd7rrioxqi",
+   "date": "2026-08-29",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787961926295
   }
  ],
  "deleted": [
