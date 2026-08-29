@@ -1607,17 +1607,6 @@
    "created": 1787924730104
   },
   {
-   "id": "mtdkoipwde67c",
-   "date": "2026-08-29",
-   "hostId": "msd4nyg4kkdv2",
-   "hostName": "嘉琪",
-   "type": "加班",
-   "hours": 5,
-   "unit": "h",
-   "note": "嘉琪加班5小时，曼虹加班5小时",
-   "created": 1787959094468
-  },
-  {
    "id": "mtdkoipx6di5y",
    "date": "2026-08-29",
    "hostId": "mssdz57ibvi67",
@@ -1638,6 +1627,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1787961926295
+  },
+  {
+   "id": "mtdmdcirxl9ab",
+   "date": "2026-08-30",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787961932451
+  },
+  {
+   "id": "mtdmdh3hacba0",
+   "date": "2026-08-31",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1787961938381
   }
  ],
  "deleted": [
@@ -1677,7 +1688,8 @@
   "mt1hf90dacd26",
   "mt1hfn7ef9fqu",
   "mt1jys8ltku7n",
-  "mt1l2bctveqen"
+  "mt1l2bctveqen",
+  "mtdkoipwde67c"
  ],
  "hosts": [
   {
