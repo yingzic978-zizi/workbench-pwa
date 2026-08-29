@@ -1671,6 +1671,39 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时",
    "created": 1787981900026
+  },
+  {
+   "id": "mtei7w1pqqe3u",
+   "date": "2026-08-30",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，玉叶加班1小时，依琳加班1小时",
+   "created": 1788015425533
+  },
+  {
+   "id": "mtei7w1rk99w3",
+   "date": "2026-08-30",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，玉叶加班1小时，依琳加班1小时",
+   "created": 1788015425535
+  },
+  {
+   "id": "mtei7w1sse17u",
+   "date": "2026-08-30",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "昭芹加班1小时，玉叶加班1小时，依琳加班1小时",
+   "created": 1788015425536
   }
  ],
  "deleted": [
@@ -1715,9 +1748,9 @@
  ],
  "hosts": [
   {
-   "id": "msfrkmk8o33wt",
+   "id": "msd2gqhb1fd8c",
    "name": "江丹丹",
-   "created": 1785914820152,
+   "created": 1785751715855,
    "note": "新工上班"
   },
   {
