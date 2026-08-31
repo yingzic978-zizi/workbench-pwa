@@ -1693,6 +1693,28 @@
    "unit": "h",
    "note": "昭芹加班1小时，玉叶加班1小时，依琳加班1小时",
    "created": 1788015425536
+  },
+  {
+   "id": "mtgry2zqvcx1b",
+   "date": "2026-08-01",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时",
+   "created": 1788152696487
+  },
+  {
+   "id": "mtgry2zz5p4sl",
+   "date": "2026-08-01",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时",
+   "created": 1788152696495
   }
  ],
  "deleted": [
