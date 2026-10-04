@@ -4003,6 +4003,17 @@
    "unit": "天",
    "note": "陈阳休假",
    "created": 1791107157475
+  },
+  {
+   "id": "muto74196e61a",
+   "date": "2026-10-05",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "妙虹休假",
+   "created": 1791109241901
   }
  ],
  "deleted": [
