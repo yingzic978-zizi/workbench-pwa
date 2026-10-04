@@ -4069,6 +4069,17 @@
    "unit": "h",
    "note": "梦淇加班1小时，婷婷加班1小时",
    "created": 1791114925461
+  },
+  {
+   "id": "muu9dfpe9drcz",
+   "date": "2026-10-05",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1791144808898
   }
  ],
  "deleted": [
