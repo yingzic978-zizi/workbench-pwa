@@ -3948,6 +3948,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1791059449003
+  },
+  {
+   "id": "mutajww3vagfr",
+   "date": "2026-10-04",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791086324547
   }
  ],
  "deleted": [
