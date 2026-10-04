@@ -3970,6 +3970,28 @@
    "unit": "天",
    "note": "珀琪休假",
    "created": 1791103263429
+  },
+  {
+   "id": "mutlh65fwuy5y",
+   "date": "2026-10-05",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791104672355
+  },
+  {
+   "id": "mutmvk73ircjf",
+   "date": "2026-10-05",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1791107023359
   }
  ],
  "deleted": [
