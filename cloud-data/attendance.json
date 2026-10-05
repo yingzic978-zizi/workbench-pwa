@@ -4091,6 +4091,28 @@
    "unit": "天",
    "note": "静端休假",
    "created": 1791176004950
+  },
+  {
+   "id": "muus9k0d7x797",
+   "date": "2026-10-05",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "曼虹加班5小时，晓铃加班4小时",
+   "created": 1791176540558
+  },
+  {
+   "id": "muus9k0odtzhd",
+   "date": "2026-10-05",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "曼虹加班5小时，晓铃加班4小时",
+   "created": 1791176540568
   }
  ],
  "deleted": [
