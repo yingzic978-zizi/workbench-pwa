@@ -4080,6 +4080,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1791144808898
+  },
+  {
+   "id": "muury2qd2ansv",
+   "date": "2026-10-06",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1791176004950
   }
  ],
  "deleted": [
