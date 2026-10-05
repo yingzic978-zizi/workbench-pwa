@@ -4113,6 +4113,17 @@
    "unit": "h",
    "note": "曼虹加班5小时，晓铃加班4小时",
    "created": 1791176540568
+  },
+  {
+   "id": "muusts8vktidm",
+   "date": "2026-10-05",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "依琳加班1小时",
+   "created": 1791177484351
   }
  ],
  "deleted": [
