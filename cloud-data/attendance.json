@@ -4245,6 +4245,39 @@
    "unit": "h",
    "note": "妙虹加班1小时",
    "created": 1791274582927
+  },
+  {
+   "id": "mux93nhnbrx26",
+   "date": "2026-10-07",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "陈阳加班4小时，晓铃加班4小时，静端加班5小时",
+   "created": 1791325750955
+  },
+  {
+   "id": "mux93nhpkrsxv",
+   "date": "2026-10-07",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "陈阳加班4小时，晓铃加班4小时，静端加班5小时",
+   "created": 1791325750957
+  },
+  {
+   "id": "mux93nhqd8wtk",
+   "date": "2026-10-07",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "陈阳加班4小时，晓铃加班4小时，静端加班5小时",
+   "created": 1791325750958
   }
  ],
  "deleted": [
