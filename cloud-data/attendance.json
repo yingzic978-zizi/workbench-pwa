@@ -4190,6 +4190,28 @@
    "unit": "天",
    "note": "梦淇休假",
    "created": 1791265370359
+  },
+  {
+   "id": "muweeapknh3i5",
+   "date": "2026-10-06",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "曼虹加班5小时，晓铃加班4小时",
+   "created": 1791274179512
+  },
+  {
+   "id": "muweeapp2wxil",
+   "date": "2026-10-06",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "曼虹加班5小时，晓铃加班4小时",
+   "created": 1791274179517
   }
  ],
  "deleted": [
