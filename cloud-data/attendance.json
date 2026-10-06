@@ -4146,6 +4146,50 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1791195845610
+  },
+  {
+   "id": "muvdx502ohhpd",
+   "date": "2026-10-06",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1791212912786
+  },
+  {
+   "id": "muve7yavseua7",
+   "date": "2026-10-06",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "妙虹加班1小时，婷婷加班1小时",
+   "created": 1791213417319
+  },
+  {
+   "id": "muve7yb18f515",
+   "date": "2026-10-06",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "妙虹加班1小时，婷婷加班1小时",
+   "created": 1791213417325
+  },
+  {
+   "id": "muw95hivh1nue",
+   "date": "2026-10-07",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梦淇休假",
+   "created": 1791265370359
   }
  ],
  "deleted": [
