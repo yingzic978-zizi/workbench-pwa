@@ -4212,6 +4212,17 @@
    "unit": "h",
    "note": "曼虹加班5小时，晓铃加班4小时",
    "created": 1791274179517
+  },
+  {
+   "id": "muweitsnzc0k1",
+   "date": "2026-10-07",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791274390871
   }
  ],
  "deleted": [
