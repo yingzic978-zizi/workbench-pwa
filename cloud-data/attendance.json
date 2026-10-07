@@ -4278,6 +4278,17 @@
    "unit": "天",
    "note": "梦淇休假",
    "created": 1791356256439
+  },
+  {
+   "id": "muy0vvs7btsk4",
+   "date": "2026-10-08",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791372417703
   }
  ],
  "deleted": [
