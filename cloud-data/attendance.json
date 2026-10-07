@@ -4300,6 +4300,17 @@
    "unit": "h",
    "note": "婷婷加班1小时",
    "created": 1791375135536
+  },
+  {
+   "id": "muy5ay6xmdh6n",
+   "date": "2026-10-09",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1791379839131
   }
  ],
  "deleted": [
