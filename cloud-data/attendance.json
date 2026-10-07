@@ -4311,6 +4311,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1791379839131
+  },
+  {
+   "id": "muy5b2wecv396",
+   "date": "2026-10-10",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1791379845230
+  },
+  {
+   "id": "muy5bs25n6gps",
+   "date": "2026-10-08",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假",
+   "created": 1791379877837
   }
  ],
  "deleted": [
