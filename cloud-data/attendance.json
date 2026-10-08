@@ -4333,6 +4333,28 @@
    "unit": "天",
    "note": "曼虹休假",
    "created": 1791379877837
+  },
+  {
+   "id": "muz55lnwqw1o9",
+   "date": "2026-10-09",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓铃休假，嘉琪休假",
+   "created": 1791440055788
+  },
+  {
+   "id": "muz55lon5sie9",
+   "date": "2026-10-09",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓铃休假，嘉琪休假",
+   "created": 1791440055815
   }
  ],
  "deleted": [
