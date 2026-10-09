@@ -4355,6 +4355,17 @@
    "unit": "天",
    "note": "晓铃休假，嘉琪休假",
    "created": 1791440055815
+  },
+  {
+   "id": "mv0tbjd6ujvsm",
+   "date": "2026-10-09",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "请假",
+   "hours": 1.5,
+   "unit": "h",
+   "note": "妙虹请假1.5小时",
+   "created": 1791541109706
   }
  ],
  "deleted": [
