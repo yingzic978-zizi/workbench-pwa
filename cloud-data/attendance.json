@@ -4366,6 +4366,28 @@
    "unit": "h",
    "note": "妙虹请假1.5小时",
    "created": 1791541109706
+  },
+  {
+   "id": "mv0tbt0mabz2d",
+   "date": "2026-10-10",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梦淇休假",
+   "created": 1791541122214
+  },
+  {
+   "id": "mv0tcna2ye1hb",
+   "date": "2026-10-10",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791541161434
   }
  ],
  "deleted": [
