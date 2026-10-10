@@ -4390,17 +4390,6 @@
    "created": 1791541161434
   },
   {
-   "id": "mv11z7zvdfahh",
-   "date": "2026-10-10",
-   "hostId": "msd4osuzgzxw8",
-   "hostName": "婷婷",
-   "type": "加班",
-   "hours": 1,
-   "unit": "h",
-   "note": "婷婷加班1小时",
-   "created": 1791555651643
-  },
-  {
    "id": "mv25qpgsm6kl9",
    "date": "2026-10-11",
    "hostId": "msur7krbq78wg",
@@ -4443,6 +4432,28 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1791636317925
+  },
+  {
+   "id": "mv2e157u05zn2",
+   "date": "2026-10-11",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "婷婷加班1小时",
+   "created": 1791636362922
+  },
+  {
+   "id": "mv2fpqxutzuch",
+   "date": "2026-10-10",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1791639190434
   }
  ],
  "deleted": [
@@ -4487,7 +4498,8 @@
   "mtdmdh3hacba0",
   "musixnnm1ldj0",
   "mutmz86h2fs5r",
-  "mus4d3dmm30ht"
+  "mus4d3dmm30ht",
+  "mv11z7zvdfahh"
  ],
  "hosts": [
   {
