@@ -4476,6 +4476,17 @@
    "unit": "h",
    "note": "曼玲加班1小时，雅玲加班1小时",
    "created": 1791639367552
+  },
+  {
+   "id": "mv2nql2dvo7od",
+   "date": "2026-10-11",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1791652666405
   }
  ],
  "deleted": [
