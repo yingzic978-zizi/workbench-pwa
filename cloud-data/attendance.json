@@ -4489,17 +4489,6 @@
    "created": 1791652701963
   },
   {
-   "id": "mv2nsuo78p8rt",
-   "date": "2026-10-11",
-   "hostId": "msrco4dxudbe7",
-   "hostName": "妙虹",
-   "type": "加班",
-   "hours": 1,
-   "unit": "h",
-   "note": "妙虹加班1小时",
-   "created": 1791652772168
-  },
-  {
    "id": "mv2o1ctx9q9pl",
    "date": "2026-10-11",
    "hostId": "msd2ijy4vnkru",
@@ -4509,6 +4498,28 @@
    "unit": "天",
    "note": "曼玲休假",
    "created": 1791653168949
+  },
+  {
+   "id": "mv2o2ff6obye2",
+   "date": "2026-10-11",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "珀琪加班1小时，雅玲加班1小时",
+   "created": 1791653218962
+  },
+  {
+   "id": "mv2o2ffxgf9db",
+   "date": "2026-10-11",
+   "hostId": "mtzupombheu63",
+   "hostName": "雅玲",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "珀琪加班1小时，雅玲加班1小时",
+   "created": 1791653218989
   }
  ],
  "deleted": [
@@ -4555,7 +4566,8 @@
   "mutmz86h2fs5r",
   "mus4d3dmm30ht",
   "mv11z7zvdfahh",
-  "mv2e157u05zn2"
+  "mv2e157u05zn2",
+  "mv2nsuo78p8rt"
  ],
  "hosts": [
   {
