@@ -4531,6 +4531,17 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1791718972359
+  },
+  {
+   "id": "mv3rptuo64oax",
+   "date": "2026-10-12",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1791719815776
   }
  ],
  "deleted": [
