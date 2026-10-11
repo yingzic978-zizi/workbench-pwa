@@ -4520,6 +4520,17 @@
    "unit": "h",
    "note": "珀琪加班1小时，雅玲加班1小时",
    "created": 1791653218989
+  },
+  {
+   "id": "mv3r7r2f1x7is",
+   "date": "2026-10-12",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1791718972359
   }
  ],
  "deleted": [
