@@ -4542,6 +4542,39 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1791719815776
+  },
+  {
+   "id": "mv4ss99xw1550",
+   "date": "2026-10-12",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，静端加班5小时",
+   "created": 1791782074869
+  },
+  {
+   "id": "mv4ss9a1lvrh1",
+   "date": "2026-10-12",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，静端加班5小时",
+   "created": 1791782074873
+  },
+  {
+   "id": "mv504bqti887m",
+   "date": "2026-10-13",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1791794395253
   }
  ],
  "deleted": [
