@@ -4619,6 +4619,28 @@
    "unit": "天",
    "note": "月茹休假",
    "created": 1791875645142
+  },
+  {
+   "id": "mv6qvcjdn6c2m",
+   "date": "2026-10-14",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1791899792185
+  },
+  {
+   "id": "mv6qvhzdxu1on",
+   "date": "2026-10-15",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1791899799241
   }
  ],
  "deleted": [
