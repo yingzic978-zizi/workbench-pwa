@@ -4608,6 +4608,17 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1791874330780
+  },
+  {
+   "id": "mv6chsk659atj",
+   "date": "2026-10-15",
+   "hostId": "msd29zu4ka7x4",
+   "hostName": "月茹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "月茹休假",
+   "created": 1791875645142
   }
  ],
  "deleted": [
