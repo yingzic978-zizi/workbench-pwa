@@ -4575,6 +4575,17 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1791794395253
+  },
+  {
+   "id": "mv5y5794jmsqa",
+   "date": "2026-10-14",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "梦淇休假",
+   "created": 1791851543032
   }
  ],
  "deleted": [
