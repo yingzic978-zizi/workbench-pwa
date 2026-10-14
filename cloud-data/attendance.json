@@ -4652,6 +4652,17 @@
    "unit": "天",
    "note": "昭芹休假",
    "created": 1791911157329
+  },
+  {
+   "id": "mv7zergmkyvsi",
+   "date": "2026-10-21",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1791974601094
   }
  ],
  "deleted": [
