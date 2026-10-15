@@ -4663,6 +4663,28 @@
    "unit": "天",
    "note": "育锈休假",
    "created": 1791974601094
+  },
+  {
+   "id": "mv7zewjy8whm7",
+   "date": "2026-10-22",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1791974607694
+  },
+  {
+   "id": "mv9feuhkuo56r",
+   "date": "2026-10-16",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1792061945048
   }
  ],
  "deleted": [
