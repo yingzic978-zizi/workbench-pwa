@@ -4685,6 +4685,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1792061945048
+  },
+  {
+   "id": "mvaevlb5xd5od",
+   "date": "2026-10-16",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假，佳欣休假",
+   "created": 1792121512865
+  },
+  {
+   "id": "mvaevlbzu0pve",
+   "date": "2026-10-16",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假，佳欣休假",
+   "created": 1792121512895
   }
  ],
  "deleted": [
