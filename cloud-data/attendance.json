@@ -4676,17 +4676,6 @@
    "created": 1791974607694
   },
   {
-   "id": "mv9feuhkuo56r",
-   "date": "2026-10-16",
-   "hostId": "msvd5okqyo3t2",
-   "hostName": "静",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "静休假",
-   "created": 1792061945048
-  },
-  {
    "id": "mvaevlb5xd5od",
    "date": "2026-10-16",
    "hostId": "msd4nyg4kkdv2",
@@ -4754,7 +4743,8 @@
   "mus4d3dmm30ht",
   "mv11z7zvdfahh",
   "mv2e157u05zn2",
-  "mv2nsuo78p8rt"
+  "mv2nsuo78p8rt",
+  "mv9feuhkuo56r"
  ],
  "hosts": [
   {
