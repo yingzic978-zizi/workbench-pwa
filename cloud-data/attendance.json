@@ -4751,6 +4751,28 @@
    "unit": "h",
    "note": "妙虹加班1小时",
    "created": 1792149572222
+  },
+  {
+   "id": "mvc4qtl5lckbt",
+   "date": "2026-10-18",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假，珀琪休假",
+   "created": 1792225426505
+  },
+  {
+   "id": "mvc4qtlukrebr",
+   "date": "2026-10-18",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假，珀琪休假",
+   "created": 1792225426530
   }
  ],
  "deleted": [
