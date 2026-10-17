@@ -4861,6 +4861,17 @@
    "unit": "h",
    "note": "陈晨加班1小时，昭芹加班1小时，嘉仪加班1小时",
    "created": 1792237200018
+  },
+  {
+   "id": "mvcbzyi5ity7m",
+   "date": "2026-10-18",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "晓铃休假",
+   "created": 1792237610093
   }
  ],
  "deleted": [
