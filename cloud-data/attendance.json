@@ -4872,6 +4872,39 @@
    "unit": "天",
    "note": "晓铃休假",
    "created": 1792237610093
+  },
+  {
+   "id": "mvcfsapoid8se",
+   "date": "2026-10-18",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静端休假",
+   "created": 1792243971132
+  },
+  {
+   "id": "mvcr7l0fhrra4",
+   "date": "2026-10-18",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1792263160095
+  },
+  {
+   "id": "mvdu9jcnxtxul",
+   "date": "2026-10-19",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1792328756279
   }
  ],
  "deleted": [
