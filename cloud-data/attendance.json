@@ -4949,6 +4949,39 @@
    "unit": "天",
    "note": "小曼休假",
    "created": 1792400062613
+  },
+  {
+   "id": "mvfc7ateodoxc",
+   "date": "2026-10-20",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1792419351170
+  },
+  {
+   "id": "mvfc7au54xe3v",
+   "date": "2026-10-20",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1792419351197
+  },
+  {
+   "id": "mvfc7au5svx6f",
+   "date": "2026-10-20",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1792419351197
   }
  ],
  "deleted": [
