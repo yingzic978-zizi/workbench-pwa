@@ -4982,6 +4982,17 @@
    "unit": "h",
    "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
    "created": 1792419351197
+  },
+  {
+   "id": "mvfc7gcy0250h",
+   "date": "2026-10-20",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "依琳休假",
+   "created": 1792419358354
   }
  ],
  "deleted": [
