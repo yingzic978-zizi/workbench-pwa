@@ -4905,6 +4905,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1792328756279
+  },
+  {
+   "id": "mvez0ad29bj9z",
+   "date": "2026-10-19",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静端加班5小时",
+   "created": 1792397188982
+  },
+  {
+   "id": "mvez0adv162bf",
+   "date": "2026-10-19",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静端加班5小时",
+   "created": 1792397189011
   }
  ],
  "deleted": [
