@@ -4938,6 +4938,17 @@
    "unit": "天",
    "note": "小曼休假",
    "created": 1792400055814
+  },
+  {
+   "id": "mvf0pvo50sd6v",
+   "date": "2026-10-21",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1792400062613
   }
  ],
  "deleted": [
