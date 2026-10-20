@@ -4993,6 +4993,39 @@
    "unit": "天",
    "note": "依琳休假",
    "created": 1792419358354
+  },
+  {
+   "id": "mvfudypz7ky28",
+   "date": "2026-10-20",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1792449895175
+  },
+  {
+   "id": "mvgcix5z9293y",
+   "date": "2026-10-20",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班5小时，曼虹加班5小时",
+   "created": 1792480359527
+  },
+  {
+   "id": "mvgcix6rblj9n",
+   "date": "2026-10-20",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班5小时，曼虹加班5小时",
+   "created": 1792480359555
   }
  ],
  "deleted": [
