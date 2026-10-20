@@ -5070,6 +5070,17 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1792486816562
+  },
+  {
+   "id": "mvgj3q8zfmxle",
+   "date": "2026-10-21",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1792491408035
   }
  ],
  "deleted": [
@@ -5119,7 +5130,9 @@
   "mv2e157u05zn2",
   "mv2nsuo78p8rt",
   "mv9feuhkuo56r",
-  "mvgcix5z9293y"
+  "mvgcix5z9293y",
+  "mvgnl7bzzhz31",
+  "mvgnl7cpuzypd"
  ],
  "hosts": [
   {
