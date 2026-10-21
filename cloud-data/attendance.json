@@ -5092,6 +5092,39 @@
    "unit": "h",
    "note": "珀琪加班1小时",
    "created": 1792583036234
+  },
+  {
+   "id": "mvi3vugfn640i",
+   "date": "2026-10-25",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1792586778351
+  },
+  {
+   "id": "mvim6edy724s8",
+   "date": "2026-10-22",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时",
+   "created": 1792617503830
+  },
+  {
+   "id": "mvim6eerm8x0i",
+   "date": "2026-10-22",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时",
+   "created": 1792617503859
   }
  ],
  "deleted": [
