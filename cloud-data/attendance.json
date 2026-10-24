@@ -5268,6 +5268,28 @@
    "unit": "h",
    "note": "陈阳加班4小时，泽玲加班5小时",
    "created": 1792779768836
+  },
+  {
+   "id": "mvm460yi16i6c",
+   "date": "2026-10-25",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，静加班5小时",
+   "created": 1792829118042
+  },
+  {
+   "id": "mvm460z8ycln5",
+   "date": "2026-10-25",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，静加班5小时",
+   "created": 1792829118068
   }
  ],
  "deleted": [
