@@ -5356,6 +5356,28 @@
    "unit": "h",
    "note": "小曼加班4小时，静端加班5小时",
    "created": 1792917838279
+  },
+  {
+   "id": "mvny1tn8ez8ar",
+   "date": "2026-10-31",
+   "hostId": "msd29zu4ka7x4",
+   "hostName": "月茹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "月茹休假",
+   "created": 1792939776596
+  },
+  {
+   "id": "mvny20v8vvl1h",
+   "date": "2026-11-01",
+   "hostId": "msd29zu4ka7x4",
+   "hostName": "月茹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "月茹休假",
+   "created": 1792939785956
   }
  ],
  "deleted": [
