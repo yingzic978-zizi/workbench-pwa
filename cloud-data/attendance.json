@@ -5477,6 +5477,28 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1793016124227
+  },
+  {
+   "id": "mvpbi8yvaie51",
+   "date": "2026-10-27",
+   "hostId": "mtzupombheu63",
+   "hostName": "雅玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "雅玲休假",
+   "created": 1793022844135
+  },
+  {
+   "id": "mvphhxlefq7hf",
+   "date": "2026-10-30",
+   "hostId": "mtzupombheu63",
+   "hostName": "雅玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "雅玲休假",
+   "created": 1793032907090
   }
  ],
  "deleted": [
