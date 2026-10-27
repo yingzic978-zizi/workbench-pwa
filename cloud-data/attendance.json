@@ -5499,6 +5499,17 @@
    "unit": "天",
    "note": "雅玲休假",
    "created": 1793032907090
+  },
+  {
+   "id": "mvphi2fvkhqqz",
+   "date": "2026-10-31",
+   "hostId": "mtzupombheu63",
+   "hostName": "雅玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "雅玲休假",
+   "created": 1793032913371
   }
  ],
  "deleted": [
