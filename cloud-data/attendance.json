@@ -5510,6 +5510,50 @@
    "unit": "天",
    "note": "雅玲休假",
    "created": 1793032913371
+  },
+  {
+   "id": "mvq7wv80ijm0k",
+   "date": "2026-10-27",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时",
+   "created": 1793077273872
+  },
+  {
+   "id": "mvq7wv8t7915a",
+   "date": "2026-10-27",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时",
+   "created": 1793077273901
+  },
+  {
+   "id": "mvq93kq6t5q7g",
+   "date": "2026-10-27",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1793079266478
+  },
+  {
+   "id": "mvq93kqzjlnjp",
+   "date": "2026-10-27",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1793079266507
   }
  ],
  "deleted": [
