@@ -5675,6 +5675,39 @@
    "unit": "天",
    "note": "珀琪休假",
    "created": 1793103888368
+  },
+  {
+   "id": "mvr2lpsghzxtf",
+   "date": "2026-10-28",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "静加班5小时",
+   "created": 1793128821712
+  },
+  {
+   "id": "mvr3cuqacndam",
+   "date": "2026-10-28",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "小曼加班4小时，静端加班5小时",
+   "created": 1793130087826
+  },
+  {
+   "id": "mvr3cur2ijpsz",
+   "date": "2026-10-28",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "小曼加班4小时，静端加班5小时",
+   "created": 1793130087854
   }
  ],
  "deleted": [
