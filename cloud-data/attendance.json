@@ -5567,17 +5567,6 @@
    "created": 1793080872619
   },
   {
-   "id": "mvqa201tcep9w",
-   "date": "2026-10-28",
-   "hostId": "msyrrpdhikfl4",
-   "hostName": "小曼",
-   "type": "加班",
-   "hours": 5,
-   "unit": "h",
-   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，曼虹加班5小时",
-   "created": 1793080872642
-  },
-  {
    "id": "mvqa201v3twsf",
    "date": "2026-10-28",
    "hostId": "msd4nyg4kkdv2",
@@ -5675,6 +5664,17 @@
    "unit": "h",
    "note": "玉叶加班1小时，依琳加班1小时，陈晨加班1小时，昭芹加班1小时，",
    "created": 1793101819138
+  },
+  {
+   "id": "mvqnrb3k3aulb",
+   "date": "2026-10-29",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1793103888368
   }
  ],
  "deleted": [
@@ -5727,7 +5727,8 @@
   "mvgcix5z9293y",
   "mvgnl7bzzhz31",
   "mvgnl7cpuzypd",
-  "mvggdbg2dga4j"
+  "mvggdbg2dga4j",
+  "mvqa201tcep9w"
  ],
  "hosts": [
   {
