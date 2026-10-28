@@ -5708,6 +5708,17 @@
    "unit": "h",
    "note": "小曼加班4小时，静端加班5小时",
    "created": 1793130087854
+  },
+  {
+   "id": "mvs2jgd63m2ns",
+   "date": "2026-10-28",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793189182362
   }
  ],
  "deleted": [
