@@ -5908,15 +5908,15 @@
    "created": 1793315734051
   },
   {
-   "id": "mvu5vw9wcw2k1",
-   "date": "2026-10-30",
-   "hostId": "msyrrpdhikfl4",
-   "hostName": "小曼",
+   "id": "mvu5we0czs8mk",
+   "date": "2026-10-29",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
    "type": "加班",
    "hours": 5,
    "unit": "h",
-   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
-   "created": 1793315734052
+   "note": "嘉琪加班5小时",
+   "created": 1793315757036
   }
  ],
  "deleted": [
@@ -5971,7 +5971,8 @@
   "mvgnl7cpuzypd",
   "mvggdbg2dga4j",
   "mvqa201tcep9w",
-  "mvt06mhom9vu1"
+  "mvt06mhom9vu1",
+  "mvu5vw9wcw2k1"
  ],
  "hosts": [
   {
