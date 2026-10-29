@@ -5862,6 +5862,61 @@
    "unit": "h",
    "note": "婷婷加班1小时",
    "created": 1793303092714
+  },
+  {
+   "id": "mvtyd3qb31jvb",
+   "date": "2026-10-30",
+   "hostId": "msd2ijxv3o7hz",
+   "hostName": "吉吉",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假",
+   "created": 1793303099939
+  },
+  {
+   "id": "mvu5vw9384s09",
+   "date": "2026-10-30",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
+   "created": 1793315734023
+  },
+  {
+   "id": "mvu5vw9vcd831",
+   "date": "2026-10-30",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
+   "created": 1793315734051
+  },
+  {
+   "id": "mvu5vw9vmnd36",
+   "date": "2026-10-30",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
+   "created": 1793315734051
+  },
+  {
+   "id": "mvu5vw9wcw2k1",
+   "date": "2026-10-30",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
+   "created": 1793315734052
   }
  ],
  "deleted": [
