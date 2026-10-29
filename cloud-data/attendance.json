@@ -5840,6 +5840,28 @@
    "unit": "天",
    "note": "陈阳休假",
    "created": 1793261341551
+  },
+  {
+   "id": "mvt9i8fim2gai",
+   "date": "2026-11-01",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1793261348910
+  },
+  {
+   "id": "mvtycy5mc1nwm",
+   "date": "2026-10-30",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "婷婷加班1小时",
+   "created": 1793303092714
   }
  ],
  "deleted": [
