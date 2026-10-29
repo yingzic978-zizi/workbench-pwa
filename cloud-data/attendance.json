@@ -5796,6 +5796,28 @@
    "unit": "天",
    "note": "嘉仪休假",
    "created": 1793245635196
+  },
+  {
+   "id": "mvt06mgzw6foz",
+   "date": "2026-10-29",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "玉叶加班1小时，依琳加班1小时，昭芹加班1小时，",
+   "created": 1793245690691
+  },
+  {
+   "id": "mvt06mhpeq070",
+   "date": "2026-10-29",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "玉叶加班1小时，依琳加班1小时，昭芹加班1小时，",
+   "created": 1793245690717
   }
  ],
  "deleted": [
@@ -5849,7 +5871,8 @@
   "mvgnl7bzzhz31",
   "mvgnl7cpuzypd",
   "mvggdbg2dga4j",
-  "mvqa201tcep9w"
+  "mvqa201tcep9w",
+  "mvt06mhom9vu1"
  ],
  "hosts": [
   {
