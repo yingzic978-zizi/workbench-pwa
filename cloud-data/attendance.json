@@ -5785,6 +5785,17 @@
    "unit": "h",
    "note": "晓铃加班4小时，曼虹加班5小时，晓铃加班4小时，小曼加班5小时",
    "created": 1793232611782
+  },
+  {
+   "id": "mvt05fng4aqcf",
+   "date": "2026-10-29",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1793245635196
   }
  ],
  "deleted": [
