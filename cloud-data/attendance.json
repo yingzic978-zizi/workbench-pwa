@@ -5818,6 +5818,28 @@
    "unit": "h",
    "note": "玉叶加班1小时，依琳加班1小时，昭芹加班1小时，",
    "created": 1793245690717
+  },
+  {
+   "id": "mvt0c52oeec5t",
+   "date": "2026-10-29",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 2,
+   "unit": "h",
+   "note": "依琳加班2小时",
+   "created": 1793245948080
+  },
+  {
+   "id": "mvt9i2r3owrlv",
+   "date": "2026-10-31",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1793261341551
   }
  ],
  "deleted": [
