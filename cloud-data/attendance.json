@@ -5917,6 +5917,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时",
    "created": 1793315757036
+  },
+  {
+   "id": "mvu7a3t5lz6nu",
+   "date": "2026-10-30",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "静加班5小时",
+   "created": 1793318076617
   }
  ],
  "deleted": [
