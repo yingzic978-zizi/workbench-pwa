@@ -5983,6 +5983,39 @@
    "unit": "天",
    "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
    "created": 1793360275207
+  },
+  {
+   "id": "mvuweu6odc5tt",
+   "date": "2026-10-31",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1793360287825
+  },
+  {
+   "id": "mvvkl0eicw7ih",
+   "date": "2026-10-31",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1793400886603
+  },
+  {
+   "id": "mvvkl0fbwwhv7",
+   "date": "2026-10-31",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班5小时",
+   "created": 1793400886631
   }
  ],
  "deleted": [
