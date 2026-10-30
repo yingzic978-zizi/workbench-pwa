@@ -5928,6 +5928,61 @@
    "unit": "h",
    "note": "静加班5小时",
    "created": 1793318076617
+  },
+  {
+   "id": "mvuwekfctm4k8",
+   "date": "2026-10-31",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
+   "created": 1793360275176
+  },
+  {
+   "id": "mvuwekg5l6t3d",
+   "date": "2026-10-31",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
+   "created": 1793360275205
+  },
+  {
+   "id": "mvuwekg62yqud",
+   "date": "2026-10-31",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
+   "created": 1793360275206
+  },
+  {
+   "id": "mvuwekg7jsvtf",
+   "date": "2026-10-31",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
+   "created": 1793360275207
+  },
+  {
+   "id": "mvuwekg7qllvq",
+   "date": "2026-10-31",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假，昭芹休假，玉叶休假，依琳休假，陈晨休假",
+   "created": 1793360275207
   }
  ],
  "deleted": [
