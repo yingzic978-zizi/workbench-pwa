@@ -6247,6 +6247,17 @@
    "unit": "天",
    "note": "晓铃休假",
    "created": 1793438696173
+  },
+  {
+   "id": "mvw7trcuxpz8b",
+   "date": "2026-10-19",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假",
+   "created": 1793439925950
   }
  ],
  "deleted": [
