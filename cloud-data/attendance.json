@@ -6038,6 +6038,28 @@
    "unit": "天",
    "note": "佳欣休假，静端休假",
    "created": 1793430487407
+  },
+  {
+   "id": "mvw6218n17hsb",
+   "date": "2026-10-10",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班5小时，静端加班5小时",
+   "created": 1793436952775
+  },
+  {
+   "id": "mvw6219iatmh1",
+   "date": "2026-10-10",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班5小时，静端加班5小时",
+   "created": 1793436952806
   }
  ],
  "deleted": [
