@@ -6225,6 +6225,17 @@
    "unit": "h",
    "note": "陈阳加班5小时，泽玲加班5小时，小曼加班5小时",
    "created": 1793437362908
+  },
+  {
+   "id": "mvw723hown0m2",
+   "date": "2026-11-02",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假",
+   "created": 1793438635308
   }
  ],
  "deleted": [
