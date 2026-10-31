@@ -6016,6 +6016,28 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时",
    "created": 1793400886631
+  },
+  {
+   "id": "mvw27gi9g2j43",
+   "date": "2026-10-31",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假，静端休假",
+   "created": 1793430487377
+  },
+  {
+   "id": "mvw27gj3sq78k",
+   "date": "2026-10-31",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假，静端休假",
+   "created": 1793430487407
   }
  ],
  "deleted": [
