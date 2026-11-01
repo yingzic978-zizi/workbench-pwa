@@ -6302,6 +6302,17 @@
    "unit": "h",
    "note": "1号嘉琪加班5小时，曼虹加班5小时",
    "created": 1793482945145
+  },
+  {
+   "id": "mvxluzpsnbg7q",
+   "date": "2026-11-02",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1793523964240
   }
  ],
  "deleted": [
