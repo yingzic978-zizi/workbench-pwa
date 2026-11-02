@@ -6434,6 +6434,39 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，静端加班5小时，",
    "created": 1793616706251
+  },
+  {
+   "id": "mvza0ya8imk5r",
+   "date": "2026-11-03",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "3号依琳休假，嘉仪休假，陈晨休假，昭芹休假，玉叶休假",
+   "created": 1793625019280
+  },
+  {
+   "id": "mvza0yb257d8a",
+   "date": "2026-11-03",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "3号依琳休假，嘉仪休假，陈晨休假，昭芹休假，玉叶休假",
+   "created": 1793625019310
+  },
+  {
+   "id": "mvza0yb3aca9h",
+   "date": "2026-11-03",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "3号依琳休假，嘉仪休假，陈晨休假，昭芹休假，玉叶休假",
+   "created": 1793625019311
   }
  ],
  "deleted": [
@@ -6492,7 +6525,9 @@
   "mvu5vw9wcw2k1",
   "mvp7i7ur7lxp0",
   "mvyjaf93qjaxa",
-  "mvyjaf92touzk"
+  "mvyjaf92touzk",
+  "mvza0yb2uzqdj",
+  "mvza0yb371gzn"
  ],
  "hosts": [
   {
