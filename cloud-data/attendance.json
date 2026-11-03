@@ -6467,6 +6467,17 @@
    "unit": "天",
    "note": "3号依琳休假，嘉仪休假，陈晨休假，昭芹休假，玉叶休假",
    "created": 1793625019311
+  },
+  {
+   "id": "mw0t62k08o2ka",
+   "date": "2026-11-07",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1793717636976
   }
  ],
  "deleted": [
