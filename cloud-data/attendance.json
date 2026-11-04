@@ -6621,6 +6621,39 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1793786707435
+  },
+  {
+   "id": "mw1ybnk39ilhp",
+   "date": "2026-11-05",
+   "hostId": "mw1ybnjdp1ptk",
+   "hostName": "嘉佳",
+   "type": "出勤",
+   "hours": 1,
+   "unit": "",
+   "note": "嘉佳上班",
+   "created": 1793786761731
+  },
+  {
+   "id": "mw2cfrlba9p9c",
+   "date": "2026-11-08",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假，吉吉休假",
+   "created": 1793810468207
+  },
+  {
+   "id": "mw2cfrm6volvr",
+   "date": "2026-11-08",
+   "hostId": "msd2ijxv3o7hz",
+   "hostName": "吉吉",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假，吉吉休假",
+   "created": 1793810468238
   }
  ],
  "deleted": [
@@ -6884,6 +6917,12 @@
    "name": "雅玲",
    "note": "",
    "created": 1789306200803
+  },
+  {
+   "id": "mw1ybnjdp1ptk",
+   "name": "嘉佳",
+   "note": "",
+   "created": 1793786761705
   }
  ]
 }
