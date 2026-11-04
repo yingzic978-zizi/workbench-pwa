@@ -6544,6 +6544,83 @@
    "unit": "天",
    "note": "佳欣休假",
    "created": 1793786659758
+  },
+  {
+   "id": "mw1y9pb1pytxi",
+   "date": "2026-11-07",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786670685
+  },
+  {
+   "id": "mw1y9u9sicqo9",
+   "date": "2026-11-08",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786677120
+  },
+  {
+   "id": "mw1y9zm6hfj19",
+   "date": "2026-11-09",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786684046
+  },
+  {
+   "id": "mw1ya4n7oc8vj",
+   "date": "2026-11-10",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786690563
+  },
+  {
+   "id": "mw1ya96470x06",
+   "date": "2026-11-11",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786696428
+  },
+  {
+   "id": "mw1yadf80ph9k",
+   "date": "2026-11-12",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786701940
+  },
+  {
+   "id": "mw1yahnvehwmo",
+   "date": "2026-11-13",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1793786707435
   }
  ],
  "deleted": [
