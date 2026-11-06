@@ -6918,6 +6918,28 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时",
    "created": 1794003061439
+  },
+  {
+   "id": "mw5k35q8etdsb",
+   "date": "2026-11-09",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班10小时",
+   "created": 1794004715456
+  },
+  {
+   "id": "mw5k35qvlvnn5",
+   "date": "2026-11-09",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 10,
+   "unit": "h",
+   "note": "嘉琪加班5小时，曼虹加班10小时",
+   "created": 1794004715479
   }
  ],
  "deleted": [
