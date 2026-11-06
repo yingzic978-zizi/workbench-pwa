@@ -6656,17 +6656,6 @@
    "created": 1793810468238
   },
   {
-   "id": "mw2cg1r0rdqvv",
-   "date": "2026-11-09",
-   "hostId": "mssdz57ibvi67",
-   "hostName": "曼虹",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "曼虹休假，吉吉休假",
-   "created": 1793810481372
-  },
-  {
    "id": "mw2cg1rtdqtob",
    "date": "2026-11-09",
    "hostId": "msd2ijxv3o7hz",
@@ -6786,17 +6775,6 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，静加班5小时",
    "created": 1793871186065
-  },
-  {
-   "id": "mw3ll4qp208ul",
-   "date": "2026-11-09",
-   "hostId": "msd4nyg4kkdv2",
-   "hostName": "嘉琪",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "嘉琪休假",
-   "created": 1793886301249
   },
   {
    "id": "mw3tdpk3oau7n",
@@ -6940,6 +6918,28 @@
    "unit": "h",
    "note": "嘉琪加班5小时，曼虹加班10小时",
    "created": 1794004715479
+  },
+  {
+   "id": "mw5kbhikeh595",
+   "date": "2026-11-07",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "陈阳加班4小时，泽玲加班5小时",
+   "created": 1794005103980
+  },
+  {
+   "id": "mw5kbhj5bz6vp",
+   "date": "2026-11-07",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "陈阳加班4小时，泽玲加班5小时",
+   "created": 1794005104001
   }
  ],
  "deleted": [
@@ -7002,7 +7002,9 @@
   "mvza0yb2uzqdj",
   "mvza0yb371gzn",
   "mw3tdpkv7z7ey",
-  "mw3tdpkw3qytm"
+  "mw3tdpkw3qytm",
+  "mw3ll4qp208ul",
+  "mw2cg1r0rdqvv"
  ],
  "hosts": [
   {
