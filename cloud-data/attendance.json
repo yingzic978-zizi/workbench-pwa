@@ -6810,28 +6810,6 @@
    "created": 1793899391907
   },
   {
-   "id": "mw3tdpkv7z7ey",
-   "date": "2026-11-06",
-   "hostId": "mssdz57ibvi67",
-   "hostName": "曼虹",
-   "type": "加班",
-   "hours": 5,
-   "unit": "h",
-   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，静加班5小时，陈阳加班5小时",
-   "created": 1793899391935
-  },
-  {
-   "id": "mw3tdpkw3qytm",
-   "date": "2026-11-06",
-   "hostId": "msn0bk5crhed8",
-   "hostName": "晓铃",
-   "type": "加班",
-   "hours": 4,
-   "unit": "h",
-   "note": "嘉琪加班5小时，曼虹加班5小时，晓铃加班4小时，静加班5小时，陈阳加班5小时",
-   "created": 1793899391936
-  },
-  {
    "id": "mw3tdpkx4xdof",
    "date": "2026-11-06",
    "hostId": "msirin9k9k8oq",
@@ -6863,6 +6841,39 @@
    "unit": "天",
    "note": "曼虹休假",
    "created": 1793917102018
+  },
+  {
+   "id": "mw4sq14v9drvc",
+   "date": "2026-11-07",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1793958753343
+  },
+  {
+   "id": "mw55n6d5oqcff",
+   "date": "2026-11-06",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 8,
+   "unit": "h",
+   "note": "曼虹加班8小时",
+   "created": 1793980455161
+  },
+  {
+   "id": "mw55nfbgwbymi",
+   "date": "2026-11-06",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 6,
+   "unit": "h",
+   "note": "晓铃加班6小时",
+   "created": 1793980466764
   }
  ],
  "deleted": [
@@ -6923,7 +6934,9 @@
   "mvyjaf93qjaxa",
   "mvyjaf92touzk",
   "mvza0yb2uzqdj",
-  "mvza0yb371gzn"
+  "mvza0yb371gzn",
+  "mw3tdpkv7z7ey",
+  "mw3tdpkw3qytm"
  ],
  "hosts": [
   {
