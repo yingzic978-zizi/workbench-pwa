@@ -6940,6 +6940,17 @@
    "unit": "h",
    "note": "陈阳加班4小时，泽玲加班5小时",
    "created": 1794005104001
+  },
+  {
+   "id": "mw5wds1ru4wjx",
+   "date": "2026-11-10",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1794025366335
   }
  ],
  "deleted": [
