@@ -6962,6 +6962,17 @@
    "unit": "h",
    "note": "曼虹加班5小时",
    "created": 1794025406468
+  },
+  {
+   "id": "mw6fec5ym9lcd",
+   "date": "2026-11-08",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时",
+   "created": 1794057305110
   }
  ],
  "deleted": [
