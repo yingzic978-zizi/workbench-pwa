@@ -6951,6 +6951,17 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1794025366335
+  },
+  {
+   "id": "mw5wen0k14yr5",
+   "date": "2026-11-09",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "曼虹加班5小时",
+   "created": 1794025406468
   }
  ],
  "deleted": [
