@@ -6973,6 +6973,17 @@
    "unit": "h",
    "note": "晓铃加班4小时",
    "created": 1794057305110
+  },
+  {
+   "id": "mw7ptr52v78t9",
+   "date": "2026-11-09",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "婷婷休假",
+   "created": 1794135286694
   }
  ],
  "deleted": [
