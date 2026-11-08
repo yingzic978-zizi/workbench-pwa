@@ -6995,6 +6995,28 @@
    "unit": "天",
    "note": "静端休假",
    "created": 1794148527693
+  },
+  {
+   "id": "mw8c211t6wfe0",
+   "date": "2026-11-09",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "陈阳加班4小时，泽玲加班5小时",
+   "created": 1794172624337
+  },
+  {
+   "id": "mw8c212kfcui6",
+   "date": "2026-11-09",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "陈阳加班4小时，泽玲加班5小时",
+   "created": 1794172624364
   }
  ],
  "deleted": [
