@@ -7039,6 +7039,17 @@
    "unit": "h",
    "note": "晓铃加班4小时，小曼加班5小时，",
    "created": 1794172725885
+  },
+  {
+   "id": "mw92a48uw1sqh",
+   "date": "2026-11-09",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "静加班5小时",
+   "created": 1794216671742
   }
  ],
  "deleted": [
