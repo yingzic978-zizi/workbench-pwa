@@ -7072,6 +7072,39 @@
    "unit": "天",
    "note": "晓铃休假",
    "created": 1794297879597
+  },
+  {
+   "id": "mwaidlye8e9df",
+   "date": "2026-11-10",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "小曼加班4小时，静端加班5小时，",
+   "created": 1794304174694
+  },
+  {
+   "id": "mwaidlz6o6icq",
+   "date": "2026-11-10",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "小曼加班4小时，静端加班5小时，",
+   "created": 1794304174722
+  },
+  {
+   "id": "mwal8574mwtil",
+   "date": "2026-11-11",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "妙虹休假",
+   "created": 1794308958544
   }
  ],
  "deleted": [
