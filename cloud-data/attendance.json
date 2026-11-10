@@ -7105,6 +7105,17 @@
    "unit": "天",
    "note": "妙虹休假",
    "created": 1794308958544
+  },
+  {
+   "id": "mwaohaec57h61",
+   "date": "2026-11-11",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1794314424037
   }
  ],
  "deleted": [
