@@ -7138,6 +7138,17 @@
    "unit": "h",
    "note": "陈阳加班4小时，泽玲加班5小时，",
    "created": 1794355257999
+  },
+  {
+   "id": "mwbop3j75v728",
+   "date": "2026-11-12",
+   "hostId": "mtzupombheu63",
+   "hostName": "雅玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "雅玲休假",
+   "created": 1794375254563
   }
  ],
  "deleted": [
