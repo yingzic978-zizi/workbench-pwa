@@ -7149,6 +7149,61 @@
    "unit": "天",
    "note": "雅玲休假",
    "created": 1794375254563
+  },
+  {
+   "id": "mwcd1bdq6n8gy",
+   "date": "2026-11-12",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1794416135390
+  },
+  {
+   "id": "mwck994a47prp",
+   "date": "2026-11-12",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班4小时，静端加班5小时",
+   "created": 1794428263018
+  },
+  {
+   "id": "mwck994yq5e68",
+   "date": "2026-11-12",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班4小时，静端加班5小时",
+   "created": 1794428263042
+  },
+  {
+   "id": "mwck994zdql07",
+   "date": "2026-11-12",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班4小时，静端加班5小时",
+   "created": 1794428263043
+  },
+  {
+   "id": "mwck994zi4smu",
+   "date": "2026-11-12",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班4小时，静端加班5小时",
+   "created": 1794428263043
   }
  ],
  "deleted": [
