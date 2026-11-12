@@ -7281,6 +7281,28 @@
    "unit": "天",
    "note": "静休假",
    "created": 1794466892336
+  },
+  {
+   "id": "mwdi0zn2i0g28",
+   "date": "2026-11-13",
+   "hostId": "msd2ijxv3o7hz",
+   "hostName": "吉吉",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假，婷婷休假",
+   "created": 1794484984430
+  },
+  {
+   "id": "mwdi0znw6gbfq",
+   "date": "2026-11-13",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "吉吉休假，婷婷休假",
+   "created": 1794484984460
   }
  ],
  "deleted": [
