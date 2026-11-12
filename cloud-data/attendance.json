@@ -7204,6 +7204,61 @@
    "unit": "h",
    "note": "嘉琪加班5小时，静加班5小时，晓铃加班4小时，静端加班5小时",
    "created": 1794428263043
+  },
+  {
+   "id": "mwd7840nth6q0",
+   "date": "2026-11-17",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1794466840919
+  },
+  {
+   "id": "mwd789vgq38x5",
+   "date": "2026-11-18",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1794466848508
+  },
+  {
+   "id": "mwd78jph6562f",
+   "date": "2026-11-27",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1794466861253
+  },
+  {
+   "id": "mwd78o4y471d3",
+   "date": "2026-11-28",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1794466866994
+  },
+  {
+   "id": "mwd78suj9fqoe",
+   "date": "2026-11-29",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "静休假",
+   "created": 1794466873099
   }
  ],
  "deleted": [
