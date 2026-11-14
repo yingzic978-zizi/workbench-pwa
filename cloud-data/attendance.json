@@ -7457,6 +7457,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时，静端加班5小时，晓铃加班4小时，曼虹加班5小时",
    "created": 1794609465971
+  },
+  {
+   "id": "mwg8kg6c0tclr",
+   "date": "2026-11-15",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1794650494692
   }
  ],
  "deleted": [
