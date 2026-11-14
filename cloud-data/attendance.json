@@ -7479,6 +7479,17 @@
    "unit": "天",
    "note": "婷婷休假",
    "created": 1794658128975
+  },
+  {
+   "id": "mwgd5chucq5b7",
+   "date": "2026-11-15",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "育锈加班1小时",
+   "created": 1794658188162
   }
  ],
  "deleted": [
