@@ -7787,6 +7787,17 @@
    "unit": "h",
    "note": "婷婷请假3小时",
    "created": 1794993291757
+  },
+  {
+   "id": "mwm04phl0tmby",
+   "date": "2026-11-21",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假",
+   "created": 1794999120393
   }
  ],
  "deleted": [
