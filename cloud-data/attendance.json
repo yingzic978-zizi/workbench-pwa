@@ -7732,6 +7732,61 @@
    "unit": "h",
    "note": "晓铃加班4小时，曼虹加班5小时",
    "created": 1794928231506
+  },
+  {
+   "id": "mwl661vvy4tb7",
+   "date": "2026-11-18",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "佳欣加班5小时，小曼加班5小时，陈阳加班4小时，泽玲加班5小时",
+   "created": 1794948794635
+  },
+  {
+   "id": "mwl661wseqe5k",
+   "date": "2026-11-18",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "佳欣加班5小时，小曼加班5小时，陈阳加班4小时，泽玲加班5小时",
+   "created": 1794948794668
+  },
+  {
+   "id": "mwl661wt7og7w",
+   "date": "2026-11-18",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "佳欣加班5小时，小曼加班5小时，陈阳加班4小时，泽玲加班5小时",
+   "created": 1794948794669
+  },
+  {
+   "id": "mwl661wtatfwi",
+   "date": "2026-11-18",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "佳欣加班5小时，小曼加班5小时，陈阳加班4小时，泽玲加班5小时",
+   "created": 1794948794669
+  },
+  {
+   "id": "mwlwns31zekw3",
+   "date": "2026-11-18",
+   "hostId": "msd4osuzgzxw8",
+   "hostName": "婷婷",
+   "type": "请假",
+   "hours": 3,
+   "unit": "h",
+   "note": "婷婷请假3小时",
+   "created": 1794993291757
   }
  ],
  "deleted": [
