@@ -8051,6 +8051,94 @@
    "unit": "h",
    "note": "依琳加班1小时，嘉仪加班1小时，昭芹加班1小时",
    "created": 1795182010872
+  },
+  {
+   "id": "mwpf40qymlirc",
+   "date": "2026-11-23",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1795205681098
+  },
+  {
+   "id": "mwpf45wfdcfbb",
+   "date": "2026-11-24",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1795205687775
+  },
+  {
+   "id": "mwpf4ba81acyb",
+   "date": "2026-11-25",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1795205694753
+  },
+  {
+   "id": "mwpf4gdja8c6v",
+   "date": "2026-11-26",
+   "hostId": "msio9vcy0wa17",
+   "hostName": "泽玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "泽玲休假",
+   "created": 1795205701351
+  },
+  {
+   "id": "mwpfjrbaxsldj",
+   "date": "2026-11-21",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
+   "created": 1795206415366
+  },
+  {
+   "id": "mwpfjrc0e4mgx",
+   "date": "2026-11-21",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
+   "created": 1795206415392
+  },
+  {
+   "id": "mwpfjrc1j6z7l",
+   "date": "2026-11-21",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
+   "created": 1795206415393
+  },
+  {
+   "id": "mwpfjrc4plqad",
+   "date": "2026-11-21",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
+   "created": 1795206415396
   }
  ],
  "deleted": [
