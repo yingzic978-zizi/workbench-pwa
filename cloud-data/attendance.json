@@ -8097,17 +8097,6 @@
    "created": 1795206415366
   },
   {
-   "id": "mwpfjrc0e4mgx",
-   "date": "2026-11-21",
-   "hostId": "msvd5okqyo3t2",
-   "hostName": "静",
-   "type": "加班",
-   "hours": 5,
-   "unit": "h",
-   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
-   "created": 1795206415392
-  },
-  {
    "id": "mwpfjrc1j6z7l",
    "date": "2026-11-21",
    "hostId": "msn0bk5crhed8",
@@ -8161,6 +8150,17 @@
    "unit": "h",
    "note": "依琳加班1小时，嘉仪加班1小时，昭芹加班1小时",
    "created": 1795258135533
+  },
+  {
+   "id": "mwqb9co42amsv",
+   "date": "2026-11-22",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼虹休假",
+   "created": 1795259677540
   }
  ],
  "deleted": [
@@ -8228,7 +8228,9 @@
   "mw2cg1r0rdqvv",
   "mw92a48uw1sqh",
   "mwfk527onzfpp",
-  "mwp0zyzslyakc"
+  "mwp0zyzslyakc",
+  "mwpfjrc0e4mgx",
+  "mwqb7j3p8qmd0"
  ],
  "hosts": [
   {
