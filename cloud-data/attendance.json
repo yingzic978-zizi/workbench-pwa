@@ -7998,17 +7998,6 @@
    "created": 1795181977549
   },
   {
-   "id": "mwp0zyzslyakc",
-   "date": "2026-11-21",
-   "hostId": "msd2catkank4m",
-   "hostName": "嘉仪",
-   "type": "出勤",
-   "hours": 1,
-   "unit": "",
-   "note": "依琳加班1小时，嘉仪1小时，昭芹1小时",
-   "created": 1795181977576
-  },
-  {
    "id": "mwp0zyzv4ijv3",
    "date": "2026-11-21",
    "hostId": "msd2e2o1n9r8i",
@@ -8205,7 +8194,8 @@
   "mw3ll4qp208ul",
   "mw2cg1r0rdqvv",
   "mw92a48uw1sqh",
-  "mwfk527onzfpp"
+  "mwfk527onzfpp",
+  "mwp0zyzslyakc"
  ],
  "hosts": [
   {
