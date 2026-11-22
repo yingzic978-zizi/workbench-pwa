@@ -8097,17 +8097,6 @@
    "created": 1795206415366
   },
   {
-   "id": "mwpfjrc1j6z7l",
-   "date": "2026-11-21",
-   "hostId": "msn0bk5crhed8",
-   "hostName": "晓铃",
-   "type": "加班",
-   "hours": 5,
-   "unit": "h",
-   "note": "嘉琪加班5小时，静加班5小时，晓铃加班5小时，曼虹加班5小时",
-   "created": 1795206415393
-  },
-  {
    "id": "mwpfjrc4plqad",
    "date": "2026-11-21",
    "hostId": "mssdz57ibvi67",
@@ -8230,7 +8219,8 @@
   "mwfk527onzfpp",
   "mwp0zyzslyakc",
   "mwpfjrc0e4mgx",
-  "mwqb7j3p8qmd0"
+  "mwqb7j3p8qmd0",
+  "mwpfjrc1j6z7l"
  ],
  "hosts": [
   {
