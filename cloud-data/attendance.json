@@ -8150,6 +8150,116 @@
    "unit": "天",
    "note": "曼虹休假",
    "created": 1795259677540
+  },
+  {
+   "id": "mwrglu4xp9koq",
+   "date": "2026-11-21",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时",
+   "created": 1795329124305
+  },
+  {
+   "id": "mwrgmoauwuo64",
+   "date": "2026-11-22",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，静端加班5小时，静加班5小时",
+   "created": 1795329163398
+  },
+  {
+   "id": "mwrgmobjc2qgc",
+   "date": "2026-11-22",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，静端加班5小时，静加班5小时",
+   "created": 1795329163423
+  },
+  {
+   "id": "mwrgmobk9cx9s",
+   "date": "2026-11-22",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，静端加班5小时，静加班5小时",
+   "created": 1795329163424
+  },
+  {
+   "id": "mwrgmobli72vv",
+   "date": "2026-11-22",
+   "hostId": "msdfjxebrmgu4",
+   "hostName": "静端",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，静端加班5小时，静加班5小时",
+   "created": 1795329163425
+  },
+  {
+   "id": "mwrgmoblq7t2x",
+   "date": "2026-11-22",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，小曼加班5小时，嘉琪加班5小时，静端加班5小时，静加班5小时",
+   "created": 1795329163425
+  },
+  {
+   "id": "mwrw7kem00o1m",
+   "date": "2026-11-23",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "依琳加班1小时，陈晨加班1小时，昭芹加班1小时",
+   "created": 1795355332366
+  },
+  {
+   "id": "mwrw7kfcafaj8",
+   "date": "2026-11-23",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "依琳加班1小时，陈晨加班1小时，昭芹加班1小时",
+   "created": 1795355332392
+  },
+  {
+   "id": "mwrw7kfdktzw6",
+   "date": "2026-11-23",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "依琳加班1小时，陈晨加班1小时，昭芹加班1小时",
+   "created": 1795355332393
+  },
+  {
+   "id": "mws05beaq1gpg",
+   "date": "2026-11-23",
+   "hostId": "msyrrpdhikfl4",
+   "hostName": "小曼",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "小曼休假",
+   "created": 1795361945842
   }
  ],
  "deleted": [
