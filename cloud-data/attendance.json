@@ -8304,6 +8304,61 @@
    "unit": "天",
    "note": "曼玲休假，妙虹休假",
    "created": 1795427812410
+  },
+  {
+   "id": "mwt3dddybwy4z",
+   "date": "2026-11-25",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1795427826694
+  },
+  {
+   "id": "mwt3difc9h9ul",
+   "date": "2026-11-26",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1795427833224
+  },
+  {
+   "id": "mwt3gfusz7oe4",
+   "date": "2026-11-24",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，嘉仪加班1小时，昭芹加班1小时",
+   "created": 1795427969860
+  },
+  {
+   "id": "mwt3gfvhma8qn",
+   "date": "2026-11-24",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，嘉仪加班1小时，昭芹加班1小时",
+   "created": 1795427969885
+  },
+  {
+   "id": "mwt3gfvhx0so5",
+   "date": "2026-11-24",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，嘉仪加班1小时，昭芹加班1小时",
+   "created": 1795427969885
   }
  ],
  "deleted": [
