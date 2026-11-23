@@ -8260,6 +8260,28 @@
    "unit": "天",
    "note": "小曼休假",
    "created": 1795361945842
+  },
+  {
+   "id": "mws0og4tauz1c",
+   "date": "2026-11-23",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1795362838445
+  },
+  {
+   "id": "mwsr3f7d1a0y2",
+   "date": "2026-11-24",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "依琳休假",
+   "created": 1795407207097
   }
  ],
  "deleted": [
