@@ -8359,6 +8359,28 @@
    "unit": "h",
    "note": "陈晨加班1小时，嘉仪加班1小时，昭芹加班1小时",
    "created": 1795427969885
+  },
+  {
+   "id": "mwt3k4pegutkk",
+   "date": "2026-11-24",
+   "hostId": "msur7krbq78wg",
+   "hostName": "梦淇",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梦淇加班1小时，育锈加班1小时",
+   "created": 1795428142034
+  },
+  {
+   "id": "mwt3k4q2zodke",
+   "date": "2026-11-24",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "梦淇加班1小时，育锈加班1小时",
+   "created": 1795428142058
   }
  ],
  "deleted": [
