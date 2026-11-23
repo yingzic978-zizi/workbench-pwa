@@ -8381,6 +8381,17 @@
    "unit": "h",
    "note": "梦淇加班1小时，育锈加班1小时",
    "created": 1795428142058
+  },
+  {
+   "id": "mwt4duwkog30f",
+   "date": "2026-11-24",
+   "hostId": "mwt4duvvomvfc",
+   "hostName": "毓华",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "毓华休假",
+   "created": 1795429529012
   }
  ],
  "deleted": [
@@ -8662,6 +8673,12 @@
    "name": "嘉佳",
    "note": "",
    "created": 1793786761705
+  },
+  {
+   "id": "mwt4duvvomvfc",
+   "name": "毓华",
+   "note": "",
+   "created": 1795429528987
   }
  ]
 }
