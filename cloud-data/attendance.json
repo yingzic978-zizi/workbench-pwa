@@ -8282,6 +8282,28 @@
    "unit": "天",
    "note": "依琳休假",
    "created": 1795407207097
+  },
+  {
+   "id": "mwt3d2c6uj3be",
+   "date": "2026-11-24",
+   "hostId": "msd2ijy4vnkru",
+   "hostName": "曼玲",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假，妙虹休假",
+   "created": 1795427812374
+  },
+  {
+   "id": "mwt3d2d6ckhyq",
+   "date": "2026-11-24",
+   "hostId": "msrco4dxudbe7",
+   "hostName": "妙虹",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "曼玲休假，妙虹休假",
+   "created": 1795427812410
   }
  ],
  "deleted": [
