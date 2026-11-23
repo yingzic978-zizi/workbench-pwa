@@ -8392,6 +8392,50 @@
    "unit": "天",
    "note": "毓华休假",
    "created": 1795429529012
+  },
+  {
+   "id": "mwtvdrby3bas7",
+   "date": "2026-11-24",
+   "hostId": "msn0bk5crhed8",
+   "hostName": "晓铃",
+   "type": "加班",
+   "hours": 4,
+   "unit": "h",
+   "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
+   "created": 1795474874014
+  },
+  {
+   "id": "mwtvdrcop0ur0",
+   "date": "2026-11-24",
+   "hostId": "mssdz57ibvi67",
+   "hostName": "曼虹",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
+   "created": 1795474874040
+  },
+  {
+   "id": "mwtvdrcpgnysh",
+   "date": "2026-11-24",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
+   "created": 1795474874041
+  },
+  {
+   "id": "mwtvdrcqlwleo",
+   "date": "2026-11-24",
+   "hostId": "msvd5okqyo3t2",
+   "hostName": "静",
+   "type": "加班",
+   "hours": 5,
+   "unit": "h",
+   "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
+   "created": 1795474874042
   }
  ],
  "deleted": [
