@@ -8436,6 +8436,17 @@
    "unit": "h",
    "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
    "created": 1795474874042
+  },
+  {
+   "id": "mwugsrvewb3gz",
+   "date": "2026-11-25",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "玉叶休假",
+   "created": 1795510846490
   }
  ],
  "deleted": [
