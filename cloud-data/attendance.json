@@ -8524,6 +8524,28 @@
    "unit": "h",
    "note": "晓铃加班4小时，曼虹加班5小时，嘉琪加班5小时，静加班5小时，",
    "created": 1795514901426
+  },
+  {
+   "id": "mwvo993m30dtu",
+   "date": "2026-11-29",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1795583838802
+  },
+  {
+   "id": "mwvo9errzwehh",
+   "date": "2026-11-30",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1795583846151
   }
  ],
  "deleted": [
