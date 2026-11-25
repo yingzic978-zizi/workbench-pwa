@@ -8546,6 +8546,72 @@
    "unit": "天",
    "note": "嘉琪休假",
    "created": 1795583846151
+  },
+  {
+   "id": "mwvo9t27s3q3d",
+   "date": "2026-12-01",
+   "hostId": "msd4nyg4kkdv2",
+   "hostName": "嘉琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉琪休假",
+   "created": 1795583864671
+  },
+  {
+   "id": "mwvxr4nrs8ymq",
+   "date": "2026-11-26",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1795599789399
+  },
+  {
+   "id": "mwvxr9gjkw9l9",
+   "date": "2026-11-27",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1795599795620
+  },
+  {
+   "id": "mwvxwi54q5kta",
+   "date": "2026-11-26",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，依琳加班1小时，玉叶加班1小时",
+   "created": 1795600040152
+  },
+  {
+   "id": "mwvxwi5q9zrlk",
+   "date": "2026-11-26",
+   "hostId": "msd2ckzlo7zfu",
+   "hostName": "依琳",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，依琳加班1小时，玉叶加班1小时",
+   "created": 1795600040174
+  },
+  {
+   "id": "mwvxwi5rde2no",
+   "date": "2026-11-26",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，依琳加班1小时，玉叶加班1小时",
+   "created": 1795600040175
   }
  ],
  "deleted": [
