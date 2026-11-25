@@ -8612,6 +8612,28 @@
    "unit": "h",
    "note": "陈晨加班1小时，依琳加班1小时，玉叶加班1小时",
    "created": 1795600040175
+  },
+  {
+   "id": "mww215itxq26g",
+   "date": "2026-11-28",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1795606975541
+  },
+  {
+   "id": "mww21an8vh02p",
+   "date": "2026-11-29",
+   "hostId": "msirin9k9k8oq",
+   "hostName": "陈阳",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈阳休假",
+   "created": 1795606982180
   }
  ],
  "deleted": [
