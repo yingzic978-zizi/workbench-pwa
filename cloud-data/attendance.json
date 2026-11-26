@@ -8559,17 +8559,6 @@
    "created": 1795599789399
   },
   {
-   "id": "mwvxr9gjkw9l9",
-   "date": "2026-11-27",
-   "hostId": "msd2catkank4m",
-   "hostName": "嘉仪",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "嘉仪休假",
-   "created": 1795599795620
-  },
-  {
    "id": "mwvxwi54q5kta",
    "date": "2026-11-26",
    "hostId": "mtybehqlz6gsd",
@@ -8731,7 +8720,9 @@
   "mwt0man1r1hp5",
   "mwuhglsk7aihk",
   "mwd78jph6562f",
-  "mwx54k909224o"
+  "mwx54k909224o",
+  "mwx56k8ziwegx",
+  "mwvxr9gjkw9l9"
  ],
  "hosts": [
   {
