@@ -7228,17 +7228,6 @@
    "created": 1794466848508
   },
   {
-   "id": "mwd78jph6562f",
-   "date": "2026-11-27",
-   "hostId": "msvd5okqyo3t2",
-   "hostName": "静",
-   "type": "请假",
-   "hours": 1,
-   "unit": "天",
-   "note": "静休假",
-   "created": 1794466861253
-  },
-  {
    "id": "mwd78o4y471d3",
    "date": "2026-11-28",
    "hostId": "msvd5okqyo3t2",
@@ -8656,6 +8645,17 @@
    "unit": "h",
    "note": "嘉琪加班5小时，静端加班5小时",
    "created": 1795672389908
+  },
+  {
+   "id": "mwx544ud1jq6h",
+   "date": "2026-11-27",
+   "hostId": "msd2es6reshto",
+   "hostName": "珀琪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "珀琪休假",
+   "created": 1795672619653
   }
  ],
  "deleted": [
@@ -8729,7 +8729,9 @@
   "mwpfjrc1j6z7l",
   "mwt0mam9gvl5w",
   "mwt0man1r1hp5",
-  "mwuhglsk7aihk"
+  "mwuhglsk7aihk",
+  "mwd78jph6562f",
+  "mwx54k909224o"
  ],
  "hosts": [
   {
