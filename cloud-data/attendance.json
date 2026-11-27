@@ -8667,6 +8667,83 @@
    "unit": "h",
    "note": "晓铃加班4小时，曼虹加班5小时",
    "created": 1795726096825
+  },
+  {
+   "id": "mwyzx00j8dkjr",
+   "date": "2026-11-28",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1795784821075
+  },
+  {
+   "id": "mwyzx01bamo2h",
+   "date": "2026-11-28",
+   "hostId": "msd2e2o1n9r8i",
+   "hostName": "昭芹",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1795784821103
+  },
+  {
+   "id": "mwyzx01brfffd",
+   "date": "2026-11-28",
+   "hostId": "msd2bipk21u5k",
+   "hostName": "玉叶",
+   "type": "加班",
+   "hours": 1,
+   "unit": "h",
+   "note": "陈晨加班1小时，昭芹加班1小时，玉叶加班1小时",
+   "created": 1795784821103
+  },
+  {
+   "id": "mwz3ofsl936xi",
+   "date": "2026-11-30",
+   "hostId": "msd2ijxz4iar0",
+   "hostName": "育锈",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "育锈休假",
+   "created": 1795791140085
+  },
+  {
+   "id": "mwz3owv49nllf",
+   "date": "2026-11-28",
+   "hostId": "msd2catkank4m",
+   "hostName": "嘉仪",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "嘉仪休假",
+   "created": 1795791162208
+  },
+  {
+   "id": "mwz722sersiai",
+   "date": "2026-11-29",
+   "hostId": "mtybehqlz6gsd",
+   "hostName": "陈晨",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "陈晨休假",
+   "created": 1795796815262
+  },
+  {
+   "id": "mwze32akmyi12",
+   "date": "2026-11-28",
+   "hostId": "msk1h47268vhz",
+   "hostName": "佳欣",
+   "type": "请假",
+   "hours": 1,
+   "unit": "天",
+   "note": "佳欣休假",
+   "created": 1795808618588
   }
  ],
  "deleted": [
